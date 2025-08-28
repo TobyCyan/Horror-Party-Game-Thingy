@@ -32,6 +32,8 @@ public class SceneLifetimeManager : MonoBehaviour
         }
         Instance = this;
         clientSceneLoader = GetComponent<ClientSceneLoader>();
+        
+        DontDestroyOnLoad(gameObject);
     }
     private void Start()
     {
