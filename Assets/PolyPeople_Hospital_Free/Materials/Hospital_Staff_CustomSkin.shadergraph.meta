@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 5328f52c3be6202468063ceee9b27030
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 327818
+  packageName: 'PolyPeople Series - Hospital [Free]'
+  packageVersion: 1.0
+  assetPath: Assets/PolyPeople_Hospital_Free/Materials/Hospital_Staff_CustomSkin.shadergraph
+  uploadId: 776156
