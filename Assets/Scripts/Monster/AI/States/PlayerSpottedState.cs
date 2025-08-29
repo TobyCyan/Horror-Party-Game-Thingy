@@ -5,17 +5,27 @@ public class PlayerSpottedState : BaseState
     private Transform player;
     private readonly LookAt lookAt = new();
     private readonly Timer timer = new();
-    private readonly float searchRadius = 10.0f;
 
-    public override void EnterState(StateMachine stateMachine, Monster monster)
+    public PlayerSpottedState(Monster monster) : base(monster)
+    {
+    }
+
+    public override void EnterState(StateMachine stateMachine)
     {
         if (player == null)
         {
             Debug.LogWarning("Player reference is null in PlayerSpottedState.");
         }
 
-        this.monster = monster;
-        timer.StartTimer(3.0f);
+        if (monster == null)
+        {
+            Debug.LogError("Monster reference is null in PlayerSpottedState.");
+            return;
+        }
+
+        float countdown = 3.0f;
+        monster.SpotPlayer();
+        timer.StartTimer(countdown);
     }
 
     public override void ExitState(StateMachine stateMachine)
@@ -25,33 +35,24 @@ public class PlayerSpottedState : BaseState
 
     public override void UpdateState(StateMachine stateMachine)
     {
-        float lookAtSpeed = 2.5f;
+        float lookAtSpeed = 4.0f;
         bool isFinished = lookAt.LookAtTarget(stateMachine.transform, player, lookAtSpeed);
         if (!isFinished)
         {
             return;
         }
 
-        bool _ = timer.RunTimer();
+        // After finishing looking at the player, run the timer.
+        timer.RunTimer();
     }
 
     public override bool CanTransition(StateMachine stateMachine)
     {
-        // Check for player within search radius
-        Collider[] hits = Physics.OverlapSphere(monster.transform.position, searchRadius);
-        foreach (Collider hit in hits)
-        {
-            if (hit.CompareTag("Player"))
-            {
-                player = hit.transform;
-                return true;
-            }
-        }
-        return false;
+        return monster.SearchForPlayer(out player);
     }
 
     public override bool CanExit(StateMachine stateMachine)
     {
-        return timer.RunTimer() || !CanTransition(stateMachine);
+        return timer.IsComplete || !CanTransition(stateMachine);
     }
 }

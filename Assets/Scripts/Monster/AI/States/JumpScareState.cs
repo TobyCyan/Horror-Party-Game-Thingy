@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class JumpScareState : BaseState
 {
+    public JumpScareState(Monster monster) : base(monster)
+    {
+    }
+
     public override bool CanExit(StateMachine stateMachine)
     {
-        throw new System.NotImplementedException();
+        return !CanTransition(stateMachine);
     }
 
     public override bool CanTransition(StateMachine stateMachine)
@@ -12,7 +16,7 @@ public class JumpScareState : BaseState
         return true;
     }
 
-    public override void EnterState(StateMachine stateMachine, Monster monster)
+    public override void EnterState(StateMachine stateMachine)
     {
         if (monster == null)
         {
@@ -20,14 +24,7 @@ public class JumpScareState : BaseState
             return;
         }
 
-        Transform player = GameObject.FindGameObjectWithTag("Player")?.transform;
-        if (player == null)
-        {
-            Debug.LogError("Player not found in the scene. Ensure the player has the 'Player' tag.");
-            return;
-        }
-
-        monster.JumpScare(player);
+        monster.JumpScare();
     }
 
     public override void ExitState(StateMachine stateMachine)

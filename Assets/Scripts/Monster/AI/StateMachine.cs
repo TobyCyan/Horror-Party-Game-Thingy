@@ -4,21 +4,25 @@ using UnityEngine;
 public class StateMachine : MonoBehaviour
 {
     public BaseState currentState;
-    private Monster monster;
 
     public Dictionary<BaseState, BaseState[]> stateTransitions = new();
 
     public void Initialize(BaseState initialState, Monster monster, Dictionary<BaseState, BaseState[]> transitions)
     {
-        this.monster = monster;
         stateTransitions = transitions;
         currentState = initialState;
-        currentState.EnterState(this, monster);
+        currentState.EnterState(this);
     }
 
     void Update()
     {
         currentState.UpdateState(this);
+        if (!stateTransitions.ContainsKey(currentState))
+        {
+            Debug.LogWarning("No transitions defined for the current state: " + currentState.GetType().Name);
+            return;
+        }
+
         foreach (var transition in stateTransitions[currentState])
         {
             // Check if the transition conditions are met and if the current state can exit
@@ -37,7 +41,7 @@ public class StateMachine : MonoBehaviour
             return;
         }
 
-        if (currentState.IsEqual(nextState))
+        if (currentState.Equals(nextState))
         {
             Debug.Log("Already in the desired state. No transition needed.");
             return;
@@ -45,6 +49,6 @@ public class StateMachine : MonoBehaviour
 
         currentState.ExitState(this);
         currentState = nextState;
-        currentState.EnterState(this, monster);
+        currentState.EnterState(this);
     }
 }

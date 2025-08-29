@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class IdleState : BaseState
 {
+    public IdleState(Monster monster) : base(monster)
+    {
+    }
+
     public override bool CanExit(StateMachine stateMachine)
     {
         return true;
@@ -12,15 +16,13 @@ public class IdleState : BaseState
         return true;
     }
 
-    public override void EnterState(StateMachine stateMachine, Monster monster)
+    public override void EnterState(StateMachine stateMachine)
     {
         if (monster == null)
         {
             Debug.LogError("Monster reference is null in IdleState.");
             return;
         }
-
-        this.monster = monster;
         monster.Idle(true);
     }
 

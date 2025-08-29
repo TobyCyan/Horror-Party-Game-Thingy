@@ -4,12 +4,17 @@ public class GhostChild : Monster
 {
     public override void InitializeStateMachine()
     {
-        BaseState initialState = new IdleState();
+        BaseState idleState = new IdleState(this);
+        BaseState playerSpottedState = new PlayerSpottedState(this);
+        BaseState jumpScareState = new JumpScareState(this);
+
+        BaseState initialState = idleState;
+
         Dictionary<BaseState, BaseState[]> transitions = new()
         {
-            { initialState, new BaseState[] { new PlayerSpottedState() } },
-            { new PlayerSpottedState(), new BaseState[] { new JumpScareState(), new IdleState() } },
-            { new JumpScareState(), new BaseState[] { initialState } }
+            { idleState, new BaseState[] { playerSpottedState } },
+            { playerSpottedState, new BaseState[] { jumpScareState, idleState } },
+            { jumpScareState, new BaseState[] { idleState } }
         };
         stateMachine.Initialize(initialState, this, transitions);
     }

@@ -2,23 +2,23 @@ using UnityEngine;
 
 public class JumpScare : MonoBehaviour
 {
-    [SerializeField] private Animator animator;
-    [SerializeField] private AudioSource jumpScareAudio;
+    private AudioSource jumpScareAudio;
+    [Header("Additional Offset")]
+    [SerializeField] private Vector3 offset;
 
     private void OnValidate()
     {
-        if (animator == null)
-        {
-            Debug.LogWarning("Animator is not assigned in JumpScare script.");
-        }
-
         if (jumpScareAudio == null)
         {
-            Debug.LogWarning("AudioSource is not assigned in JumpScare script.");
+            jumpScareAudio = GetComponent<AudioSource>();
+            if (jumpScareAudio == null)
+            {
+                Debug.LogWarning("AudioSource is not assigned in JumpScare script.");
+            }
         }
     }
 
-    public void TriggerJumpScare(Transform target)
+    public void TriggerJumpScare(Animator animator, Transform target)
     {
         // Jump to target.
         JumpToTarget(target);
@@ -27,6 +27,7 @@ public class JumpScare : MonoBehaviour
 
         // JumpScare the target.
         animator.SetTrigger("JumpScare");
+        animator.Play("JumpScare", 0, 0.0f);
 
         PlayJumpScareAudio();
     }
@@ -34,7 +35,7 @@ public class JumpScare : MonoBehaviour
     private void JumpToTarget(Transform target)
     {
         Vector3 targetForward = target.forward;
-        Vector3 offsetPosition = target.position - targetForward * 0.5f; // Offset by 0.5 units in front of the target
+        Vector3 offsetPosition = target.position + (targetForward * 0.5f) + offset; // Offset by 0.5 units in front of the target
         gameObject.transform.position = offsetPosition;
     }
 

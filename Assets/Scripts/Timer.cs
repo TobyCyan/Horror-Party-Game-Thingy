@@ -7,6 +7,8 @@ public class Timer
 
     private bool isRunning;
 
+    public bool IsComplete => !isRunning && currentTime >= duration;
+
     public void StartTimer(float duration)
     {
         this.duration = duration;
@@ -19,20 +21,18 @@ public class Timer
         isRunning = false;
     }
 
-    public bool RunTimer()
+    public void RunTimer()
     {
         if (!isRunning)
         {
-            return false;
+            return;
         }
 
         currentTime += Time.deltaTime;
         if (currentTime >= duration)
         {
+            Debug.Log("Timer completed after " + duration + " seconds.");
             StopTimer();
-            return true; // Timer finished
         }
-
-        return false; // Timer still running
     }
 }
