@@ -24,10 +24,9 @@ public class ClientSceneLoader : MonoBehaviour
 
     public AsyncOperation LoadSceneAsync(string sceneName)
     {
-        if (_loadedSceneNames.Contains(sceneName)) return null;
-        
-        _loadedSceneNames.Add(sceneName);
-        return SceneManager.LoadSceneAsync(sceneName);
+        if (!_loadedSceneNames.Add(sceneName)) return null;
+
+        return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
     }
 
     public AsyncOperation UnloadSceneAsync(string sceneName)
