@@ -80,12 +80,21 @@ public class Monster : MonoBehaviour
 
     public void SpotPlayer()
     {
-        animator.SetTrigger("PlayerSpotted");
+        animator.SetBool("PlayerSpotted", true);
     }
 
-    public void Idle(bool enable)
+    public void LosePlayer()
     {
+        animator.SetBool("PlayerSpotted", false);
+        targetPlayer = null;
+    }
 
+    public virtual void Idle(bool enable)
+    {
+        if (enable)
+        {
+            animator.Play("Idle", 0, 0.0f);
+        }
     }
 
     public virtual void InitializeStateMachine()
@@ -95,6 +104,6 @@ public class Monster : MonoBehaviour
         {
             { initialState, new BaseState[] { } }
         };
-        stateMachine.Initialize(initialState, this, transitions);
+        stateMachine.Initialize(initialState, transitions);
     }
 }

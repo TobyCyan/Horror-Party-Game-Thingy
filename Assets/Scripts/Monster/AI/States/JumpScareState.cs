@@ -13,7 +13,7 @@ public class JumpScareState : BaseState
 
     public override bool CanTransition(StateMachine stateMachine)
     {
-        return true;
+        return monster.targetPlayer != null;
     }
 
     public override void EnterState(StateMachine stateMachine)

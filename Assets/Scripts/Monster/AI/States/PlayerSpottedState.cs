@@ -30,7 +30,10 @@ public class PlayerSpottedState : BaseState
 
     public override void ExitState(StateMachine stateMachine)
     {
-        return;
+        if (player == null)
+        {
+            monster.LosePlayer();
+        }
     }
 
     public override void UpdateState(StateMachine stateMachine)
@@ -53,6 +56,7 @@ public class PlayerSpottedState : BaseState
 
     public override bool CanExit(StateMachine stateMachine)
     {
-        return timer.IsComplete || !CanTransition(stateMachine);
+        // Exit if the timer is complete or if the player is lost.
+        return timer.IsComplete || !monster.SearchForPlayer(out player);
     }
 }

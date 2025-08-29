@@ -7,7 +7,7 @@ public class StateMachine : MonoBehaviour
 
     public Dictionary<BaseState, BaseState[]> stateTransitions = new();
 
-    public void Initialize(BaseState initialState, Monster monster, Dictionary<BaseState, BaseState[]> transitions)
+    public void Initialize(BaseState initialState, Dictionary<BaseState, BaseState[]> transitions)
     {
         stateTransitions = transitions;
         currentState = initialState;
@@ -23,12 +23,18 @@ public class StateMachine : MonoBehaviour
             return;
         }
 
+        if (!currentState.CanExit(this))
+        {
+            return;
+        }
+
         foreach (var transition in stateTransitions[currentState])
         {
             // Check if the transition conditions are met and if the current state can exit
-            if (transition.CanTransition(this) && currentState.CanExit(this))
+            if (transition.CanTransition(this))
             {
                 GoNextState(transition);
+                break;
             }
         }
     }

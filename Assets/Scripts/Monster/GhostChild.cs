@@ -16,6 +16,6 @@ public class GhostChild : Monster
             { playerSpottedState, new BaseState[] { jumpScareState, idleState } },
             { jumpScareState, new BaseState[] { idleState } }
         };
-        stateMachine.Initialize(initialState, this, transitions);
+        stateMachine.Initialize(initialState, transitions);
     }
 }
