@@ -1,9 +1,41 @@
 using System.Collections.Generic;
-using System.Numerics;
+using UnityEngine;
 
 public class GhostChild : Monster
 {
-    protected new Vector3 outOfBoundsPosition = new(0, -1000, 0);
+    private Reveal reveal;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+        reveal = GetComponent<Reveal>();
+        reveal.Initialize(initialPosition, outOfBoundsPosition);
+    }
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        if (reveal == null)
+        {
+            reveal = GetComponent<Reveal>();
+            if (reveal == null)
+            {
+                Debug.LogWarning("Reveal component is missing from the GhostChild GameObject.");
+            }
+        }
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        reveal.RevealSelf();
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        reveal.HideSelf();
+    }
 
     protected override void InitializeStateMachine()
     {

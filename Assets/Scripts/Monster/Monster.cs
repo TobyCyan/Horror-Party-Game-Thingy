@@ -7,17 +7,19 @@ public class Monster : MonoBehaviour
     protected StateMachine stateMachine;
     protected PlayerRadar playerRadar;
     private AnimatorController animatorController;
-    public Vector3 initialPosition;
+    [SerializeField] protected Vector3 initialPosition;
     protected Vector3 outOfBoundsPosition = new(0, -500, 0);
     [HideInInspector] public Transform targetPlayer;
+    [SerializeField] private float searchRadius = 2.5f;
+    [SerializeField] private AudioClip playerSpottedSfx;
+    [SerializeField] private AudioClip idleSfx;
 
     private void Awake()
     {
-        OnValidate();
         Initialize();
     }
 
-    private void OnValidate()
+    protected virtual void OnValidate()
     {
         if (jumpScare == null)
         {
@@ -39,7 +41,7 @@ public class Monster : MonoBehaviour
 
         if (playerRadar == null)
         {
-            playerRadar = GetComponent<PlayerRadar>();
+            playerRadar = new PlayerRadar(searchRadius);
             if (playerRadar == null)
             {
                 Debug.LogWarning("PlayerRadar component is missing from the Monster GameObject.");
@@ -63,7 +65,7 @@ public class Monster : MonoBehaviour
 
     public bool SearchForPlayer(out Transform player)
     {
-        bool isPlayerInRange = playerRadar.IsPlayerInRange(out player);
+        bool isPlayerInRange = playerRadar.IsPlayerInRange(transform.position, out player);
         targetPlayer = player;
         return isPlayerInRange;
     }
@@ -114,33 +116,22 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void Initialize()
+    public virtual void Initialize()
     {
         InitializeStateMachine();
         animatorController.Initialize();
-        ResetPosition();
         ResetAnimator();
     }
 
-    public void ResetPosition()
+    protected virtual void OnEnable()
     {
-        transform.position = initialPosition;
+        PlaySfx(idleSfx);
     }
 
-    public void MoveOutOfBounds()
+    protected virtual void OnDisable()
     {
-        transform.position = outOfBoundsPosition;
-    }
-
-    private void OnEnable()
-    {
-        ResetPosition();
-    }
-
-    private void OnDisable()
-    {
-        MoveOutOfBounds();
         ResetAnimator();
+        PlaySfx(null);
     }
 
     public void Enable(bool enable)
@@ -153,6 +144,16 @@ public class Monster : MonoBehaviour
         {
             OnDisable();
         }
+    }
+
+    public void PlaySfx(AudioClip clip)
+    {
+        if (clip == null)
+        {
+            Debug.LogWarning("AudioClip is null. Cannot play sound effect.");
+            return;
+        }
+        AudioSource.PlayClipAtPoint(clip, transform.position);
     }
 
     protected virtual void InitializeStateMachine()

@@ -1,13 +1,18 @@
 using UnityEngine;
 
-public class PlayerRadar : MonoBehaviour
+public class PlayerRadar
 {
-    [SerializeField] private float searchRadius = 10.0f;
+    private readonly float searchRadius;
 
-    public bool IsPlayerInRange(out Transform player)
+    public PlayerRadar(float searchRadius = 2.5f)
+    {
+        this.searchRadius = searchRadius;
+    }
+
+    public bool IsPlayerInRange(Vector3 origin, out Transform player)
     {
         // Check for player within search radius
-        Collider[] hits = Physics.OverlapSphere(transform.position, searchRadius);
+        Collider[] hits = Physics.OverlapSphere(origin, searchRadius);
         foreach (Collider hit in hits)
         {
             if (hit.CompareTag("Player"))

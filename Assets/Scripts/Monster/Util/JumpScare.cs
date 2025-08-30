@@ -2,21 +2,9 @@ using UnityEngine;
 
 public class JumpScare : MonoBehaviour
 {
-    private AudioSource jumpScareAudio;
+    [SerializeField] private AudioClip jumpScareSfx;
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
-
-    private void OnValidate()
-    {
-        if (jumpScareAudio == null)
-        {
-            jumpScareAudio = GetComponent<AudioSource>();
-            if (jumpScareAudio == null)
-            {
-                Debug.LogWarning("AudioSource is not assigned in JumpScare script.");
-            }
-        }
-    }
 
     public void TriggerJumpScare(Animator animator, Transform target)
     {
@@ -67,11 +55,13 @@ public class JumpScare : MonoBehaviour
 
     private void PlayJumpScareAudio()
     {
-        if (jumpScareAudio.isPlaying)
+        if (jumpScareSfx != null)
         {
-            jumpScareAudio.Stop();
+            AudioSource.PlayClipAtPoint(jumpScareSfx, transform.position);
         }
-
-        jumpScareAudio.Play();
+        else
+        {
+            Debug.LogWarning("JumpScare audio clip is not assigned.");
+        }
     }
 }
