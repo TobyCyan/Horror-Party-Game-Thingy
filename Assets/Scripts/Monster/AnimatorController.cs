@@ -19,8 +19,7 @@ public class AnimatorController : MonoBehaviour
     {
         if (animator == null)
         {
-            animator = GetComponent<Animator>();
-            Debug.LogWarning($"Animator component is missing from the GameObject: {name}!");
+            Initialize();
         }
     }
 

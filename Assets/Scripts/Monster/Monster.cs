@@ -117,6 +117,7 @@ public class Monster : MonoBehaviour
     public void Initialize()
     {
         InitializeStateMachine();
+        animatorController.Initialize();
         ResetPosition();
         ResetAnimator();
     }
