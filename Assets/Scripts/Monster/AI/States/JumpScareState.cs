@@ -30,7 +30,7 @@ public class JumpScareState : BaseState
 
     public override void ExitState(StateMachine stateMachine)
     {
-        return;
+        monster.ResetToInitial();
     }
 
     public override void UpdateState(StateMachine stateMachine)

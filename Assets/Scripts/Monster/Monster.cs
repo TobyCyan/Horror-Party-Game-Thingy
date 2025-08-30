@@ -178,6 +178,11 @@ public class Monster : MonoBehaviour
         }
     }
 
+    public void ResetToInitial()
+    {
+        transform.SetPositionAndRotation(initialPosition, Quaternion.identity);
+    }
+
     public void PlaySfx(AudioClip clip, float maxDistance, bool isLoop = false)
     {
         if (audioSource.isPlaying)
