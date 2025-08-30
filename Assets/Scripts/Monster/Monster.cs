@@ -6,9 +6,9 @@ public class Monster : MonoBehaviour
     protected JumpScare jumpScare;
     protected StateMachine stateMachine;
     protected PlayerRadar playerRadar;
-    private Animator animator;
+    private AnimatorController animatorController;
     public Vector3 initialPosition;
-    private readonly Vector3 outOfBoundsPosition = new(0, -500, 0);
+    protected Vector3 outOfBoundsPosition = new(0, -500, 0);
     [HideInInspector] public Transform targetPlayer;
 
     private void Awake()
@@ -46,24 +46,19 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (animator == null)
+        if (animatorController == null)
         {
-            animator = GetComponent<Animator>();
-            if (animator == null)
+            animatorController = GetComponent<AnimatorController>();
+            if (animatorController == null)
             {
-                Debug.LogWarning("Animator component is missing from the Monster GameObject.");
+                Debug.LogWarning("Animator Controller component is missing from the Monster GameObject.");
             }
         }
     }
 
     private void ResetAnimator()
     {
-        if (animator == null)
-        {
-            Debug.LogWarning("Animator component is missing. Cannot reset states.");
-            return;
-        }
-        ResetAnimatorParams();
+        animatorController.ResetAnimator();
     }
 
     public bool SearchForPlayer(out Transform player)
@@ -81,41 +76,41 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        if (animator == null)
+        if (animatorController == null)
         {
-            Debug.LogWarning("Animator component is missing. Cannot perform JumpScare.");
+            Debug.LogWarning("Animator Controller component is missing. Cannot perform JumpScare.");
             return;
         }
 
-        jumpScare.TriggerJumpScare(animator, targetPlayer.GetComponent<Camera>().transform);
+        jumpScare.TriggerJumpScare(animatorController.Animator, targetPlayer.GetComponent<Camera>().transform);
     }
 
     public void SpotPlayer()
     {
-        animator.SetBool("PlayerSpotted", true);
+        animatorController.SetAnimatorBool("PlayerSpotted", true);
     }
 
     public void LosePlayer()
     {
-        animator.SetBool("PlayerSpotted", false);
+        animatorController.SetAnimatorBool("PlayerSpotted", false);
         targetPlayer = null;
     }
 
     public bool IsJumpScareComplete()
     {
-        if (animator == null)
+        if (animatorController == null)
         {
-            Debug.LogWarning("Animator component is missing. Cannot check JumpScare completion.");
+            Debug.LogWarning("Animator Controller component is missing. Cannot check JumpScare completion.");
             return true;
         }
-        return jumpScare.IsJumpScareComplete(animator);
+        return jumpScare.IsJumpScareComplete(animatorController.Animator);
     }
 
     public virtual void Idle(bool enable)
     {
         if (enable)
         {
-            animator.Play("Idle", 0, 0.0f);
+            animatorController.PlayAnimatorState("Idle", 0, 0.0f);
         }
     }
 
@@ -167,30 +162,5 @@ public class Monster : MonoBehaviour
             { initialState, new BaseState[] { } }
         };
         stateMachine.Initialize(initialState, transitions);
-    }
-
-    private void ResetAnimatorParams()
-    {
-        foreach (AnimatorControllerParameter param in animator.parameters)
-        {
-            switch (param.type)
-            {
-                case AnimatorControllerParameterType.Float:
-                    animator.SetFloat(param.name, 0f);
-                    break;
-
-                case AnimatorControllerParameterType.Int:
-                    animator.SetInteger(param.name, 0);
-                    break;
-
-                case AnimatorControllerParameterType.Bool:
-                    animator.SetBool(param.name, false);
-                    break;
-
-                case AnimatorControllerParameterType.Trigger:
-                    animator.ResetTrigger(param.name);
-                    break;
-            }
-        }
     }
 }

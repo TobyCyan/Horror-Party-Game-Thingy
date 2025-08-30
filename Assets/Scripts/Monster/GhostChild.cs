@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Numerics;
 
 public class GhostChild : Monster
 {
+    protected new Vector3 outOfBoundsPosition = new(0, -1000, 0);
+
     protected override void InitializeStateMachine()
     {
         BaseState idleState = new IdleState(this);

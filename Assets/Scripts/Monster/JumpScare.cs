@@ -34,12 +34,6 @@ public class JumpScare : MonoBehaviour
 
     public bool IsJumpScareComplete(Animator animator)
     {
-        if (animator == null)
-        {
-            Debug.LogWarning("Animator is null in IsJumpScareComplete check.");
-            return true;
-        }
-
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
         if (animator.IsInTransition(0))
