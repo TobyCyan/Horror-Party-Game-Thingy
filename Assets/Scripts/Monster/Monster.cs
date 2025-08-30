@@ -9,7 +9,7 @@ public class Monster : MonoBehaviour
     protected PlayerRadar playerRadar;
     private AnimatorController animatorController;
     private AudioSource audioSource;
-    private Reveal reveal;
+    protected Reveal reveal;
     [HideInInspector] public Transform targetPlayer;
 
     // Configuration
@@ -153,6 +153,7 @@ public class Monster : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        reveal.SetDetectionActive(true);
         PlaySfx(idleSfx, idleSfxMaxDistance, true);
         reveal.RevealSelf();
     }
@@ -162,6 +163,7 @@ public class Monster : MonoBehaviour
         reveal.HideSelf();
         ResetAnimator();
         PlaySfx(null, idleSfxMaxDistance);
+        reveal.SetDetectionActive(false);
     }
 
     public void Enable(bool enable)
