@@ -9,7 +9,6 @@ public class JumpScareState : BaseState
     public override bool CanExit(StateMachine stateMachine)
     {
         bool isAnimationComplete = monster.IsJumpScareComplete();
-        Debug.Log($"JumpScareState CanExit: AnimationComplete={isAnimationComplete}, CanTransition={CanTransition(stateMachine)}");
         return isAnimationComplete || !CanTransition(stateMachine);
     }
 
