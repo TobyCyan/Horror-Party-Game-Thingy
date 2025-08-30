@@ -3,14 +3,22 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
+    // Components
     protected JumpScare jumpScare;
     protected StateMachine stateMachine;
     protected PlayerRadar playerRadar;
     private AnimatorController animatorController;
+    private AudioSource audioSource;
+    private Reveal reveal;
+    [HideInInspector] public Transform targetPlayer;
+
+    // Configuration
     [SerializeField] protected Vector3 initialPosition;
     protected Vector3 outOfBoundsPosition = new(0, -500, 0);
-    [HideInInspector] public Transform targetPlayer;
     [SerializeField] private float searchRadius = 2.5f;
+    protected float idleSfxMaxDistance = 5.5f;
+
+    // Sound Effects
     [SerializeField] private AudioClip playerSpottedSfx;
     [SerializeField] private AudioClip idleSfx;
 
@@ -56,6 +64,24 @@ public class Monster : MonoBehaviour
                 Debug.LogWarning("Animator Controller component is missing from the Monster GameObject.");
             }
         }
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                Debug.LogWarning("AudioSource component is missing from the Monster GameObject.");
+            }
+        }
+
+        if (reveal == null)
+        {
+            reveal = GetComponent<Reveal>();
+            if (reveal == null)
+            {
+                Debug.LogWarning("Reveal component is missing from the Monster GameObject.");
+            }
+        }
     }
 
     private void ResetAnimator()
@@ -90,6 +116,7 @@ public class Monster : MonoBehaviour
     public void SpotPlayer()
     {
         animatorController.SetAnimatorBool("PlayerSpotted", true);
+        animatorController.PlayAnimatorState("PlayerSpotted", 0, 0.0f);
     }
 
     public void LosePlayer()
@@ -121,17 +148,20 @@ public class Monster : MonoBehaviour
         InitializeStateMachine();
         animatorController.Initialize();
         ResetAnimator();
+        reveal.Initialize(initialPosition, outOfBoundsPosition);
     }
 
     protected virtual void OnEnable()
     {
-        PlaySfx(idleSfx);
+        PlaySfx(idleSfx, idleSfxMaxDistance, true);
+        reveal.RevealSelf();
     }
 
     protected virtual void OnDisable()
     {
+        reveal.HideSelf();
         ResetAnimator();
-        PlaySfx(null);
+        PlaySfx(null, idleSfxMaxDistance);
     }
 
     public void Enable(bool enable)
@@ -146,14 +176,18 @@ public class Monster : MonoBehaviour
         }
     }
 
-    public void PlaySfx(AudioClip clip)
+    public void PlaySfx(AudioClip clip, float maxDistance, bool isLoop = false)
     {
-        if (clip == null)
+        if (audioSource.isPlaying)
         {
-            Debug.LogWarning("AudioClip is null. Cannot play sound effect.");
-            return;
+            audioSource.Stop();
         }
-        AudioSource.PlayClipAtPoint(clip, transform.position);
+
+        audioSource.spatialBlend = 1.0f;
+        audioSource.maxDistance = maxDistance;
+        audioSource.clip = clip;
+        audioSource.loop = isLoop;
+        audioSource.Play();
     }
 
     protected virtual void InitializeStateMachine()

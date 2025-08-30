@@ -5,6 +5,19 @@ public class JumpScare : MonoBehaviour
     [SerializeField] private AudioClip jumpScareSfx;
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
+    private AudioSource audioSource;
+
+    private void OnValidate()
+    {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                Debug.LogWarning("AudioSource component is missing from the JumpScare GameObject.");
+            }
+        }
+    }
 
     public void TriggerJumpScare(Animator animator, Transform target)
     {
@@ -57,7 +70,7 @@ public class JumpScare : MonoBehaviour
     {
         if (jumpScareSfx != null)
         {
-            AudioSource.PlayClipAtPoint(jumpScareSfx, transform.position);
+            audioSource.PlayOneShot(jumpScareSfx);
         }
         else
         {
