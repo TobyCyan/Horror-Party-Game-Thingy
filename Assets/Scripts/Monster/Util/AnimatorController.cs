@@ -67,4 +67,30 @@ public class AnimatorController : MonoBehaviour
             }
         }
     }
+
+    public bool IsAnimationCompleted(string animationName)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (animator.IsInTransition(0))
+        {
+            AnimatorStateInfo nextInfo = animator.GetNextAnimatorStateInfo(0);
+
+            // JumpScare finished and transitioning out
+            if (stateInfo.IsName(animationName) && stateInfo.normalizedTime >= 1.0f)
+            {
+                return true;
+            }
+
+            // Already moved to a non-JumpScare state
+            if (!nextInfo.IsName(animationName))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return stateInfo.IsName(animationName) && stateInfo.normalizedTime >= 1.0f;
+    }
 }

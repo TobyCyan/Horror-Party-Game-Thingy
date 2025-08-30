@@ -132,7 +132,7 @@ public class Monster : MonoBehaviour
             Debug.LogWarning("Animator Controller component is missing. Cannot check JumpScare completion.");
             return true;
         }
-        return jumpScare.IsJumpScareComplete(animatorController.Animator);
+        return animatorController.IsAnimationCompleted("JumpScare");
     }
 
     public virtual void Idle(bool enable)

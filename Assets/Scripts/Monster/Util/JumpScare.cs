@@ -33,32 +33,6 @@ public class JumpScare : MonoBehaviour
         PlayJumpScareAudio();
     }
 
-    public bool IsJumpScareComplete(Animator animator)
-    {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        if (animator.IsInTransition(0))
-        {
-            AnimatorStateInfo nextInfo = animator.GetNextAnimatorStateInfo(0);
-
-            // JumpScare finished and transitioning out
-            if (stateInfo.IsName("JumpScare") && stateInfo.normalizedTime >= 1.0f)
-            {
-                return true;
-            }
-
-            // Already moved to a non-JumpScare state
-            if (!nextInfo.IsName("JumpScare"))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        return stateInfo.IsName("JumpScare") && stateInfo.normalizedTime >= 1.0f;
-    }
-
     private void JumpToTarget(Transform target)
     {
         Vector3 targetForward = target.forward;
