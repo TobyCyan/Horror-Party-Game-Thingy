@@ -774,6 +774,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ghostchild
       objectReference: {fileID: 0}
+    - target: {fileID: 5921417175153628740, guid: c24a4b7d664a9fb4f9b0b7ff0b3ac139, type: 3}
+      propertyPath: initialPosition.x
+      value: 4.713
+      objectReference: {fileID: 0}
+    - target: {fileID: 5921417175153628740, guid: c24a4b7d664a9fb4f9b0b7ff0b3ac139, type: 3}
+      propertyPath: initialPosition.y
+      value: -1.68344
+      objectReference: {fileID: 0}
+    - target: {fileID: 5921417175153628740, guid: c24a4b7d664a9fb4f9b0b7ff0b3ac139, type: 3}
+      propertyPath: initialPosition.z
+      value: 1.06
+      objectReference: {fileID: 0}
     - target: {fileID: 7917643840311547121, guid: c24a4b7d664a9fb4f9b0b7ff0b3ac139, type: 3}
       propertyPath: offset.y
       value: -0.433

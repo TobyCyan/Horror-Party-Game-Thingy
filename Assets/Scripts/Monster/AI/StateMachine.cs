@@ -30,7 +30,7 @@ public class StateMachine : MonoBehaviour
 
         foreach (var transition in stateTransitions[currentState])
         {
-            // Check if the transition conditions are met and if the current state can exit
+            // Check if the transition conditions are met
             if (transition.CanTransition(this))
             {
                 GoNextState(transition);
