@@ -2,19 +2,11 @@ using UnityEngine;
 
 public class MoveCamera : MonoBehaviour
 {
+    public Transform cameraPosition; // assign CameraMount (child of player)
 
-    public Transform cameraPosition;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void LateUpdate()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        transform.position = cameraPosition.position;
-
+        if (!cameraPosition) return;
+        transform.SetPositionAndRotation(cameraPosition.position, cameraPosition.rotation);
     }
 }
