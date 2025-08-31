@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public static class Cell
+public static class CellUtils
 {
     // Wall directions as indices LURD LURD
     public const int Left = 0;
@@ -27,19 +27,5 @@ public static class Cell
     {
         return (cell & (1 << wallIndex)) != 0;
     }
-
-
-    /*
-    public static int SetRoom(int cell, bool isRoom)
-    {
-        if (isRoom) return cell | IsRoom; // cell | 10000
-        else return cell & ~IsRoom; // cell & 01111
-    }
-
-    public static bool IsRoomCell(int cell)
-    {
-        return (cell & IsRoom) != 0; // check 5th bit
-    }
-    */
 
 }

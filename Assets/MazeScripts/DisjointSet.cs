@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets?tab=MIT-1-ov-file
+// implementation modified from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets
 public class DisjointSet
 {
     private int[] _set;
@@ -38,8 +38,7 @@ public class DisjointSet
         }
     }
 
-    //slow bandaid
-
+    //slow bandaid, likely not an issue with small maze size
     public bool IsFullyConnected()
     {
         if (_set.Length == 0) return true;

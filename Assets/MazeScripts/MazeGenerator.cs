@@ -1,42 +1,27 @@
 using UnityEngine;
-using static Cell;
+using static CellUtils;
 using UnityEngine.InputSystem;
 /*
- * idea is kruskal to get maze structure
- * designate certain parts as 'rooms'
- * markov chain/wave collapse to decide which cells get which walls
+ * generate primitive maze structure using kruskal
+ * modified from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets
  */
-public class Generator : MonoBehaviour
+public class MazeGenerator : MonoBehaviour
 {
     int[] cells;
-    public int size = 15;
-
-    // disjoint set as array
-    // every iter connect set to neighbouring cell and eat it
-
-    private void Start()
+    public static MazeGenerator Instance { get; private set; }
+    private void Awake()
     {
-        RegenerateMazeFromScratch();
-    }
-
-    public void RegenerateMazeFromScratch()
-    {
-        GameObject[] existingBlocks = GameObject.FindGameObjectsWithTag("MazeBlock");
-        foreach (var block in existingBlocks)
+        // enforce singleton
+        if (Instance != null && Instance != this)
         {
-            Destroy(block);
+            Destroy(gameObject);
+            return;
         }
-
-        InitMaze();
-        GenerateMaze();
-        LogMaze();
-        Builder.Instance?.BuildMaze(cells, size);
+        Instance = this;
+        //DontDestroyOnLoad(gameObject); 
     }
 
-   
-
-
-    void InitMaze()
+    void InitMaze(int size)
     {
         cells = new int[size * size];
 
@@ -45,10 +30,11 @@ public class Generator : MonoBehaviour
             cells[x] = All;
         }
     }
-    // modified from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets/blob/main/Assets/Scripts/MazeGenerator.cs
-    void GenerateMaze()
+
+    public int[] GenerateMaze(int size)
     {
-        System.Func<int, int, int> idx = (x, y) => x * size + y; // wow variable capture
+        InitMaze(size);
+        int idx(int x, int y) => x * size + y;  // wow variable capture
 
         int N = size * size;
         var set = new DisjointSet(N);
@@ -61,22 +47,19 @@ public class Generator : MonoBehaviour
             }
         }
 
-        // assuming bottom left to top right here!!
-        int start = 0;
-        int end = idx(size - 1, size - 1);
-
         while (!set.IsFullyConnected())
         {
             // pick some random cell
             int randomCell = Random.Range(0, N);
 
-            // move in random direction
+            // direction to break wall in
             int dir = Directions[Random.Range(0, Directions.Length)];
 
+            // if already broken choose another random cell, the cell and neighbour in question are already connected
             if (!HasWall(cells[randomCell], dir)) continue;
 
             var neighbourCell = -1;
-            if (!IsMazeEdge(randomCell, dir))
+            if (!IsMazeEdge(randomCell, dir, size))
             {
                 if (dir == Left) neighbourCell = randomCell - 1; // Left
                 if (dir == Up) neighbourCell = randomCell + size; // Up
@@ -98,19 +81,10 @@ public class Generator : MonoBehaviour
 
         }
 
-        // at this point the generation is finished, now have to select some 'rooms'
-    }
+        cells[0] = RemoveWall(cells[0], Left);
+        cells[N-1] = RemoveWall(cells[N-1], Right);
 
-    private bool IsMazeEdge(int cellIndex, int wallIndex)
-    {
-        if (cellIndex % size == 0 && wallIndex == Left) return true;
-        if (cellIndex % size == size - 1 && wallIndex == Right) return true;
-        if ((cellIndex / size) == size - 1 && wallIndex == Up) return true;
-        return (cellIndex / size) == 0 && wallIndex == Down;
-    }
-
-    void LogMaze()
-    {
+        #region debug
         string str = "";
         for (int i = 0; i < size * size; i++)
         {
@@ -118,5 +92,17 @@ public class Generator : MonoBehaviour
             str += cells[i].ToString() + " ";
         }
         Debug.Log(str);
+        #endregion
+
+        return cells;
     }
+
+    private bool IsMazeEdge(int cellIndex, int wallIndex, int size)
+    {
+        if (cellIndex % size == 0 && wallIndex == Left) return true;
+        if (cellIndex % size == size - 1 && wallIndex == Right) return true;
+        if ((cellIndex / size) == size - 1 && wallIndex == Up) return true;
+        return (cellIndex / size) == 0 && wallIndex == Down;
+    }
+
 }
