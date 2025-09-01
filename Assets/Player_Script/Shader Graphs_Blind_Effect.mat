@@ -39,8 +39,8 @@ Material:
     m_Floats:
     - _Fullscreen_DepthWrite: 0
     - _Vigenette_darkening: 1
-    - _Vigenette_softness: 0.944
-    - _Vignette_radius: 0.156
+    - _Vigenette_softness: 0
+    - _Vignette_radius: 0.394
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
