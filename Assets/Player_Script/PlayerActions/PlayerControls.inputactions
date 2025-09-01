@@ -7,7 +7,7 @@
             "actions": [
                 {
                     "name": "Look",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "9ca4fb0b-dfa9-4969-8b39-cd0021bf5d95",
                     "expectedControlType": "",
                     "processors": "",
@@ -36,6 +36,15 @@
                     "name": "Crawl",
                     "type": "Button",
                     "id": "d32147e2-8579-467b-a895-39bc89c2c479",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Blind",
+                    "type": "Button",
+                    "id": "4dc7206d-1bb0-487d-9f5e-b80c9642c9db",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -139,6 +148,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Crawl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2deb5d17-6aff-46a1-a544-083f754b7a91",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Blind",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

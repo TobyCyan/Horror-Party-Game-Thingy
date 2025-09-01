@@ -93,7 +93,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Look"",
-                    ""type"": ""Value"",
+                    ""type"": ""Button"",
                     ""id"": ""9ca4fb0b-dfa9-4969-8b39-cd0021bf5d95"",
                     ""expectedControlType"": """",
                     ""processors"": """",
@@ -122,6 +122,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""name"": ""Crawl"",
                     ""type"": ""Button"",
                     ""id"": ""d32147e2-8579-467b-a895-39bc89c2c479"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Blind"",
+                    ""type"": ""Button"",
+                    ""id"": ""4dc7206d-1bb0-487d-9f5e-b80c9642c9db"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -227,6 +236,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Crawl"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2deb5d17-6aff-46a1-a544-083f754b7a91"",
+                    ""path"": ""<Keyboard>/b"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Blind"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -239,6 +259,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Crawl = m_Player.FindAction("Crawl", throwIfNotFound: true);
+        m_Player_Blind = m_Player.FindAction("Blind", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -323,6 +344,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Crawl;
+    private readonly InputAction m_Player_Blind;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -350,6 +372,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Crawl".
         /// </summary>
         public InputAction @Crawl => m_Wrapper.m_Player_Crawl;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Blind".
+        /// </summary>
+        public InputAction @Blind => m_Wrapper.m_Player_Blind;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -388,6 +414,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Crawl.started += instance.OnCrawl;
             @Crawl.performed += instance.OnCrawl;
             @Crawl.canceled += instance.OnCrawl;
+            @Blind.started += instance.OnBlind;
+            @Blind.performed += instance.OnBlind;
+            @Blind.canceled += instance.OnBlind;
         }
 
         /// <summary>
@@ -411,6 +440,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Crawl.started -= instance.OnCrawl;
             @Crawl.performed -= instance.OnCrawl;
             @Crawl.canceled -= instance.OnCrawl;
+            @Blind.started -= instance.OnBlind;
+            @Blind.performed -= instance.OnBlind;
+            @Blind.canceled -= instance.OnBlind;
         }
 
         /// <summary>
@@ -479,5 +511,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCrawl(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Blind" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBlind(InputAction.CallbackContext context);
     }
 }
