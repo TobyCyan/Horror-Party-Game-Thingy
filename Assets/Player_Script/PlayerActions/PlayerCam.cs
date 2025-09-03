@@ -31,8 +31,8 @@ public class PlayerCam : MonoBehaviour
 
     void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (playerBody) yaw = playerBody.eulerAngles.y;
 

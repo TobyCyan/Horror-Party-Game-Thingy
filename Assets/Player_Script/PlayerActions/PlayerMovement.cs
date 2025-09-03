@@ -174,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
         // Animator params
         if (anim)
         {
-            Vector3 lv = rb.linearVelocity; // ✅
+            Vector3 lv = rb.linearVelocity; // 
             float horizontalMag = new Vector3(lv.x, 0f, lv.z).magnitude;
             bool isWalking = grounded && (moveInput.sqrMagnitude > 0.01f) && horizontalMag > 0.01f;
 
@@ -206,17 +206,17 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isFrozen)
         {
-            rb.linearVelocity = Vector3.zero; // ✅ pin every physics step
+            rb.linearVelocity = Vector3.zero; //  pin every physics step
             return;
         }
 
-        rb.linearDamping = grounded ? groundDrag : airDrag; // ✅
+        rb.linearDamping = grounded ? groundDrag : airDrag; // 
 
         Vector3 wish = (moveInput.x * transform.right + moveInput.y * transform.forward);
         if (wish.sqrMagnitude > 1f) wish.Normalize();
 
         float topSpeed = movementSpeed * (isCrouching ? crouchSpeedMultiplier : 1f);
-        Vector3 v = rb.linearVelocity; // ✅
+        Vector3 v = rb.linearVelocity; // 
         Vector3 vXZ = new Vector3(v.x, 0f, v.z);
 
         float speedAlong = (wish.sqrMagnitude > 0f) ? Vector3.Dot(vXZ, wish) : 0f;
@@ -237,9 +237,9 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(brake, ForceMode.Acceleration);
 
             // prevent overshoot reversing direction
-            Vector3 newXZ = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); // ✅
+            Vector3 newXZ = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); // 
             if (Vector3.Dot(newXZ, vXZ) < 0f)
-                rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f); // ✅
+                rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f); // 
         }
     }
 
@@ -286,7 +286,7 @@ public class PlayerMovement : MonoBehaviour
         isFrozen = true;
         freezeTimer = Mathf.Max(0f, duration);
 
-        rb.linearVelocity = Vector3.zero; // ✅ immediate stop
+        rb.linearVelocity = Vector3.zero; //  immediate stop
         anim?.SetBool("IsWalking", false);
         anim?.SetFloat("MoveX", 0f);
         anim?.SetFloat("MoveZ", 0f);
