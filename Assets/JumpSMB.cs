@@ -3,7 +3,7 @@ using UnityEngine;
 public class JumpSMB : StateMachineBehaviour
 {
     [Tooltip("14/25 for your Mixamo jump")]
-    public float takeoffNormTime = 0.56f;
+    public float takeoffNormTime = 0.00f;
 
     [Tooltip("Impulse applied at takeoff")]
     public float jumpForce = 5f;

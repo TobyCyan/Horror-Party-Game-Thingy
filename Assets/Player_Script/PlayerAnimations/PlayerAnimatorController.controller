@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c68ca7f0814c850478c43b41d942533e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  takeoffNormTime: 0.56
+  takeoffNormTime: 0
   jumpForce: 5
 --- !u!1101 &-5453175131810685746
 AnimatorStateTransition:
@@ -437,7 +437,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 68c0bf1a2eb7b5449aeccc03fbf3d9d9, type: 3}
+  m_Motion: {fileID: -203655887218126122, guid: 2850cdce767f16b42b4ab865672486eb, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
