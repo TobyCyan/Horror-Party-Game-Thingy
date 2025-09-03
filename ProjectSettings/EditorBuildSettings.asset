@@ -15,5 +15,5 @@ EditorBuildSettings:
     path: Assets/Scenes/PersistentSessionScene.unity
     guid: a68f37a82d8e91d4e97ba75bec173e8c
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 439ec4286ce81ea45b80b5acb3a916ab, type: 3}
   m_UseUCBPForAssetBundles: 0

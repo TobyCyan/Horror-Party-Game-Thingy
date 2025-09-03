@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2436bf02e59c781419872aeed0b4977d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 327818
+  packageName: 'PolyPeople Series - Hospital [Free]'
+  packageVersion: 1.0
+  assetPath: Assets/PolyPeople_Hospital_Free/Scenes/DemoScene/Demo_Background.mat
+  uploadId: 776156
