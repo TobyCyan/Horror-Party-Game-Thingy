@@ -169,13 +169,13 @@ public class SceneLifetimeManager : MonoBehaviour
                 sceneEvent.AsyncOperation.completed += OnSceneEventCompletion;
                 break;
             case SceneEventType.LoadComplete:
-                if (sceneEvent.SceneName == "GameScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("GameScene");
+                    SetActiveScene("PersistentSessionScene");
                 }
                 break;
             case SceneEventType.UnloadComplete:
-                if (sceneEvent.SceneName == "GameScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
                     SetActiveScene("InitScene");
                 }
