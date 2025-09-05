@@ -465,6 +465,7 @@ MonoBehaviour:
   - {fileID: -6288072647309666549}
   - {fileID: 7518938298396184218}
   - {fileID: -1410297666881709256}
+  - {fileID: 4428846251994843805}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -837,6 +838,22 @@ MonoBehaviour:
   param:
     m_OverrideState: 1
     m_Value: 123
+--- !u!114 &4428846251994843805
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84910eee036bab146aa93765f7396287, type: 3}
+  m_Name: MyCustomEffect
+  m_EditorClassIdentifier: 
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
 --- !u!114 &4644742534064026673
 MonoBehaviour:
   m_ObjectHideFlags: 3

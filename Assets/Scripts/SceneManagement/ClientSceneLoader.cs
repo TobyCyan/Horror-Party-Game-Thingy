@@ -31,9 +31,8 @@ public class ClientSceneLoader : MonoBehaviour
 
     public AsyncOperation UnloadSceneAsync(string sceneName)
     {
-        if (!_loadedSceneNames.Contains(sceneName)) return null;
+        if (!_loadedSceneNames.Remove(sceneName)) return null;
         
-        _loadedSceneNames.Remove(sceneName);
         return SceneManager.UnloadSceneAsync(sceneName);
     }
     private async Task LoadOrUnloadSceneAsync(string[] sceneNames, bool toLoad)
