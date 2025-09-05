@@ -10,11 +10,11 @@ public class SessionStartButton : NetworkBehaviour
         if (!IsServer) return;
         
         UnloadMainMenuNotServerRPC();
-        await Task.Delay(300); //wait just incase;
+        await Task.Delay(300); // Wait just incase;
         
         // Send to everyone but Host
         await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "PersistentSessionScene"});
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "PersistentSessionScene" });
         //SceneLifetimeManager.Instance.SetActiveScene("PersistentRunScene");
         //NetworkManager.SceneManager.LoadScene("PreGameScene",UnityEngine.SceneManagement.LoadSceneMode.Single);
     }

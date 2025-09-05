@@ -3992,7 +3992,19 @@ MonoBehaviour:
   WidgetConfiguration: {fileID: 11400000, guid: 867ee2c581ec3844698a7f80587ab07e, type: 2}
   JoiningSession:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 139135254}
+        m_TargetAssemblyTypeName: SessionStartButton, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   JoinedSession:
     m_PersistentCalls:
       m_Calls: []
