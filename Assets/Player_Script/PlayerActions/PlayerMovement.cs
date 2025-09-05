@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -51,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     // --- Internals ---
     [SerializeField] private Camera ownerCamera;
+    
     private Rigidbody rb;
     private PlayerControls controls;
     private Animator anim;
