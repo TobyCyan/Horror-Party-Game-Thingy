@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class SpawnManager : NetworkBehaviour
 {
     [SerializeField] private NetworkObject spawnPrefab;
-    [SerializeField] private Vector3 spawnPosition;
+    [SerializeField] private List<Transform> spawnPositions;
     
     void Awake()
     {
@@ -24,7 +24,10 @@ public class SpawnManager : NetworkBehaviour
     private void SpawnPlayerServerRpc(RpcParams ctx = default)
     {
         Debug.Log($"Spawning Player with id: {ctx.Receive.SenderClientId}");
-        Player player = Instantiate(spawnPrefab, spawnPosition, Quaternion.identity).GetComponent<Player>();
+        Player player = Instantiate(
+            spawnPrefab, 
+            spawnPositions[(int) ctx.Receive.SenderClientId].position, 
+            Quaternion.identity).GetComponent<Player>();
         
         player.GetComponent<NetworkObject>().SpawnWithOwnership(ctx.Receive.SenderClientId);
         
