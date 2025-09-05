@@ -28,10 +28,6 @@ public class MazeManager : MonoBehaviour
     private void Start()
     {
         RegenerateAndRebuildMaze();
-        AddTrap(booTrap[0], 0, 0);
-        AddTrap(booTrap[1], 0, 0);
-        AddTrap(booTrap[0], 0, 0);
-        AddTrap(booTrap[1], 1, 3);
     }
 
     public void RegenerateAndRebuildMaze()

@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 public class MazeGenerator : MonoBehaviour
 {
     int[] cells;
+    int size = 0; // square maze
     public static MazeGenerator Instance { get; private set; }
     private void Awake()
     {
@@ -23,6 +24,7 @@ public class MazeGenerator : MonoBehaviour
 
     void InitMaze(int size)
     {
+        this.size = size;
         cells = new int[size * size];
 
         for (int x = 0; x < size * size; x++)
@@ -81,7 +83,8 @@ public class MazeGenerator : MonoBehaviour
 
         }
 
-        cells[0] = RemoveWall(cells[0], Left);
+        // exit at top right
+        // cells[0] = RemoveWall(cells[0], Left);
         cells[N-1] = RemoveWall(cells[N-1], Right);
 
         #region debug
