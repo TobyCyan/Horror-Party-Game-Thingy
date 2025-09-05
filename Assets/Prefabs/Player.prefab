@@ -172,7 +172,7 @@ MonoBehaviour:
   PivotOffset: {x: 0, y: 0, z: 0}
   AmplitudeGain: 0.3
   FrequencyGain: 0.5
-  m_NoiseOffsets: {x: 0, y: 0, z: 0}
+  m_NoiseOffsets: {x: -24.966827, y: -704.6614, z: 392.42148}
 --- !u!114 &4329248482455789318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -444,13 +444,13 @@ PrefabInstance:
       addedObject: {fileID: 4157317622870393551}
     - targetCorrespondingSourceObject: {fileID: 7747244595922091905, guid: 93587572c0ddb6e4b82b059e762dfb27, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1948054223761656794}
+      addedObject: {fileID: 4835887271873043021}
     - targetCorrespondingSourceObject: {fileID: 7747244595922091905, guid: 93587572c0ddb6e4b82b059e762dfb27, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2052961575596493835}
+      addedObject: {fileID: 9165264579764173315}
     - targetCorrespondingSourceObject: {fileID: 7747244595922091905, guid: 93587572c0ddb6e4b82b059e762dfb27, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3062523484052297167}
+      addedObject: {fileID: 3874662753375168169}
     - targetCorrespondingSourceObject: {fileID: 2559449059601810332, guid: 93587572c0ddb6e4b82b059e762dfb27, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3390627972923002399}
@@ -569,22 +569,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   debugDrawRay: 1
   logEveryFrame: 0
---- !u!114 &1948054223761656794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3387615295776957855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
-  TransitionStateInfoList: []
-  m_Animator: {fileID: 8262071571292267871}
---- !u!114 &2052961575596493835
+--- !u!114 &4835887271873043021
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -617,9 +602,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -630,7 +615,7 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &3062523484052297167
+--- !u!114 &9165264579764173315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -647,6 +632,21 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &3874662753375168169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3387615295776957855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a655d4b67e3041d4f98cc08d9fcd167d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 8262071571292267871}
 --- !u!1 &7423192895813917058 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2559449059601810332, guid: 93587572c0ddb6e4b82b059e762dfb27, type: 3}
