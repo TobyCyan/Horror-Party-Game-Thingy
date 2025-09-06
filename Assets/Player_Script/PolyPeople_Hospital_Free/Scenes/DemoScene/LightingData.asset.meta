@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 064fe76b4c1abb74eacda682ef372962
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 327818
+  packageName: 'PolyPeople Series - Hospital [Free]'
+  packageVersion: 1.0
+  assetPath: Assets/PolyPeople_Hospital_Free/Scenes/DemoScene/LightingData.asset
+  uploadId: 776156
