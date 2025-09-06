@@ -1,41 +1,33 @@
 using UnityEngine;
 using static CellUtils;
-using UnityEngine.InputSystem;
+using System;
+using System.Collections.Generic;
 /*
- * generate primitive maze structure using kruskal
- * modified from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets
- */
-public class MazeGenerator : MonoBehaviour
+* generate primitive maze structure using kruskal
+* modified from https://github.com/martinopiaggi/Unity-Maze-generation-using-disjoint-sets
+*/
+public class MazeGenerator
 {
-    int[] cells;
-    int size = 0; // square maze
+    private int[] cells;
+    private int size = 0; // square maze
+    private float roomRate;
+    System.Random random;
     public static MazeGenerator Instance { get; private set; }
-    private void Awake()
-    {
-        // enforce singleton
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        //DontDestroyOnLoad(gameObject); 
-    }
 
-    void InitMaze(int size)
+    public MazeGenerator(int size, int seed, float roomRate)
     {
         this.size = size;
         cells = new int[size * size];
-
+        this.roomRate = roomRate;
         for (int x = 0; x < size * size; x++)
         {
             cells[x] = All;
         }
+        random = new System.Random(seed);
     }
 
-    public int[] GenerateMaze(int size)
+    public int[] GenerateMaze()
     {
-        InitMaze(size);
         int idx(int x, int y) => x * size + y;  // wow variable capture
 
         int N = size * size;
@@ -52,10 +44,10 @@ public class MazeGenerator : MonoBehaviour
         while (!set.IsFullyConnected())
         {
             // pick some random cell
-            int randomCell = Random.Range(0, N);
+            int randomCell = random.Next(0, N);
 
             // direction to break wall in
-            int dir = Directions[Random.Range(0, Directions.Length)];
+            int dir = Directions[random.Next(0, Directions.Length)];
 
             // if already broken choose another random cell, the cell and neighbour in question are already connected
             if (!HasWall(cells[randomCell], dir)) continue;
@@ -83,9 +75,25 @@ public class MazeGenerator : MonoBehaviour
 
         }
 
-        // exit at top right
-        // cells[0] = RemoveWall(cells[0], Left);
-        cells[N-1] = RemoveWall(cells[N-1], Right);
+   
+        cells[0] = RemoveWall(cells[0], Left); // make entrance FOR NOW, i guess we spawn them all inside the maze later on
+        cells[N-1] = RemoveWall(cells[N-1], Right); // exit at top right
+
+        int roomsToPick = (int)(N * roomRate);
+        var chosen = new HashSet<int>();
+
+        while (chosen.Count < roomsToPick)
+        {
+            int candidate = random.Next(0, N);
+            //avoid start and end for now
+            if (candidate == 0 || candidate == N - 1) continue;
+
+            if (!chosen.Contains(candidate))
+            {
+                chosen.Add(candidate);
+                cells[candidate] = MakeRoom(cells[candidate]);
+            }
+        }
 
         #region debug
         string str = "";
