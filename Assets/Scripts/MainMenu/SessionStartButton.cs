@@ -14,7 +14,7 @@ public class SessionStartButton : NetworkBehaviour
         
         // Send to everyone but Host
         await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "PersistentSessionScene" });
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "MazeScene" });
         //SceneLifetimeManager.Instance.SetActiveScene("PersistentRunScene");
         //NetworkManager.SceneManager.LoadScene("PreGameScene",UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
