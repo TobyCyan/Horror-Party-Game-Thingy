@@ -1,0 +1,40 @@
+using UnityEngine;
+
+public class JumpScareState : BaseState
+{
+    public JumpScareState(Monster monster) : base(monster)
+    {
+    }
+
+    public override bool CanExit(StateMachine stateMachine)
+    {
+        bool isAnimationComplete = monster.IsJumpScareComplete();
+        return isAnimationComplete || !CanTransition(stateMachine);
+    }
+
+    public override bool CanTransition(StateMachine stateMachine)
+    {
+        return monster.targetPlayer != null;
+    }
+
+    public override void EnterState(StateMachine stateMachine)
+    {
+        if (monster == null)
+        {
+            Debug.LogError("Monster reference is null in JumpScareState.");
+            return;
+        }
+
+        monster.JumpScare();
+    }
+
+    public override void ExitState(StateMachine stateMachine)
+    {
+        monster.ResetToInitial();
+    }
+
+    public override void UpdateState(StateMachine stateMachine)
+    {
+        return;
+    }
+}
