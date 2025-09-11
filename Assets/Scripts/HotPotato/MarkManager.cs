@@ -57,10 +57,11 @@ public class MarkManager : NetworkBehaviour
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-        UpdateMarkedPlayerAllRpc(id);
         Debug.Log($"Passing mark to {player} with id {id}");
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
+        
+        UpdateMarkedPlayerAllRpc(id);
     }
 
     [Rpc(SendTo.Everyone)]
