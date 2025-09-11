@@ -52,7 +52,13 @@ public class PlayerMovement : MonoBehaviour
 
     // --- Internals ---
     [SerializeField] private Camera ownerCamera;
-    
+
+    [SerializeField] private string localBarrierLayerName = "LocalBarrier";
+    private int barrierBit = 0;
+    private int savedMask = 0;
+    private bool barrierApplied = false;
+
+
     private Rigidbody rb;
     private PlayerControls controls;
     private Animator anim;
@@ -88,8 +94,28 @@ public class PlayerMovement : MonoBehaviour
         originalCenter = cap.center;
         targetHeight = originalHeight;
         targetCenter = originalCenter;
+        int id = LayerMask.NameToLayer(localBarrierLayerName);
+        barrierBit = (id >= 0) ? (1 << id) : 0;
 
         if (blindEffect) blindEffect.SetActive(false);
+        if (!ownerCamera)
+        {
+            // Prefer the camera tagged "MainCamera"
+            ownerCamera = Camera.main;
+
+            // Fallback: grab any enabled Camera in the scene
+            if (!ownerCamera)
+            {
+                var cams = FindObjectsOfType<Camera>(true); // include inactive just in case
+                foreach (var cam in cams)
+                {
+                    if (cam.isActiveAndEnabled) { ownerCamera = cam; break; }
+                }
+            }
+
+            if (!ownerCamera)
+                Debug.LogWarning("[PlayerMovement] No Camera found. Assign 'ownerCamera' in the Inspector or tag your camera as MainCamera.");
+        }
     }
 
     void OnEnable() => controls.Player.Enable();
@@ -261,24 +287,46 @@ public class PlayerMovement : MonoBehaviour
     public void Blind(float duration)
     {
         if (blindEffect == null) { Debug.LogWarning("[Blind] No blindEffect assigned."); return; }
+        //isBlinded = true;
+        //blindTimer = Mathf.Max(0f, duration);
+        //blindEffect.SetActive(true);
+
+        //int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
+        //if (ownerCamera && localBarrierLayer != -1)
+        //    ownerCamera.cullingMask |= (1 << localBarrierLayer);
         isBlinded = true;
         blindTimer = Mathf.Max(0f, duration);
-        blindEffect.SetActive(true);
+        if (blindEffect) blindEffect.SetActive(true);
 
-        int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-        if (ownerCamera && localBarrierLayer != -1)
-            ownerCamera.cullingMask |= (1 << localBarrierLayer);
+        if (ownerCamera && barrierBit != 0)
+        {
+            if (!barrierApplied)           // snapshot once
+            {
+                savedMask = ownerCamera.cullingMask;
+                barrierApplied = true;
+            }
+            ownerCamera.cullingMask = savedMask | barrierBit; // ensure ON
+        }
     }
 
     public void Unblind()
     {
+        //isBlinded = false;
+        //blindTimer = 0f;
+        //if (blindEffect) blindEffect.SetActive(false);
+
+        //int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
+        //if (ownerCamera && localBarrierLayer != -1)
+        //    ownerCamera.cullingMask &= ~(1 << localBarrierLayer);
         isBlinded = false;
         blindTimer = 0f;
         if (blindEffect) blindEffect.SetActive(false);
 
-        int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-        if (ownerCamera && localBarrierLayer != -1)
-            ownerCamera.cullingMask &= ~(1 << localBarrierLayer);
+        if (ownerCamera && barrierApplied)
+        {
+            ownerCamera.cullingMask = savedMask;  // exact restore
+            barrierApplied = false;
+        }
     }
 
     // ----------------- Freeze API -----------------
@@ -303,11 +351,11 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("[PlayerMovement] Unfrozen");
     }
 
-    private void OnBlind()
+    public void OnBlind()
     {
         Blind(defaultBlindDuration);
     }
-    
+
     private void OnCollisionEnter(Collision other)
     {
         NetworkObject nObj = other.gameObject.GetComponent<NetworkObject>();
@@ -316,7 +364,7 @@ public class PlayerMovement : MonoBehaviour
             ChangeOwnerServerRpc(other.gameObject.GetComponent<NetworkObject>());
         }
     }
-    
+
     // Give Last touch player authority to move it
     [Rpc(SendTo.Server)]
     void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)

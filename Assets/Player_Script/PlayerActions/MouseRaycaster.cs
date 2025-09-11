@@ -57,7 +57,7 @@ public class MouseRaycaster : MonoBehaviour
                     $"[MouseRaycaster] Hit: '{hit.collider.name}' dist={hit.distance:0.00} " +
                     $"layer={LayerMask.LayerToName(hit.collider.gameObject.layer)} " +
                     $"interactable={(found != null ? found.GetType().Name : "None")}";
-                Debug.Log(msg);
+                //Debug.Log(msg);
                 lastHitName = hit.collider.name;
             }
         }
@@ -65,12 +65,12 @@ public class MouseRaycaster : MonoBehaviour
         {
             if (lastHitName != null)
             {
-                Debug.Log("[MouseRaycaster] No hit.");
+                //Debug.Log("[MouseRaycaster] No hit.");
                 lastHitName = null;
             }
             else if (logEveryFrame)
             {
-                Debug.Log("[MouseRaycaster] No hit (frame).");
+                //Debug.Log("[MouseRaycaster] No hit (frame).");
             }
         }
 
@@ -82,22 +82,22 @@ public class MouseRaycaster : MonoBehaviour
         {
             if (current == null)
             {
-                Debug.Log("[MouseRaycaster] Interact pressed but no IInteractable under cursor.");
+                //Debug.Log("[MouseRaycaster] Interact pressed but no IInteractable under cursor.");
                 return;
             }
 
             var ctx = new InteractionContext(user: transform, camera: cam, hit: hit);
             bool can = current.CanInteract(ctx);
-            Debug.Log($"[MouseRaycaster] Interact pressed on '{hit.collider.name}'. CanInteract={can}");
+            //Debug.Log($"[MouseRaycaster] Interact pressed on '{hit.collider.name}'. CanInteract={can}");
 
             if (can)
             {
                 current.Interact(ctx);
-                Debug.Log($"[MouseRaycaster] Interact() CALLED on {current.GetType().Name} ({hit.collider.name}).");
+                //Debug.Log($"[MouseRaycaster] Interact() CALLED on {current.GetType().Name} ({hit.collider.name}).");
             }
             else
             {
-                Debug.Log("[MouseRaycaster] CanInteract returned false; interaction blocked.");
+                //Debug.Log("[MouseRaycaster] CanInteract returned false; interaction blocked.");
             }
         }
     }
