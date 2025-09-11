@@ -1,5 +1,8 @@
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
+using System;
+using System.Collections.Generic;
 
 /*
  * maze builder
@@ -16,13 +19,13 @@ public class MazeManager : NetworkBehaviour
     [SerializeField] private MazeBlock roomPrefab;
 
     private NetworkVariable<int> mazeSeed = new NetworkVariable<int>(
-        0,
+        -1,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server
     );
 
-    // how does this work in multiplayer
-    private void Awake()
+
+    void Awake()
     {
         // enforce singleton
         if (Instance != null && Instance != this)
@@ -32,27 +35,33 @@ public class MazeManager : NetworkBehaviour
         }
         Instance = this;
         //DontDestroyOnLoad(gameObject); 
+        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
+        NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnloaded;
     }
 
-    public override void OnNetworkSpawn()
+    private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
+        NetworkManager.SceneManager.OnUnloadEventCompleted -= OnSceneUnloaded;
+        mazeSeed.OnValueChanged -= OnSeedChanged; // if not ddol then doesnt matter..?
+    }
+
+    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+
         if (IsServer)
         {
-            int seed = Random.Range(int.MinValue, int.MaxValue);
+            int seed = UnityEngine.Random.Range(1, int.MaxValue);
             mazeSeed.Value = seed;
         }
 
 
         mazeSeed.OnValueChanged += OnSeedChanged;
-        if (mazeSeed.Value != 0)
+        if (mazeSeed.Value != -1)
         {
             BuildMazeWithSeed(mazeSeed.Value);
         }
-    }
 
-    public override void OnNetworkDespawn()
-    {
-        mazeSeed.OnValueChanged -= OnSeedChanged;
     }
 
     private void OnSeedChanged(int oldSeed, int newSeed)
