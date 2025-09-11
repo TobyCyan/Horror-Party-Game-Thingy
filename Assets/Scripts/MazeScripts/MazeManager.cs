@@ -98,7 +98,7 @@ public class MazeManager : NetworkBehaviour
             if (CellUtils.IsRoom(cells[i])) blockPrefab = roomPrefab;
 
             // instantiate mazeblock at hor 0 vert with state
-            MazeBlock block = Instantiate(blockPrefab, new Vector3(hor, 0, vert), Quaternion.identity);
+            MazeBlock block = Instantiate(blockPrefab, new Vector3(hor, 0, vert), Quaternion.identity, gameObject.transform);
             block.InitState(cells[i]);
             mazeBlocks[i] = block;
             // next
