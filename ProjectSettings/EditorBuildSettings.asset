@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PersistentSessionScene.unity
     guid: a68f37a82d8e91d4e97ba75bec173e8c
+  - enabled: 1
+    path: Assets/Scenes/AlvinTestScenes/MazeScene.unity
+    guid: 8c65693288187664c9fd21676c002d98
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 439ec4286ce81ea45b80b5acb3a916ab, type: 3}
   m_UseUCBPForAssetBundles: 0

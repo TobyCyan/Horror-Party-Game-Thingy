@@ -7,13 +7,15 @@ public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Instance;
 
-    private List<Player> players;
+    public List<Player> players = new List<Player>();
     public UnityEvent OnPlayerListChanged = new();
     public Player localPlayer;
-    
-    void Start()
+
+    public override void OnNetworkSpawn()
     {
-        if (Instance)
+        base.OnNetworkSpawn();
+
+        if (!Instance)
         {
             Instance = this;
         }
@@ -27,6 +29,7 @@ public class PlayerManager : NetworkBehaviour
     {
         if (players.Contains(player)) return;
         
+        if (player.IsOwner) localPlayer = player;
         players.Add(player);
         OnPlayerListChanged.Invoke();
     }
@@ -37,5 +40,10 @@ public class PlayerManager : NetworkBehaviour
         
         players.Remove(player);
         OnPlayerListChanged.Invoke();
+    }
+
+    public Player FindPlayerByNetId(ulong id)
+    {
+        return players.Find(p => p.Id == id);
     }
 }

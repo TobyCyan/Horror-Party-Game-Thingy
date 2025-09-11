@@ -139,16 +139,24 @@ public class SceneLifetimeManager : MonoBehaviour
             case SceneEventType.LoadComplete:
                 Debug.Log($"Adding {sceneEvent.SceneName} to networkedSceneNames after clientSceneEventLoadComplete");
                 networkedSceneNames.Add(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "GameScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("GameScene");
+                    SetActiveScene("PersistentSessionScene");
+                }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("MazeScene");
                 }
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "GameScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
                     SetActiveScene("InitScene");
+                }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("PersistentSessionScene");
                 }
                 break;
             case SceneEventType.LoadEventCompleted:
@@ -173,11 +181,19 @@ public class SceneLifetimeManager : MonoBehaviour
                 {
                     SetActiveScene("PersistentSessionScene");
                 }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("MazeScene");
+                }
                 break;
             case SceneEventType.UnloadComplete:
                 if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
                     SetActiveScene("InitScene");
+                }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("PersistentSessionScene");
                 }
                 break;
         }
