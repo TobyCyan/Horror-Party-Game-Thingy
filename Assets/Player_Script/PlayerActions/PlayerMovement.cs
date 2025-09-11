@@ -303,7 +303,7 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("[PlayerMovement] Unfrozen");
     }
 
-    private void OnBlind()
+    public void OnBlind()
     {
         Blind(defaultBlindDuration);
     }
