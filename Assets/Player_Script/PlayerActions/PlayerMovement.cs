@@ -307,20 +307,4 @@ public class PlayerMovement : MonoBehaviour
     {
         Blind(defaultBlindDuration);
     }
-    
-    private void OnCollisionEnter(Collision other)
-    {
-        NetworkObject nObj = other.gameObject.GetComponent<NetworkObject>();
-        if (nObj)
-        {
-            ChangeOwnerServerRpc(other.gameObject.GetComponent<NetworkObject>());
-        }
-    }
-    
-    // Give Last touch player authority to move it
-    [Rpc(SendTo.Server)]
-    void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)
-    {
-        other.ChangeOwnership(rpcParams.Receive.SenderClientId);
-    }
 }

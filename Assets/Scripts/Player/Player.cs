@@ -1,7 +1,6 @@
-using Unity.Netcode;
+    using Unity.Netcode;
 using Unity.Collections;
 using UnityEngine;
-
 
 public class Player : NetworkBehaviour
 {
@@ -24,5 +23,14 @@ public class Player : NetworkBehaviour
             playerMovement.enabled = false;
             playerCam.enabled = false;
         }
+        
+        PlayerManager.Instance.AddPlayer(this);
     }
+    
+    // // Give Last touch player authority to move it
+    // [Rpc(SendTo.Server)]
+    // void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)
+    // {
+    //     other.ChangeOwnership(rpcParams.Receive.SenderClientId);
+    // }
 }
