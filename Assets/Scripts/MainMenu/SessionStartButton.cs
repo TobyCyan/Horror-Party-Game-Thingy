@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SessionStartButton : NetworkBehaviour
 {
+    [Tooltip("For testing only please")]
+    public string SceneToLoad;
+    
     public async void StartGame()
     {
         // Let client start game? NAHHH
@@ -14,7 +17,7 @@ public class SessionStartButton : NetworkBehaviour
         
         // Send to everyone but Host
         await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "PersistentSessionScene" });
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { SceneToLoad });
         //SceneLifetimeManager.Instance.SetActiveScene("PersistentRunScene");
         //NetworkManager.SceneManager.LoadScene("PreGameScene",UnityEngine.SceneManagement.LoadSceneMode.Single);
     }

@@ -30,6 +30,5 @@ public class SpawnManager : NetworkBehaviour
             Quaternion.identity).GetComponent<Player>();
         
         player.GetComponent<NetworkObject>().SpawnWithOwnership(ctx.Receive.SenderClientId);
-        
     }
 }

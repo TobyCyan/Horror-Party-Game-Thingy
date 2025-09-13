@@ -1,37 +1,73 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class MarkManager : MonoBehaviour
+public class MarkManager : NetworkBehaviour
 {
+    [SerializeField] private GameObject markSymbol;
+    
     public static MarkManager Instance;
-
-    public GameObject currentMarkedPlayer;
+    public Player currentMarkedPlayer;
 
     void Awake()
     {
         Instance = this;
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        AssignRandomPlayerWithMark();
+        if (!IsServer) return;
+        
+        
+        StartHPGame();
     }
 
-    private void Update()
+    private async void StartHPGame()
     {
-        if (currentMarkedPlayer == null)
-        {
-            AssignRandomPlayerWithMark();
-        }
+        await Task.Delay(500);
+        
+        AssignRandomPlayerWithMark();
+        AddHpComponentClientRpc();
+    }
+    
+    [Rpc(SendTo.Everyone)]
+    private void AddHpComponentClientRpc()
+    {
+        Debug.Log($"Adding hp component to {PlayerManager.Instance.localPlayer} with {PlayerManager.Instance.localPlayer.Id}");
+        PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
 
     public void AssignRandomPlayerWithMark()
     {
-        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-        if (players.Length > 0)
-        {
-            int randomIndex = Random.Range(0, players.Length);
-            currentMarkedPlayer = players[randomIndex];
-        }
+        List<Player> players = PlayerManager.Instance.players;
+        int randomIndex = Random.Range(0, players.Count);
+        currentMarkedPlayer = players[randomIndex];
+        
+        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
     }
 
+    public void PassMarkToPlayer(ulong id)
+    {
+        PassMarkToPlayerServerRpc(id);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
+    {
+        Player player = PlayerManager.Instance.FindPlayerByNetId(id);
+        Debug.Log($"Passing mark to {player} with id {id}");
+        markSymbol.transform.SetParent(player.transform);
+        markSymbol.transform.position = player.transform.position + 2*Vector3.up;
+        
+        UpdateMarkedPlayerAllRpc(id);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateMarkedPlayerAllRpc(ulong id)
+    {
+        Player player = PlayerManager.Instance.FindPlayerByNetId(id);
+        currentMarkedPlayer = player;
+    }
 }

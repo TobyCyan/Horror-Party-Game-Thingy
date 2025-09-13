@@ -303,24 +303,8 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log("[PlayerMovement] Unfrozen");
     }
 
-    private void OnBlind()
+    public void OnBlind()
     {
         Blind(defaultBlindDuration);
-    }
-    
-    private void OnCollisionEnter(Collision other)
-    {
-        NetworkObject nObj = other.gameObject.GetComponent<NetworkObject>();
-        if (nObj)
-        {
-            ChangeOwnerServerRpc(other.gameObject.GetComponent<NetworkObject>());
-        }
-    }
-    
-    // Give Last touch player authority to move it
-    [Rpc(SendTo.Server)]
-    void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)
-    {
-        other.ChangeOwnership(rpcParams.Receive.SenderClientId);
     }
 }
