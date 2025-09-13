@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 24ccce1e1af6a1a4bae16d166889becd
+guid: b5e889b5d2583564781acb967c249b1b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,7 +31,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Floating
+      name: GhostSoldier_Floating
       takeName: Floating
       internalID: -5317887767387918893
       firstFrame: 0
@@ -118,7 +118,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: metarig|JumpScare_Full
+      name: GhostSoldier_JumpScare
       takeName: metarig|JumpScare_Full
       internalID: 3671005155073446010
       firstFrame: 0
