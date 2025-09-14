@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GhostMarchTrap : TrapBase
@@ -9,8 +10,13 @@ public class GhostMarchTrap : TrapBase
 
     private new void Start()
     {
-        base.Start();
         OnArmed += PlaceAtStart;
+        base.Start();
+    }
+
+    private void OnDestroy()
+    {
+        OnArmed -= PlaceAtStart;
     }
 
     private void OnValidate()
@@ -30,26 +36,29 @@ public class GhostMarchTrap : TrapBase
         marchObject.transform.position = startPosition;
     }
 
-    private void March()
+    private IEnumerator MarchThenRearm()
     {
         if (!marchObject)
         {
-            return;
+            yield break;
         }
 
         float epsilon = 0.1f;
         // March across.
         while (true)
         {
-            marchObject.transform.position = Vector3.Lerp(marchObject.transform.position,
+            marchObject.transform.position = Vector3.MoveTowards(marchObject.transform.position,
                                                         endPosition,
-                                                        marchSpeed);
+                                                        marchSpeed * Time.deltaTime);
             if (Vector3.Distance(endPosition, marchObject.transform.position) < epsilon)
             {
                 break;
             }
+            yield return null;
         }
         marchObject.transform.position = endPosition;
+        // Re-arm this
+        Arm();
     }
 
     protected override void OnTriggerCore(TrapTriggerContext ctx)
@@ -59,10 +68,8 @@ public class GhostMarchTrap : TrapBase
             return;
         }
 
-        // March across
-        March();
-
-        // Re-arm this
-        Arm();
+        // Disarm so won't trigger repeatedly
+        Disarm();
+        StartCoroutine(MarchThenRearm());
     }
 }
