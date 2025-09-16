@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Show",
+                    "type": "Button",
+                    "id": "8ecd4ab4-a71c-41f1-9783-f165200acd7b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -199,6 +208,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Freeze",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4de05ab1-22df-44fd-8926-066caeeb0f42",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Show",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

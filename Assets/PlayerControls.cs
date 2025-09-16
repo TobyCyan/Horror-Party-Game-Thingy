@@ -153,6 +153,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Show"",
+                    ""type"": ""Button"",
+                    ""id"": ""8ecd4ab4-a71c-41f1-9783-f165200acd7b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -287,6 +296,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Freeze"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4de05ab1-22df-44fd-8926-066caeeb0f42"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Show"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -302,6 +322,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Blind = m_Player.FindAction("Blind", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Freeze = m_Player.FindAction("Freeze", throwIfNotFound: true);
+        m_Player_Show = m_Player.FindAction("Show", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -389,6 +410,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Blind;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Freeze;
+    private readonly InputAction m_Player_Show;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -428,6 +450,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Freeze".
         /// </summary>
         public InputAction @Freeze => m_Wrapper.m_Player_Freeze;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Show".
+        /// </summary>
+        public InputAction @Show => m_Wrapper.m_Player_Show;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -475,6 +501,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Freeze.started += instance.OnFreeze;
             @Freeze.performed += instance.OnFreeze;
             @Freeze.canceled += instance.OnFreeze;
+            @Show.started += instance.OnShow;
+            @Show.performed += instance.OnShow;
+            @Show.canceled += instance.OnShow;
         }
 
         /// <summary>
@@ -507,6 +536,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Freeze.started -= instance.OnFreeze;
             @Freeze.performed -= instance.OnFreeze;
             @Freeze.canceled -= instance.OnFreeze;
+            @Show.started -= instance.OnShow;
+            @Show.performed -= instance.OnShow;
+            @Show.canceled -= instance.OnShow;
         }
 
         /// <summary>
@@ -596,5 +628,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFreeze(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Show" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShow(InputAction.CallbackContext context);
     }
 }
