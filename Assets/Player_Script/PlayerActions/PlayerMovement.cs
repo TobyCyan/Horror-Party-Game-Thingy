@@ -48,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
     // --- Blindness VFX ---
     [Header("Blind Effect")]
     [SerializeField] private GameObject blindEffect;
-    [SerializeField] private float defaultBlindDuration = 10f;
 
     // --- Internals ---
     [SerializeField] private Camera ownerCamera;
@@ -71,8 +70,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 targetCenter;
 
     // freeze
-    private bool isFrozen = false;
-    private float freezeTimer = 0f;
+    private bool isStunned = false;
+    private float stunTimer = 0f;
 
     void Awake()
     {
@@ -127,24 +126,20 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // Freeze timer
-        if (isFrozen)
+        if (isStunned)
         {
-            freezeTimer -= Time.deltaTime;
-            if (freezeTimer <= 0f) Unfreeze();
+            stunTimer -= Time.deltaTime;
+            if (stunTimer <= 0f) Unfreeze();
             return; // skip inputs/anim while frozen
         }
 
         // --- Blind test key ---
         if (controls.Player.Blind.triggered)
-            Blind(defaultBlindDuration);
+            Blind(5f);
 
         // --- Freeze test key ---
         if (controls.Player.Freeze != null && controls.Player.Freeze.triggered)
-            Freeze(5f);
-
-        // Blind test key
-        if (controls.Player.Blind.triggered)
-            Blind(defaultBlindDuration);
+            Stun(5f);
 
         // Inputs
         moveInput = controls.Player.Move.ReadValue<Vector2>();
@@ -154,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
         {
             bool next = !isCrouching;
             SetCrouchState(next);
-            anim?.SetBool("IsCrawling", next);
+            anim.SetBool("IsCrawling", next);
         }
 
         // Grounding
@@ -171,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Jump (animation trigger only)
         if (grounded && !isCrouching && controls.Player.Jump.triggered)
-            anim?.SetTrigger("Jump");
+            anim.SetTrigger("Jump");
 
         // Animator params
         if (anim)
@@ -206,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isFrozen)
+        if (isStunned)
         {
             rb.linearVelocity = Vector3.zero; //  pin every physics step
             return;
@@ -270,7 +265,7 @@ public class PlayerMovement : MonoBehaviour
             ownerCamera.cullingMask |= (1 << localBarrierLayer);
     }
 
-    public void Unblind()
+    private void Unblind()
     {
         isBlinded = false;
         blindTimer = 0f;
@@ -281,25 +276,25 @@ public class PlayerMovement : MonoBehaviour
             ownerCamera.cullingMask &= ~(1 << localBarrierLayer);
     }
 
-    // ----------------- Freeze API -----------------
-    /// <summary>Freeze the player's movement for 'duration' seconds.</summary>
-    public void Freeze(float duration)
+    // ----------------- Stun API -----------------
+    /// <summary>Stuns the player's movement for 'duration' seconds.</summary>
+    public void Stun(float duration)
     {
-        isFrozen = true;
-        freezeTimer = Mathf.Max(0f, duration);
+        isStunned = true;
+        stunTimer = Mathf.Max(0f, duration);
 
         rb.linearVelocity = Vector3.zero; //  immediate stop
-        anim?.SetBool("IsWalking", false);
-        anim?.SetFloat("MoveX", 0f);
-        anim?.SetFloat("MoveZ", 0f);
+        anim.SetBool("IsWalking", false);
+        anim.SetFloat("MoveX", 0f);
+        anim.SetFloat("MoveZ", 0f);
         Debug.Log($"[PlayerMovement] Frozen for {duration:0.00}s");
     }
 
     /// <summary>Unfreeze the player immediately.</summary>
-    public void Unfreeze()
+    private void Unfreeze()
     {
-        isFrozen = false;
-        freezeTimer = 0f;
+        isStunned = false;
+        stunTimer = 0f;
         Debug.Log("[PlayerMovement] Unfrozen");
     }
 

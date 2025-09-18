@@ -39,6 +39,16 @@ public class Player : NetworkBehaviour
         EnablePlayer(false);
         playerCam.LookStraight();
     }
+
+    public void Stun(float duration)
+    {
+        playerMovement.Stun(duration);
+    }
+
+    public void Blind(float duration)
+    {
+        playerMovement.Blind(duration);
+    }
     
     // // Give Last touch player authority to move it
     // [Rpc(SendTo.Server)]
