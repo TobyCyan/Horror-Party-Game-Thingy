@@ -171,6 +171,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4583236074999682964, guid: 561ce6adb5389c24ba4a9fcf185db6f6, type: 3}
+      propertyPath: ownerCamera
+      value: 
+      objectReference: {fileID: 1455807378}
     - target: {fileID: 7792095592329483594, guid: 561ce6adb5389c24ba4a9fcf185db6f6, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 926960401
@@ -623,6 +627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 749b8b1fba0c52545b8298a3a735430f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stunDuration: 5
 --- !u!1001 &998702417121242409
 PrefabInstance:
   m_ObjectHideFlags: 0

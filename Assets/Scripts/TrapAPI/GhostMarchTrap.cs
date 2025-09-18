@@ -114,6 +114,6 @@ public class GhostMarchTrap : TrapBase
         }
 
         jumpScareModel.gameObject.SetActive(true);
-        jumpScareModel.TriggerJumpScare(player.transform);
+        jumpScareModel.TriggerJumpScare(player);
     }
 }

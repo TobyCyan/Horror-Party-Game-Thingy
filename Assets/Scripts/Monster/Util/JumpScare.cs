@@ -16,7 +16,7 @@ public class JumpScare : MonoBehaviour
 
     public event Action OnJumpScareStart;
     // Apply any effect after jumpscaring (e.g. stun, death etc.)
-    public event Action<Transform> AfterJumpScarePlayer;
+    public event Action<Player> AfterJumpScarePlayer;
     public event Action OnJumpScareCleanUp;
 
     // The animation name used as state and trigger.
@@ -48,7 +48,7 @@ public class JumpScare : MonoBehaviour
 #endif
     }
 
-    public void TriggerJumpScare(Transform target)
+    public void TriggerJumpScare(Player player)
     {
         // Assumes animator is on this game object.
         Animator animator = GetComponent<Animator>();
@@ -56,22 +56,18 @@ public class JumpScare : MonoBehaviour
         {
             return;
         }
-        TriggerJumpScare(animator, target);
+        TriggerJumpScare(animator, player);
     }
 
-    public void TriggerJumpScare(Animator animator, Transform target)
+    public void TriggerJumpScare(Animator animator, Player player)
     {
         OnJumpScareStart?.Invoke();
-        jumpScareTarget = target;
 
         // Disable player camera movement.
-        if (target.TryGetComponent(out Player player))
-        {
-            player.EnablePlayer(false);
-            jumpScarePlayer = player;
-            jumpScareTarget = player.PlayerCam.transform;
-        }
-
+        player.EnablePlayer(false);
+        jumpScarePlayer = player;
+        jumpScareTarget = player.PlayerCam.transform;
+        
         JumpToTarget(jumpScareTarget);
 
         // Force monster to look at target.
@@ -120,7 +116,7 @@ public class JumpScare : MonoBehaviour
     public void OnJumpScareEnd()
     {
         Debug.Log($"{name} Jumpscare ended");
-        AfterJumpScarePlayer?.Invoke(jumpScareTarget);
+        AfterJumpScarePlayer?.Invoke(jumpScarePlayer);
         OnJumpScareCleanUp?.Invoke();
 
         if (shouldResumeCameraMovementAfter && jumpScarePlayer)

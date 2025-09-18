@@ -10,7 +10,7 @@ public abstract class EffectBase : MonoBehaviour
         ApplySubscriptions();
     }
 
-    public void Apply(Transform target)
+    public void Apply(Player target)
     {
         if (!target)
         {
@@ -22,5 +22,5 @@ public abstract class EffectBase : MonoBehaviour
     }
 
     protected abstract void ApplySubscriptions();
-    protected abstract void ApplyEffect(Transform target);
+    protected abstract void ApplyEffect(Player target);
 }
