@@ -63,8 +63,7 @@ public class JumpScare : MonoBehaviour
     {
         OnJumpScareStart?.Invoke();
 
-        // Disable player camera movement.
-        player.EnablePlayer(false);
+        player.LockPlayerInPlace();
         jumpScarePlayer = player;
         jumpScareTarget = player.PlayerCam.transform;
         

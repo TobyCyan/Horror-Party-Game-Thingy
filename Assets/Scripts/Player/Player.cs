@@ -33,6 +33,12 @@ public class Player : NetworkBehaviour
         playerMovement.enabled = enable;
         playerCam.enabled = enable;
     }
+
+    public void LockPlayerInPlace()
+    {
+        EnablePlayer(false);
+        playerCam.LookStraight();
+    }
     
     // // Give Last touch player authority to move it
     // [Rpc(SendTo.Server)]
