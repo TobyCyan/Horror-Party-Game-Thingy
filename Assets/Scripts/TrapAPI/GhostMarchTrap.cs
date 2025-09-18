@@ -103,9 +103,17 @@ public class GhostMarchTrap : TrapBase
     void OnTriggerEnter(Collider other)
     {
         bool isNotPlayer = (playerMask.value & (1 << other.gameObject.layer)) == 0;
-        if (isNotPlayer) return;
+        if (isNotPlayer)
+        {
+            return;
+        }
+
+        if (!other.TryGetComponent(out Player player))
+        {
+            return;
+        }
 
         jumpScareModel.gameObject.SetActive(true);
-        jumpScareModel.TriggerJumpScare(other.transform);
+        jumpScareModel.TriggerJumpScare(player.transform);
     }
 }

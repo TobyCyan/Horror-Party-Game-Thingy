@@ -8,9 +8,11 @@ public class JumpScare : MonoBehaviour
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
     [SerializeField] private List<EffectBase> effects;
+    [SerializeField] private bool shouldResumeCameraMovementAfter = true;
     private AudioSource audioSource;
     private Vector3 referencePosition;
     private Transform jumpScareTarget;
+    private Player jumpScarePlayer;
 
     public event Action OnJumpScareStart;
     // Apply any effect after jumpscaring (e.g. stun, death etc.)
@@ -59,21 +61,22 @@ public class JumpScare : MonoBehaviour
         OnJumpScareStart?.Invoke();
         jumpScareTarget = target;
 
-        // Jump to target.
-        JumpToTarget(target);
-
-#if UNITY_EDITOR
-        referencePosition = transform.position;
-#endif
-
-        // Force monster to look at target.
-        FaceTarget(target);
-
         // Disable player camera movement.
         if (target.TryGetComponent(out Player player))
         {
             player.EnablePlayer(false);
+            jumpScarePlayer = player;
+            jumpScareTarget = player.PlayerCam.transform;
         }
+
+        // Force monster to look at target.
+        FaceTarget(jumpScareTarget);
+
+        JumpToTarget(jumpScareTarget);
+
+#if UNITY_EDITOR
+        referencePosition = transform.position;
+#endif
 
         // JumpScare the target.
         animator.SetTrigger("JumpScare");
@@ -115,5 +118,10 @@ public class JumpScare : MonoBehaviour
         Debug.Log($"{name} Jumpscare ended");
         AfterJumpScarePlayer?.Invoke(jumpScareTarget);
         OnJumpScareCleanUp?.Invoke();
+
+        if (shouldResumeCameraMovementAfter && jumpScarePlayer)
+        {
+            jumpScarePlayer.EnablePlayer(true);
+        }
     }
 }
