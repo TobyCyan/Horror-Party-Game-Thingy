@@ -12,13 +12,18 @@ public class GhostMarchTrap : TrapBase
 
     private new void Start()
     {
+        jumpScareModel.OnJumpScareStart += JumpScareStartHandler;
+        jumpScareModel.OnJumpScareCleanUp += CleanUpHandler;
         jumpScareModel.gameObject.SetActive(false);
+
         OnArmed += PlaceAtStart;
         base.Start();
     }
 
     private void OnDestroy()
     {
+        jumpScareModel.OnJumpScareStart -= JumpScareStartHandler;
+        jumpScareModel.OnJumpScareCleanUp -= CleanUpHandler;
         OnArmed -= PlaceAtStart;
     }
 
@@ -76,15 +81,30 @@ public class GhostMarchTrap : TrapBase
             return;
         }
 
-        // Disarm so won't trigger repeatedly
+        // Disarm so marching won't trigger repeatedly
         Disarm();
         StartCoroutine(MarchThenRearm());
+    }
+
+    private void JumpScareStartHandler()
+    {
+        // Disarm so jumpscare won't trigger repeatedly
+        StopAllCoroutines();
+        Disarm();
+    }
+
+    private void CleanUpHandler()
+    {
+        jumpScareModel.gameObject.SetActive(false);
+        // Re-arm upon finishing jumpscare.
+        Arm();
     }
 
     void OnTriggerEnter(Collider other)
     {
         bool isNotPlayer = (playerMask.value & (1 << other.gameObject.layer)) == 0;
         if (isNotPlayer) return;
+
         jumpScareModel.gameObject.SetActive(true);
         jumpScareModel.TriggerJumpScare(other.transform);
     }

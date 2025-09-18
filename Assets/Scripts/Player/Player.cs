@@ -7,9 +7,10 @@ public class Player : NetworkBehaviour
     // hold player user info
     public NetworkVariable<FixedString64Bytes> playerName = new(writePerm: NetworkVariableWritePermission.Owner);
     
-    [SerializeField] private GameObject cam;
-    [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private PlayerCam playerCam;
+    [SerializeField] protected GameObject cam;
+    [SerializeField] protected PlayerMovement playerMovement;
+    [SerializeField] protected PlayerCam playerCam;
+
     public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
 
@@ -20,12 +21,17 @@ public class Player : NetworkBehaviour
         
         if (!IsOwner)
         {
-            cam.SetActive(false);
-            playerMovement.enabled = false;
-            playerCam.enabled = false;
+            EnablePlayer(false);
         }
         
         PlayerManager.Instance.AddPlayer(this);
+    }
+
+    public void EnablePlayer(bool enable)
+    {
+        cam.SetActive(enable);
+        playerMovement.enabled = enable;
+        playerCam.enabled = enable;
     }
     
     // // Give Last touch player authority to move it

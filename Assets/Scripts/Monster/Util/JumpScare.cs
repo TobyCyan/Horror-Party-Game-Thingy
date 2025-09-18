@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class JumpScare : MonoBehaviour
@@ -5,8 +7,24 @@ public class JumpScare : MonoBehaviour
     [SerializeField] private AudioClip jumpScareSfx;
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
+    [SerializeField] private List<EffectBase> effects;
     private AudioSource audioSource;
     private Vector3 referencePosition;
+    private Transform jumpScareTarget;
+
+    public event Action OnJumpScareStart;
+    // Apply any effect after jumpscaring (e.g. stun, death etc.)
+    public event Action<Transform> AfterJumpScarePlayer;
+    public event Action OnJumpScareCleanUp;
+
+    private void Awake()
+    {
+        foreach (var effect in effects)
+        {
+            AfterJumpScarePlayer += effect.Apply;
+            Debug.Log($"Effect {effect.name} subscribed");
+        }
+    }
 
     private void OnValidate()
     {
@@ -38,6 +56,9 @@ public class JumpScare : MonoBehaviour
 
     public void TriggerJumpScare(Animator animator, Transform target)
     {
+        OnJumpScareStart?.Invoke();
+        jumpScareTarget = target;
+
         // Jump to target.
         JumpToTarget(target);
 
@@ -45,7 +66,14 @@ public class JumpScare : MonoBehaviour
         referencePosition = transform.position;
 #endif
 
-        // TODO: Force target to look at the monster.
+        // Force monster to look at target.
+        FaceTarget(target);
+
+        // Disable player camera movement.
+        if (target.TryGetComponent(out Player player))
+        {
+            player.EnablePlayer(false);
+        }
 
         // JumpScare the target.
         animator.SetTrigger("JumpScare");
@@ -58,7 +86,12 @@ public class JumpScare : MonoBehaviour
     {
         Vector3 targetForward = target.forward;
         Vector3 offsetPosition = target.position + (targetForward * 0.5f) + offset; // Offset by 0.5 units in front of the target
-        gameObject.transform.position = offsetPosition;
+        transform.position = offsetPosition;
+    }
+
+    private void FaceTarget(Transform target)
+    {
+        transform.LookAt(target.position);
     }
 
     private void PlayJumpScareAudio()
@@ -71,5 +104,16 @@ public class JumpScare : MonoBehaviour
         {
             Debug.LogWarning("JumpScare audio clip is not assigned.");
         }
+    }
+
+    /// <summary>
+    /// Invokes any methods subscribed to the jumpscare end event.
+    /// This is called from the Unity animation event system.
+    /// </summary>
+    public void OnJumpScareEnd()
+    {
+        Debug.Log($"{name} Jumpscare ended");
+        AfterJumpScarePlayer?.Invoke(jumpScareTarget);
+        OnJumpScareCleanUp?.Invoke();
     }
 }
