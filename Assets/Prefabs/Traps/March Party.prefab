@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3704927523635827733}
   - component: {fileID: 1430693788717857195}
+  - component: {fileID: 5085876349425284653}
   m_Layer: 0
   m_Name: March Party
   m_TagString: Untagged
@@ -57,6 +58,31 @@ MonoBehaviour:
   startPosition: {x: 0.8, y: -1.68344, z: -5}
   endPosition: {x: 0.8, y: -1.68344, z: 5.28}
   marchSpeed: 5
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  jumpScareModel: {fileID: 0}
+--- !u!65 &5085876349425284653
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8083099324181897937}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7957342, y: 2.6042135, z: 3.853899}
+  m_Center: {x: 1.4184316, y: 0.802107, z: 0.6704693}
 --- !u!1001 &627403696553024605
 PrefabInstance:
   m_ObjectHideFlags: 0

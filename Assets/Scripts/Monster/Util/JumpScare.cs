@@ -6,6 +6,7 @@ public class JumpScare : MonoBehaviour
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
     private AudioSource audioSource;
+    private Vector3 referencePosition;
 
     private void OnValidate()
     {
@@ -17,12 +18,32 @@ public class JumpScare : MonoBehaviour
                 Debug.LogWarning("AudioSource component is missing from the JumpScare GameObject.");
             }
         }
+
+        // For adjusting offset in the editor
+#if UNITY_EDITOR
+        transform.position = referencePosition + offset;
+#endif
+    }
+
+    public void TriggerJumpScare(Transform target)
+    {
+        // Assumes animator is on this game object.
+        Animator animator = GetComponent<Animator>();
+        if (!animator)
+        {
+            return;
+        }
+        TriggerJumpScare(animator, target);
     }
 
     public void TriggerJumpScare(Animator animator, Transform target)
     {
         // Jump to target.
         JumpToTarget(target);
+
+#if UNITY_EDITOR
+        referencePosition = transform.position;
+#endif
 
         // TODO: Force target to look at the monster.
 

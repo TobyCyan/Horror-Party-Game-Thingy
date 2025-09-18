@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerSpottedState : BaseState
 {
-    private Transform player;
+    private Player player;
     private readonly LookAt lookAt = new();
     private readonly Timer timer = new();
 
@@ -39,7 +39,7 @@ public class PlayerSpottedState : BaseState
     public override void UpdateState(StateMachine stateMachine)
     {
         float lookAtSpeed = 4.0f;
-        bool isFinished = lookAt.LookAtTarget(stateMachine.transform, player, lookAtSpeed);
+        bool isFinished = lookAt.LookAtTarget(stateMachine.transform, player.transform, lookAtSpeed);
         if (!isFinished)
         {
             return;

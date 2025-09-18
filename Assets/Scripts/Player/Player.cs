@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private GameObject cam;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private PlayerCam playerCam;
+    public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
 
     // Give owner control to stuff it should control

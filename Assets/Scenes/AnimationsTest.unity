@@ -119,6 +119,32 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &771474025 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8083099324181897937, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
+  m_PrefabInstance: {fileID: 998702417121242409}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &771474028
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771474025}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7957342, y: 2.6042135, z: 3.853899}
+  m_Center: {x: 1.4184316, y: 0.802107, z: 0.6704693}
 --- !u!1 &969062169
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,6 +788,89 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1766208856
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.62045
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.37929
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.61158
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier - JumpScare
+      objectReference: {fileID: 0}
+    - target: {fileID: 9188209229025624927, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 27315200611ad1d4ab020500ebdd95ec, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1766208858}
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!1 &1766208857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 1766208856}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1766208858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766208857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46bbd5a056b998c4b82f1f5f74e883b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpScareSfx: {fileID: 8300000, guid: 1c1c857b5af93764a85e393afa753bb2, type: 3}
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1001 &998702417121242409
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -770,6 +879,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1430693788717857195, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
+      propertyPath: jumpScareModel
+      value: 
+      objectReference: {fileID: 1766208858}
+    - target: {fileID: 1430693788717857195, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
+      propertyPath: playerMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 3704927523635827733, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.8
@@ -817,7 +934,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8083099324181897937, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 771474028}
   m_SourcePrefab: {fileID: 100100000, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
 --- !u!1001 &3699368921466088987
 PrefabInstance:
@@ -887,3 +1007,4 @@ SceneRoots:
   - {fileID: 969062175}
   - {fileID: 998702417121242409}
   - {fileID: 1497571246}
+  - {fileID: 1766208856}

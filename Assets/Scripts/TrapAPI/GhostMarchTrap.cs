@@ -7,9 +7,12 @@ public class GhostMarchTrap : TrapBase
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 endPosition;
     [SerializeField] private float marchSpeed = 2.0f;
+    [SerializeField] private LayerMask playerMask;   // set to "Player" in Inspector
+    [SerializeField] private JumpScare jumpScareModel;
 
     private new void Start()
     {
+        jumpScareModel.gameObject.SetActive(false);
         OnArmed += PlaceAtStart;
         base.Start();
     }
@@ -24,6 +27,11 @@ public class GhostMarchTrap : TrapBase
         if (!marchObject)
         {
             Debug.LogWarning($"March object is null on {name}!");
+        }
+
+        if (!jumpScareModel)
+        {
+            Debug.LogWarning($"Jumpscare model is null on {name}!");
         }
     }
 
@@ -71,5 +79,13 @@ public class GhostMarchTrap : TrapBase
         // Disarm so won't trigger repeatedly
         Disarm();
         StartCoroutine(MarchThenRearm());
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        bool isNotPlayer = (playerMask.value & (1 << other.gameObject.layer)) == 0;
+        if (isNotPlayer) return;
+        jumpScareModel.gameObject.SetActive(true);
+        jumpScareModel.TriggerJumpScare(other.transform);
     }
 }
