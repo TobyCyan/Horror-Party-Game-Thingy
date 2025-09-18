@@ -19,6 +19,9 @@ public class JumpScare : MonoBehaviour
     public event Action<Transform> AfterJumpScarePlayer;
     public event Action OnJumpScareCleanUp;
 
+    // The animation name used as state and trigger.
+    private static readonly string AN_JUMPSCARE = "JumpScare";
+
     private void Awake()
     {
         foreach (var effect in effects)
@@ -69,18 +72,19 @@ public class JumpScare : MonoBehaviour
             jumpScareTarget = player.PlayerCam.transform;
         }
 
+        JumpToTarget(jumpScareTarget);
+
         // Force monster to look at target.
         FaceTarget(jumpScareTarget);
 
-        JumpToTarget(jumpScareTarget);
-
+        // Minus offset to get accurate reference position for adjusting offset
 #if UNITY_EDITOR
-        referencePosition = transform.position;
+        referencePosition = transform.position - offset;
 #endif
 
         // JumpScare the target.
-        animator.SetTrigger("JumpScare");
-        animator.Play("JumpScare", 0, 0.0f);
+        animator.SetTrigger(AN_JUMPSCARE);
+        animator.Play(AN_JUMPSCARE, 0, 0.0f);
 
         PlayJumpScareAudio();
     }
@@ -88,13 +92,13 @@ public class JumpScare : MonoBehaviour
     private void JumpToTarget(Transform target)
     {
         Vector3 targetForward = target.forward;
-        Vector3 offsetPosition = target.position + (targetForward * 0.5f) + offset; // Offset by 0.5 units in front of the target
+        Vector3 offsetPosition = target.position + (targetForward * 0.5f) + offset;
         transform.position = offsetPosition;
     }
 
     private void FaceTarget(Transform target)
     {
-        transform.LookAt(target.position);
+        transform.rotation = Quaternion.LookRotation(-target.forward, Vector3.up);
     }
 
     private void PlayJumpScareAudio()
