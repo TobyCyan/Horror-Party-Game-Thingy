@@ -21,6 +21,9 @@ public abstract class EffectBase : MonoBehaviour
         OnEffectApplied?.Invoke();
     }
 
+    /// <summary>
+    /// Applies any subscriptions to events related to this effect.
+    /// </summary>
     protected abstract void ApplySubscriptions();
     protected abstract void ApplyEffect(Player target);
 }

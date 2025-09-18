@@ -3,14 +3,15 @@ using UnityEngine;
 public class BlindEffect : EffectBase
 {
     [SerializeField] private GameObject blindEffect;
-    [SerializeField] private float blindDuration = 10f;
+    [Min(0.0f)]
+    [SerializeField] private float blindDuration = 10.0f;
+    [SerializeField] private Camera targetCam;
     private bool isBlinded = false;
     private float blindTimer = 0.0f;
-    private Camera targetCam;
 
     protected override void ApplyEffect(Player target)
     {
-        Blind(target, blindDuration);
+        Blind(blindDuration);
     }
 
     protected override void ApplySubscriptions()
@@ -28,7 +29,7 @@ public class BlindEffect : EffectBase
         }
     }
 
-    private void Blind(Player target, float duration)
+    private void Blind(float duration)
     {
         if (blindEffect == null) 
         { 
@@ -40,13 +41,12 @@ public class BlindEffect : EffectBase
         blindTimer = Mathf.Max(0f, duration);
         blindEffect.SetActive(true);
 
-        if (!target.TryGetComponent(out Camera targetCamera))
+        if (!targetCam)
         {
-            Debug.LogWarning($"No camera at target {target.name}!");
+            Debug.LogWarning($"No camera assigned to {name}!");
             return;
         }
 
-        targetCam = targetCamera;
         int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
         if (localBarrierLayer != -1)
         {
