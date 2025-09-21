@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 7824253542832585806}
   - component: {fileID: 3041895902546920972}
   - component: {fileID: 3313754586703386880}
+  - component: {fileID: 6519136845518210295}
+  - component: {fileID: 3952225463073851692}
   m_Layer: 0
   m_Name: MazeManager
   m_TagString: Untagged
@@ -45,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3155296783
+  GlobalObjectIdHash: 1431397076
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -75,3 +77,30 @@ MonoBehaviour:
   roomRate: 0.2
   prefab: {fileID: 6747622387691823791, guid: b7ad1e859d2664046804467c55c8cf5b, type: 3}
   roomPrefab: {fileID: 6747622387691823791, guid: c65baf4d6a19d05448fb52bc8fd69a76, type: 3}
+--- !u!114 &6519136845518210295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7725800713833811696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 786ba94f139810e4a8d184d96ab71abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  topdown: {fileID: 0}
+--- !u!114 &3952225463073851692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7725800713833811696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c6aaa936b5453c459f6902fdae98a36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topDownCam: {fileID: 0}

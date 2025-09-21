@@ -2,21 +2,21 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using System;
 public class MazeGameManager : NetworkBehaviour
 {
     public static MazeGameManager Instance;
 
-    [SerializeField] private Camera topdown;
-
-    private NetworkVariable<PhaseID> currPhaseId = new NetworkVariable<PhaseID>(
+    private NetworkVariable<PhaseID> currPhaseId = new(
        PhaseID.Default,
        NetworkVariableReadPermission.Everyone,
        NetworkVariableWritePermission.Server
    );
 
     private MazeGamePhase currPhase;
-
+    // TESTING
+    private float phaseTimer = 0f;
     void Awake()
     {
         // enforce singleton
@@ -49,18 +49,17 @@ public class MazeGameManager : NetworkBehaviour
         }
     }
 
-    // enum space, id change -> actual phase change
-    private void ChangePhase(PhaseID prev, PhaseID next)
+    // id change -> actual phase change
+    public void ChangePhase(PhaseID prev, PhaseID next)
     {
         currPhase?.Exit();
-        // make new phase obejct??? enter?? assign?? making this extensible is a bit pointless
         switch(next)
         {
             case PhaseID.Default:
                 currPhase = new DefaultPhase();
             break;
             case PhaseID.Traps:
-                currPhase = new TrapPhase(topdown);
+                currPhase = new TrapPhase();
             break;
             case PhaseID.Run:
                 currPhase = new RunPhase();
@@ -75,8 +74,32 @@ public class MazeGameManager : NetworkBehaviour
 
     private void Update()
     {
-        currPhase.UpdatePhase();
+        currPhase?.UpdatePhase();
+        // uncomment below to test for now
+
+        //if (!IsServer) return;
+
+        //phaseTimer += Time.deltaTime;
+        //if (phaseTimer >= 3f)
+        //{
+        //    phaseTimer = 0f;
+        //    ToggleTrapRun();
+        //}
     }
+
+    // test, del later
+    private void ToggleTrapRun()
+    {
+        if (currPhaseId.Value == PhaseID.Traps)
+        {
+            currPhaseId.Value = PhaseID.Run;
+        }
+        else if (currPhaseId.Value == PhaseID.Run)
+        {
+            currPhaseId.Value = PhaseID.Traps;
+        }
+    }
+
 
     private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {

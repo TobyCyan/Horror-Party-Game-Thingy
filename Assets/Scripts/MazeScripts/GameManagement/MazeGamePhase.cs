@@ -1,20 +1,26 @@
 using UnityEngine;
+using Unity.Cinemachine;
 public abstract class MazeGamePhase
 {
-    public int phaseId;
-
+    protected PhaseID id; // laze
     public virtual void Enter()
     {
-        Debug.Log(string.Format("Entering phase {0}", phaseId));
+        Debug.Log($"Entering {GetType().Name}");
     }
 
     public virtual void Exit()
     {
-        Debug.Log(string.Format("Exiting phase {0}", phaseId));
+        Debug.Log($"Exiting {GetType().Name}");
     }
 
     public virtual void UpdatePhase() { }
+
+    public virtual void ChangePhase(PhaseID next)
+    {
+        MazeGameManager.Instance.ChangePhase(id, next);
+    }
 }
+
 
 public enum PhaseID
 {
@@ -26,43 +32,107 @@ public enum PhaseID
 
 public class DefaultPhase : MazeGamePhase
 {
-
+    public DefaultPhase() { id = PhaseID.Default; }
 }
 
 public class TrapPhase : MazeGamePhase
 {
-    private Camera fpsCam;
-    private Camera topdownCam;
-    public TrapPhase(Camera topdown)
+
+    float timeLimit;
+    float currTime = 0f;
+    public TrapPhase()
     {
-        topdownCam = topdown;
+        timeLimit = 5f;
+    }
+
+    public TrapPhase(float timeLimit)
+    {
+        this.timeLimit = timeLimit;
     }
 
     public override void Enter()
     {
+        // todo disbale fps input , change ui
         base.Enter();
-        fpsCam = Camera.main;
-        fpsCam.enabled = false;
-        topdownCam.enabled = true;
-        
+        MazeCameraManager.Instance.SetToTopDownView();
+
+
     }
 
     public override void Exit()
     {
-        fpsCam.enabled = true;
-        topdownCam.enabled = false;
+        
         base.Exit();
+
+    }
+
+    public override void UpdatePhase()
+    {
+        base.UpdatePhase();
+        currTime += Time.deltaTime;
+        if (currTime >= timeLimit)
+        {
+            ChangePhase(PhaseID.Run);
+        }
     }
 }
 
 public class RunPhase : MazeGamePhase
 {
+    float timeLimit;
+    float currTime = 0f;
 
+    public RunPhase()
+    {
+        this.timeLimit = 5f;
+    }
+
+    public RunPhase(float timeLimit)
+    {
+        this.timeLimit = timeLimit;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        // todo enable fps input, change ui
+        MazeCameraManager.Instance.SetToPlayerView();
+    }
+
+    public override void Exit()
+    {
+
+        base.Exit();
+    }
+
+    public override void UpdatePhase()
+    {
+        base.UpdatePhase();
+        currTime += Time.deltaTime;
+        if (currTime >= timeLimit)
+        {
+            ChangePhase(PhaseID.Traps); // test
+        }
+    }
 }
 
 public class ScorePhase : MazeGamePhase
 {
+    public ScorePhase() { }
 
+    public override void Enter()
+    {
+        base.Enter();
+        // stop player inputs?
+        // display score ui
+        
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        // close score ui
+    }
 }
 
 

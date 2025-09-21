@@ -321,6 +321,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8215566735670058899}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3436618833130660647}
     - targetCorrespondingSourceObject: {fileID: -4267678088381660852, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1197703584625609843}
@@ -622,6 +625,19 @@ MonoBehaviour:
   cam: {fileID: 9033277658621435649}
   playerMovement: {fileID: 2282382335596024}
   playerCam: {fileID: 7850040235040859059}
+--- !u!114 &3436618833130660647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74ded238ed5e77f4583ebd2ca00dd208, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCam: {fileID: 6777540985549378276}
 --- !u!4 &2006949262448999753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
