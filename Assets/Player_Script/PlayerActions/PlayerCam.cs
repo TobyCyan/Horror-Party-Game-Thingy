@@ -65,4 +65,13 @@ public class PlayerCam : MonoBehaviour
             transform.localPosition = lp;
         }
     }
+
+    /// <summary>
+    /// Forces player camera to look straight.
+    /// Use this to make cinematics like jumpscares look right.
+    /// </summary>
+    public void LookStraight()
+    {
+        transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+    }
 }

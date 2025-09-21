@@ -10,7 +10,7 @@ public class Monster : MonoBehaviour
     private AnimatorController animatorController;
     private AudioSource audioSource;
     protected Reveal reveal;
-    [HideInInspector] public Transform targetPlayer;
+    [HideInInspector] public Player targetPlayer;
 
     // Configuration
     [SerializeField] protected Vector3 initialPosition;
@@ -89,7 +89,7 @@ public class Monster : MonoBehaviour
         animatorController.ResetAnimator();
     }
 
-    public bool SearchForPlayer(out Transform player)
+    public bool SearchForPlayer(out Player player)
     {
         bool isPlayerInRange = playerRadar.IsPlayerInRange(transform.position, out player);
         targetPlayer = player;
@@ -110,7 +110,7 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        jumpScare.TriggerJumpScare(animatorController.Animator, targetPlayer.GetComponent<Camera>().transform);
+        jumpScare.TriggerJumpScare(animatorController.Animator, targetPlayer);
     }
 
     public void SpotPlayer()
