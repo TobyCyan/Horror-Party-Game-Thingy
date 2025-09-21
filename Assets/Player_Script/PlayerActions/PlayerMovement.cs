@@ -297,9 +297,4 @@ public class PlayerMovement : MonoBehaviour
         stunTimer = 0f;
         Debug.Log("[PlayerMovement] Unfrozen");
     }
-
-    public void OnBlind()
-    {
-        Blind(defaultBlindDuration);
-    }
 }
