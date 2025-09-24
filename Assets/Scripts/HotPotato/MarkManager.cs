@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
-using Random = UnityEngine.Random;
 
 public class MarkManager : NetworkBehaviour
 {
@@ -16,24 +14,38 @@ public class MarkManager : NetworkBehaviour
     public event Action<ulong> OnMarkPassed;
     public event Action OnMarkedPlayerEliminated;
 
+    [SerializeField] private Timer postEliminationCoolDownTimer;
+    public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
+    [Min(0.0f)]
+    [SerializeField] private float markPassingCoolDownDuration = 4.0f;
+
     void Awake()
     {
         Instance = this;
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
         OnMarkPassed += UpdateMarkedPlayerAllRpc;
-        // TODO: Should assign next player by least sabotage scores.
-        OnMarkedPlayerEliminated += AssignRandomPlayerWithMark;
+        OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
+        postEliminationCoolDownTimer.OnTimeUp += AssignNextPlayerWithMark;
     }
 
-
-    public override void OnDestroy()
+    public override void OnNetworkDespawn()
     {
-        base.OnDestroy();
         OnMarkPassed -= UpdateMarkedPlayerAllRpc;
-        OnMarkedPlayerEliminated -= AssignRandomPlayerWithMark;
+        OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
+        postEliminationCoolDownTimer.OnTimeUp -= AssignNextPlayerWithMark;
+    }
+
+    public void EliminateMarkedPlayer()
+    {
+        if (currentMarkedPlayer == null)
+        {
+            Debug.LogWarning("No marked player to eliminate.");
+            return;
+        }
+        currentMarkedPlayer.EliminatePlayer();
     }
 
     public async void StartHPGame()
@@ -43,7 +55,17 @@ public class MarkManager : NetworkBehaviour
         AssignRandomPlayerWithMark();
         AddHpComponentClientRpc();
     }
-    
+
+    private void HandleMarkedPlayerEliminated()
+    {
+        // Remove the marked player from the alive players pool
+        PlayerManager.Instance.EliminatePlayer(currentMarkedPlayer);
+        currentMarkedPlayer = null;
+
+        // Start cooldown timer before assigning the new marked player
+        postEliminationCoolDownTimer.StartTimer(markPassingCoolDownDuration);
+    }
+
     [Rpc(SendTo.Everyone)]
     private void AddHpComponentClientRpc()
     {
@@ -57,12 +79,17 @@ public class MarkManager : NetworkBehaviour
         PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
 
+    private void AssignNextPlayerWithMark()
+    {
+        // TODO: Should assign next player by least sabotage scores.
+        AssignRandomPlayerWithMark();
+    }
+
     public void AssignRandomPlayerWithMark()
     {
-        List<Player> players = PlayerManager.Instance.players;
-        int randomIndex = Random.Range(0, players.Count);
-        currentMarkedPlayer = players[randomIndex];
-        
+        Player randomPlayer = PlayerManager.Instance.GetRandomAlivePlayer();
+        currentMarkedPlayer = randomPlayer;
+
         PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
     }
 
@@ -77,7 +104,7 @@ public class MarkManager : NetworkBehaviour
         if (currentMarkedPlayer != null)
         {
             // Unsubscribe from previous marked player's elimination event
-            currentMarkedPlayer.OnPlayerEliminated -= OnMarkedPlayerEliminated;
+            currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
@@ -93,6 +120,12 @@ public class MarkManager : NetworkBehaviour
     {
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
         currentMarkedPlayer = player;
-        currentMarkedPlayer.OnPlayerEliminated += OnMarkedPlayerEliminated;
+        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
+        Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
+    }
+
+    private void InvokeOnMarkedPlayerEliminated()
+    {
+        OnMarkedPlayerEliminated?.Invoke();
     }
 }

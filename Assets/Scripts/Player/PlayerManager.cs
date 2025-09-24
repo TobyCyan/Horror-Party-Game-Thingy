@@ -7,9 +7,11 @@ public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Instance;
 
-    public List<Player> players = new List<Player>();
+    public List<Player> players = new();
     public UnityEvent OnPlayerListChanged = new();
     public Player localPlayer;
+    private List<Player> alivePlayers = new();
+    public List<Player> AlivePlayers => alivePlayers;
 
     public override void OnNetworkSpawn()
     {
@@ -31,6 +33,7 @@ public class PlayerManager : NetworkBehaviour
         
         if (player.IsOwner) localPlayer = player;
         players.Add(player);
+        alivePlayers.Add(player);
         OnPlayerListChanged.Invoke();
     }
     
@@ -39,7 +42,30 @@ public class PlayerManager : NetworkBehaviour
         if (!players.Contains(player)) return;
         
         players.Remove(player);
+        alivePlayers.Remove(player);
         OnPlayerListChanged.Invoke();
+    }
+
+    public void EliminatePlayer(Player player)
+    {
+        if (!players.Contains(player)) return;
+        
+        if (alivePlayers.Contains(player))
+        {
+            alivePlayers.Remove(player);
+        }
+    }
+
+    public bool IsPlayerAlive(Player player)
+    {
+        return alivePlayers.Contains(player);
+    }
+
+    public Player GetRandomAlivePlayer()
+    {
+        if (alivePlayers.Count == 0) return null;
+        int randomIndex = Random.Range(0, alivePlayers.Count);
+        return alivePlayers[randomIndex];
     }
 
     public Player FindPlayerByNetId(ulong id)
