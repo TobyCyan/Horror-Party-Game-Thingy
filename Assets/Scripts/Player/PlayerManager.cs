@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class PlayerManager : NetworkBehaviour
@@ -34,8 +33,11 @@ public class PlayerManager : NetworkBehaviour
         if (players.Contains(player)) return;
         
         if (player.IsOwner) localPlayer = player;
+
         players.Add(player);
         alivePlayers.Add(player);
+        player.OnPlayerEliminated += () => EliminatePlayer(player);
+
         OnPlayerListChanged?.Invoke();
     }
     
@@ -45,6 +47,8 @@ public class PlayerManager : NetworkBehaviour
         
         players.Remove(player);
         alivePlayers.Remove(player);
+        player.OnPlayerEliminated -= () => EliminatePlayer(player);
+
         OnPlayerListChanged?.Invoke();
     }
 

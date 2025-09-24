@@ -101,6 +101,7 @@ public class HotPotatoGameManager : NetworkBehaviour
     private void HandleMarkedPlayerEliminated()
     {
         Debug.Log("Marked player eliminated. Handling elimination logic.");
+        // TODO: Notify players by ui, update scores, etc.
     }
 
     private void OnValidate()
