@@ -1,17 +1,19 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Instance;
 
     public List<Player> players = new();
-    public UnityEvent OnPlayerListChanged = new();
+    public event Action OnPlayerListChanged;
     public Player localPlayer;
-    private List<Player> alivePlayers = new();
+    private readonly List<Player> alivePlayers = new();
     public List<Player> AlivePlayers => alivePlayers;
+    public event Action OnAllPlayersEliminated;
 
     public override void OnNetworkSpawn()
     {
@@ -34,7 +36,7 @@ public class PlayerManager : NetworkBehaviour
         if (player.IsOwner) localPlayer = player;
         players.Add(player);
         alivePlayers.Add(player);
-        OnPlayerListChanged.Invoke();
+        OnPlayerListChanged?.Invoke();
     }
     
     public void RemovePlayer(Player player)
@@ -43,7 +45,7 @@ public class PlayerManager : NetworkBehaviour
         
         players.Remove(player);
         alivePlayers.Remove(player);
-        OnPlayerListChanged.Invoke();
+        OnPlayerListChanged?.Invoke();
     }
 
     public void EliminatePlayer(Player player)
@@ -54,6 +56,11 @@ public class PlayerManager : NetworkBehaviour
         {
             alivePlayers.Remove(player);
         }
+
+        if (alivePlayers.Count == 0)
+        {
+            OnAllPlayersEliminated?.Invoke();
+        }
     }
 
     public bool IsPlayerAlive(Player player)
@@ -63,7 +70,11 @@ public class PlayerManager : NetworkBehaviour
 
     public Player GetRandomAlivePlayer()
     {
-        if (alivePlayers.Count == 0) return null;
+        if (alivePlayers.Count == 0)
+        {
+            return null;
+        }
+
         int randomIndex = Random.Range(0, alivePlayers.Count);
         return alivePlayers[randomIndex];
     }

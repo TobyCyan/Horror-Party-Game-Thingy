@@ -11,11 +11,21 @@ public class Timer : MonoBehaviour
     public event Action OnTimeUp;
     public event Action OnTimeTick;
 
+    private Coroutine currentCoroutine;
+    private bool isRunning = false;
+
     public void StartTimer(float duration)
     {
-        this.duration = duration;
+        if (isRunning)
+        {
+            Debug.LogWarning("Timer is already running. Restarting with new duration.");
+        }
+
         StopTimer();
-        StartCoroutine(Tick());
+
+        this.duration = duration;
+        isRunning = true;
+        currentCoroutine = StartCoroutine(Tick());
     }
 
     private void OnDestroy()
@@ -25,7 +35,11 @@ public class Timer : MonoBehaviour
 
     public void StopTimer()
     {
-        StopAllCoroutines();
+        isRunning = false;
+        if (currentCoroutine != null)
+        {
+            StopCoroutine(currentCoroutine);
+        }
     }
 
     public string GetCurrentTimeAsString()
@@ -39,12 +53,16 @@ public class Timer : MonoBehaviour
     private IEnumerator Tick()
     {
         timer = duration;
-        while (true)
+        while (isRunning)
         {
             timer -= Time.deltaTime;
             if (timer <= 0)
             {
-                OnTimeUp?.Invoke();
+                if (isRunning)
+                {
+                    Debug.Log($"Timer finished at {name}.");
+                    OnTimeUp?.Invoke();
+                }
                 yield break;
             }
             OnTimeTick?.Invoke();

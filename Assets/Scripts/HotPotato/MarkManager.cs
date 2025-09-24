@@ -15,9 +15,8 @@ public class MarkManager : NetworkBehaviour
     public event Action OnMarkedPlayerEliminated;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
-    public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
     [Min(0.0f)]
-    [SerializeField] private float markPassingCoolDownDuration = 4.0f;
+    [SerializeField] private float markPassingCooldown = 4.0f;
 
     void Awake()
     {
@@ -56,6 +55,18 @@ public class MarkManager : NetworkBehaviour
         AddHpComponentClientRpc();
     }
 
+    public void StopHPGame()
+    {
+        if (currentMarkedPlayer != null)
+        {
+            currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
+            currentMarkedPlayer = null;
+        }
+        
+        postEliminationCoolDownTimer.StopTimer();
+        markSymbol.SetActive(false);
+    }
+
     private void HandleMarkedPlayerEliminated()
     {
         // Remove the marked player from the alive players pool
@@ -63,7 +74,7 @@ public class MarkManager : NetworkBehaviour
         currentMarkedPlayer = null;
 
         // Start cooldown timer before assigning the new marked player
-        postEliminationCoolDownTimer.StartTimer(markPassingCoolDownDuration);
+        postEliminationCoolDownTimer.StartTimer(markPassingCooldown);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -89,6 +100,12 @@ public class MarkManager : NetworkBehaviour
     {
         Player randomPlayer = PlayerManager.Instance.GetRandomAlivePlayer();
         currentMarkedPlayer = randomPlayer;
+
+        if (currentMarkedPlayer == null)
+        {
+            Debug.LogWarning("No alive players to assign the mark to.");
+            return;
+        }
 
         PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
     }
