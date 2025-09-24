@@ -11,7 +11,6 @@ public class Timer : MonoBehaviour
     public event Action OnTimeUp;
     public event Action OnTimeTick;
 
-    private Coroutine currentCoroutine;
     private bool isRunning = false;
 
     public void StartTimer(float duration)
@@ -25,7 +24,7 @@ public class Timer : MonoBehaviour
 
         this.duration = duration;
         isRunning = true;
-        currentCoroutine = StartCoroutine(Tick());
+        StartCoroutine(Tick());
     }
 
     private void OnDestroy()
@@ -36,10 +35,7 @@ public class Timer : MonoBehaviour
     public void StopTimer()
     {
         isRunning = false;
-        if (currentCoroutine != null)
-        {
-            StopCoroutine(currentCoroutine);
-        }
+        StopAllCoroutines();
     }
 
     public string GetCurrentTimeAsString()
