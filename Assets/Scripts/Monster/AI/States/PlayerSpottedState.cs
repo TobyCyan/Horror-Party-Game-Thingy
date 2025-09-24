@@ -4,10 +4,15 @@ public class PlayerSpottedState : BaseState
 {
     private Player player;
     private readonly LookAt lookAt = new();
-    private readonly Timer timer = new();
+    private readonly Timer timer;
+    private bool hasTimerStarted = false;
 
     public PlayerSpottedState(Monster monster) : base(monster)
     {
+        if (timer == null)
+        {
+            timer = monster.gameObject.AddComponent<Timer>();
+        }
     }
 
     public override void EnterState(StateMachine stateMachine)
@@ -23,9 +28,7 @@ public class PlayerSpottedState : BaseState
             return;
         }
 
-        float countdown = 3.0f;
         monster.SpotPlayer();
-        timer.StartTimer(countdown);
     }
 
     public override void ExitState(StateMachine stateMachine)
@@ -34,6 +37,8 @@ public class PlayerSpottedState : BaseState
         {
             monster.LosePlayer();
         }
+
+        hasTimerStarted = false;
     }
 
     public override void UpdateState(StateMachine stateMachine)
@@ -46,7 +51,13 @@ public class PlayerSpottedState : BaseState
         }
 
         // After finishing looking at the player, run the timer.
-        timer.RunTimer();
+        if (hasTimerStarted)
+        {
+            return;
+        }
+        float countdown = 3.0f;
+        timer.StartTimer(countdown);
+        hasTimerStarted = true;
     }
 
     public override bool CanTransition(StateMachine stateMachine)

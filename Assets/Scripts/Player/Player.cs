@@ -1,6 +1,7 @@
     using Unity.Netcode;
 using Unity.Collections;
 using UnityEngine;
+using System;
 
 public class Player : NetworkBehaviour
 {
@@ -13,6 +14,8 @@ public class Player : NetworkBehaviour
 
     public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
+
+    public event Action OnPlayerEliminated;
 
     // Give owner control to stuff it should control
     public override void OnNetworkSpawn()
@@ -49,7 +52,15 @@ public class Player : NetworkBehaviour
     {
         playerMovement.Blind(duration);
     }
-    
+
+    public void EliminatePlayer()
+    {
+        Debug.Log($"Player {Id} eliminated.");
+        OnPlayerEliminated?.Invoke();
+
+        // TODO: Add logic to hide player and go into spectator mode
+    }
+
     // // Give Last touch player authority to move it
     // [Rpc(SendTo.Server)]
     // void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)

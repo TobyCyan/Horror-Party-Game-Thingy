@@ -1,38 +1,54 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
-public class Timer
+public class Timer : MonoBehaviour
 {
     private float duration;
-    private float currentTime;
-
-    private bool isRunning;
-
-    public bool IsComplete => !isRunning && currentTime >= duration;
+    private float timer;
+    public float CurrentTime => timer;
+    public bool IsComplete => timer <= 0;
+    public event Action OnTimeUp;
+    public event Action OnTimeTick;
 
     public void StartTimer(float duration)
     {
         this.duration = duration;
-        currentTime = 0f;
-        isRunning = true;
+        StopTimer();
+        StartCoroutine(Tick());
+    }
+
+    private void OnDestroy()
+    {
+        StopTimer();
     }
 
     public void StopTimer()
     {
-        isRunning = false;
+        StopAllCoroutines();
     }
 
-    public void RunTimer()
+    public string GetCurrentTimeAsString()
     {
-        if (!isRunning)
-        {
-            return;
-        }
+        TimeSpan time = TimeSpan.FromSeconds(timer);
+        string formattedTime = time.ToString(@"mm\:ss");
 
-        currentTime += Time.deltaTime;
-        if (currentTime >= duration)
+        return formattedTime;
+    }
+
+    private IEnumerator Tick()
+    {
+        timer = duration;
+        while (true)
         {
-            Debug.Log("Timer completed after " + duration + " seconds.");
-            StopTimer();
+            timer -= Time.deltaTime;
+            if (timer <= 0)
+            {
+                OnTimeUp?.Invoke();
+                yield break;
+            }
+            OnTimeTick?.Invoke();
+            yield return null;
         }
     }
 }

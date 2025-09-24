@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
+using Random = UnityEngine.Random;
 
 public class MarkManager : NetworkBehaviour
 {
@@ -11,20 +13,30 @@ public class MarkManager : NetworkBehaviour
     public static MarkManager Instance;
     public Player currentMarkedPlayer;
 
+    public event Action<ulong> OnMarkPassed;
+    public event Action OnMarkedPlayerEliminated;
+
     void Awake()
     {
         Instance = this;
     }
 
-    public override void OnNetworkSpawn()
+    private void Start()
     {
-        if (!IsServer) return;
-        
-        
-        StartHPGame();
+        OnMarkPassed += UpdateMarkedPlayerAllRpc;
+        // TODO: Should assign next player by least sabotage scores.
+        OnMarkedPlayerEliminated += AssignRandomPlayerWithMark;
     }
 
-    private async void StartHPGame()
+
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        OnMarkPassed -= UpdateMarkedPlayerAllRpc;
+        OnMarkedPlayerEliminated -= AssignRandomPlayerWithMark;
+    }
+
+    public async void StartHPGame()
     {
         await Task.Delay(500);
         
@@ -35,6 +47,12 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void AddHpComponentClientRpc()
     {
+        if (PlayerManager.Instance == null || PlayerManager.Instance.localPlayer == null)
+        {
+            Debug.Log("PlayerManager or localPlayer is null, cannot add HPPassingLogic component.");
+            return;
+        }
+        
         Debug.Log($"Adding hp component to {PlayerManager.Instance.localPlayer} with {PlayerManager.Instance.localPlayer.Id}");
         PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
@@ -56,12 +74,18 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
+        if (currentMarkedPlayer != null)
+        {
+            // Unsubscribe from previous marked player's elimination event
+            currentMarkedPlayer.OnPlayerEliminated -= OnMarkedPlayerEliminated;
+        }
+
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
         Debug.Log($"Passing mark to {player} with id {id}");
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
-        
-        UpdateMarkedPlayerAllRpc(id);
+
+        OnMarkPassed?.Invoke(id);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -69,5 +93,6 @@ public class MarkManager : NetworkBehaviour
     {
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
         currentMarkedPlayer = player;
+        currentMarkedPlayer.OnPlayerEliminated += OnMarkedPlayerEliminated;
     }
 }

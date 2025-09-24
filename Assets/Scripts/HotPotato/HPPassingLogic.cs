@@ -8,9 +8,9 @@ public class HPPassingLogic : MonoBehaviour
         // Only marked person should try to pass
         if (MarkManager.Instance.currentMarkedPlayer.Id != PlayerManager.Instance.localPlayer.Id) return;
         
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
-            MarkManager.Instance.PassMarkToPlayer(other.gameObject.GetComponent<Player>().Id);
+            MarkManager.Instance.PassMarkToPlayer(player.Id);
         }
     }
 }
