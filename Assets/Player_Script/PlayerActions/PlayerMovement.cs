@@ -1,6 +1,4 @@
-﻿using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
