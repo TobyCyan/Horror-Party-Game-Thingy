@@ -52,6 +52,10 @@ public class PlayerManager : NetworkBehaviour
         OnPlayerListChanged?.Invoke();
     }
 
+    /// <summary>
+    /// Eliminates a player from the alive players list.
+    /// </summary>
+    /// <param name="player"></param>
     public void EliminatePlayer(Player player)
     {
         if (!players.Contains(player)) return;
