@@ -1,5 +1,7 @@
 using UnityEngine;
 using Unity.Cinemachine;
+
+// these could probably be instances
 public abstract class MazeGamePhase
 {
     protected PhaseID id; // laze
@@ -55,10 +57,9 @@ public class TrapPhase : MazeGamePhase
         // todo disbale fps input , change ui
         base.Enter();
         MazeCameraManager.Instance.SetToTopDownView();
-
-
+        UIManager.Instance.SwitchUIView<TrapsPhaseView>();
+        
     }
-
     public override void Exit()
     {
         
@@ -97,8 +98,8 @@ public class RunPhase : MazeGamePhase
         base.Enter();
         // todo enable fps input, change ui
         MazeCameraManager.Instance.SetToPlayerView();
+        UIManager.Instance.SwitchUIView<RunPhaseView>();
     }
-
     public override void Exit()
     {
 

@@ -16,9 +16,7 @@ public class MazeCameraManager : MonoBehaviour
             return;
         }
         Instance = this;
-        SetToPlayerView();
-
-
+        topDownCam.Priority = 100; // hack
     }
 
     public void RegisterLocalPlayerCamera(CinemachineCamera cam)

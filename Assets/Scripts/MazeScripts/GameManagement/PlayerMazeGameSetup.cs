@@ -1,12 +1,13 @@
 using UnityEngine;
 using Unity.Cinemachine;
 using Unity.Netcode;
-
+using UnityEngine.SceneManagement;
 public class PlayerMazeGameSetup : MonoBehaviour
 {
     public CinemachineCamera playerCam;
     private bool isLocalPlayer;
-    void Start()
+
+    private void Start()
     {
         if (null == MazeGameManager.Instance) return; // not in maze game
         isLocalPlayer = GetComponent<NetworkBehaviour>().IsOwner;

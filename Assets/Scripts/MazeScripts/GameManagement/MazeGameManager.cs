@@ -77,14 +77,14 @@ public class MazeGameManager : NetworkBehaviour
         currPhase?.UpdatePhase();
         // uncomment below to test for now
 
-        //if (!IsServer) return;
+        if (!IsServer) return;
 
-        //phaseTimer += Time.deltaTime;
-        //if (phaseTimer >= 3f)
-        //{
-        //    phaseTimer = 0f;
-        //    ToggleTrapRun();
-        //}
+        phaseTimer += Time.deltaTime;
+        if (phaseTimer >= 3f)
+        {
+            phaseTimer = 0f;
+            ToggleTrapRun();
+        }
     }
 
     // test, del later
