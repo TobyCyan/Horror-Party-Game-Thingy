@@ -12,7 +12,7 @@ public class MazeManager : NetworkBehaviour
     public static MazeManager Instance { get; private set; }
     public int size = 15;
     public float roomRate = 0.2f;
-    private float scale = 6f; // should be same as prefab scale, SORRY
+    public float scale = 6f; // should be same as prefab scale, SORRY
     int[] cells;
     MazeBlock[] mazeBlocks; // ref to all mazeblocks for now
     [SerializeField] private MazeBlock prefab;
@@ -34,7 +34,6 @@ public class MazeManager : NetworkBehaviour
             return;
         }
         Instance = this;
-        //DontDestroyOnLoad(gameObject); 
         NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnloaded;
     }
@@ -42,7 +41,7 @@ public class MazeManager : NetworkBehaviour
     private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         NetworkManager.SceneManager.OnUnloadEventCompleted -= OnSceneUnloaded;
-        mazeSeed.OnValueChanged -= OnSeedChanged; // if not ddol then doesnt matter..?
+        mazeSeed.OnValueChanged -= OnSeedChanged;
     }
 
     private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
@@ -98,7 +97,7 @@ public class MazeManager : NetworkBehaviour
             if (CellUtils.IsRoom(cells[i])) blockPrefab = roomPrefab;
 
             // instantiate mazeblock at hor 0 vert with state
-            MazeBlock block = Instantiate(blockPrefab, new Vector3(hor, 0, vert), Quaternion.identity);
+            MazeBlock block = Instantiate(blockPrefab, new Vector3(hor, 0, vert), Quaternion.identity, gameObject.transform);
             block.InitState(cells[i]);
             mazeBlocks[i] = block;
             // next
