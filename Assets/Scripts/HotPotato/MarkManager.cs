@@ -7,7 +7,7 @@ using System;
 public class MarkManager : NetworkBehaviour
 {
     [SerializeField] private GameObject markSymbol;
-    
+
     public static MarkManager Instance;
     public Player currentMarkedPlayer;
 
@@ -125,9 +125,10 @@ public class MarkManager : NetworkBehaviour
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-        Debug.Log($"Passing mark to {player} with id {id}");
+        // Debug.Log($"Passing mark to {player} with id {id}");
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
+        markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
 
         OnMarkPassed?.Invoke(id);
     }

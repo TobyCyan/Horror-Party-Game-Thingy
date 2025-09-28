@@ -3,11 +3,19 @@ using UnityEngine;
 
 public class HotPotatoGameManager : NetworkBehaviour
 {
+    public static HotPotatoGameManager Instance;
+    
     [SerializeField] private MarkManager markManager;
     [Min(0.0f)]
     [SerializeField] private float hotPotatoDuration = 30.0f;
     [SerializeField] private Timer hotPotatoTimer;
+    public NetworkVariable<float> timer = new();
     private bool isGameActive = true;
+
+    public void Awake()
+    {
+        Instance = this;
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -88,6 +96,10 @@ public class HotPotatoGameManager : NetworkBehaviour
     {
         if (!isGameActive) return;
 
+        if (IsServer)
+        {
+            timer.Value = hotPotatoTimer.CurrentTime;
+        }
         // For testing purposes
         if (Input.GetKeyDown(KeyCode.K))
         {

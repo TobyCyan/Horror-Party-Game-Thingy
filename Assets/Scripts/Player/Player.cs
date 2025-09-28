@@ -14,6 +14,7 @@ public class Player : NetworkBehaviour
 
     public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
+    public ulong clientId;
 
     public event Action OnPlayerEliminated;
 
@@ -26,7 +27,8 @@ public class Player : NetworkBehaviour
         {
             EnablePlayer(false);
         }
-        
+
+        clientId = OwnerClientId;
         PlayerManager.Instance.AddPlayer(this);
     }
 
