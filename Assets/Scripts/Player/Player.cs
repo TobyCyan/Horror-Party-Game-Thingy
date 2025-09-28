@@ -32,7 +32,7 @@ public class Player : NetworkBehaviour
 
     public void EnablePlayer(bool enable)
     {
-        cam.SetActive(enable);
+        // cam.SetActive(enable); // Switching to cinemachine priority
         playerMovement.enabled = enable;
         playerCam.enabled = enable;
     }
@@ -59,6 +59,7 @@ public class Player : NetworkBehaviour
         OnPlayerEliminated?.Invoke();
 
         // TODO: Add logic to hide player and go into spectator mode
+        SpawnManager.Instance.DespawnPlayerServerRpc(Id);
     }
 
     // // Give Last touch player authority to move it
