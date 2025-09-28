@@ -56,7 +56,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (PlayerManager.Instance != null)
         {
-            PlayerManager.Instance.OnAllPlayersEliminated -= EndGame;
+            PlayerManager.Instance.OnLastPlayerStanding -= EndGame;
         }
     }
 
