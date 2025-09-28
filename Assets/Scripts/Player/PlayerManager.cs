@@ -13,6 +13,7 @@ public class PlayerManager : NetworkBehaviour
     private readonly List<Player> alivePlayers = new();
     public List<Player> AlivePlayers => alivePlayers;
     public event Action OnAllPlayersEliminated;
+    public event Action OnLastPlayerStanding;
 
     public override void OnNetworkSpawn()
     {
@@ -63,6 +64,11 @@ public class PlayerManager : NetworkBehaviour
         if (alivePlayers.Contains(player))
         {
             alivePlayers.Remove(player);
+        }
+
+        if (alivePlayers.Count <= 1)
+        {
+            OnLastPlayerStanding?.Invoke();
         }
 
         if (alivePlayers.Count == 0)
