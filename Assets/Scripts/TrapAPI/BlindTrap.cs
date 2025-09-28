@@ -1,13 +1,19 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
+[RequireComponent (typeof(BlindEffect))]
 public class BlindTrap : TrapBase
 {
     [Header("Who can trigger")]
     [SerializeField] private LayerMask playerMask;   // set to "Player" in Inspector
 
-    [Header("Optional")]
-    [SerializeField] private float blindSeconds = 2f; // use if your OnBlind has a duration
+    private BlindEffect blindEffect;
+
+    protected override void Start()
+    {
+        base.Start();
+        blindEffect = GetComponent<BlindEffect>();
+    }
 
     void Reset()
     {
@@ -34,15 +40,14 @@ public class BlindTrap : TrapBase
     // Trap effect
     protected override void OnTriggerCore(TrapTriggerContext ctx)
     {
-        var pm = ctx.instigator.GetComponentInParent<PlayerMovement>();
-        if (pm == null) return;
+        var player = ctx.instigator.GetComponentInParent<Player>();
+        if (player == null) return;
 
         // Call the method your PlayerMovement exposes:
         // If your signature is OnBlind(float):
         // pm.OnBlind(blindSeconds);
 
-        // If your signature is OnBlind() with no args:
-        pm.OnBlind();
-        Debug.Log($"BlindTrap: blinded {ctx.instigator} for {blindSeconds} seconds");
+        blindEffect.Apply(player);
+        Debug.Log($"BlindTrap: blinded {ctx.instigator}");
     }
 }

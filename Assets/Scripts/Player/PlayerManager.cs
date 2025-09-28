@@ -1,15 +1,18 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
-using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class PlayerManager : NetworkBehaviour
 {
     public static PlayerManager Instance;
 
-    public List<Player> players = new List<Player>();
-    public UnityEvent OnPlayerListChanged = new();
+    public List<Player> players = new();
+    public event Action OnPlayerListChanged;
     public Player localPlayer;
+    private readonly List<Player> alivePlayers = new();
+    public List<Player> AlivePlayers => alivePlayers;
+    public event Action OnAllPlayersEliminated;
 
     public override void OnNetworkSpawn()
     {
@@ -30,8 +33,12 @@ public class PlayerManager : NetworkBehaviour
         if (players.Contains(player)) return;
         
         if (player.IsOwner) localPlayer = player;
+
         players.Add(player);
-        OnPlayerListChanged.Invoke();
+        alivePlayers.Add(player);
+        player.OnPlayerEliminated += () => EliminatePlayer(player);
+
+        OnPlayerListChanged?.Invoke();
     }
     
     public void RemovePlayer(Player player)
@@ -39,7 +46,45 @@ public class PlayerManager : NetworkBehaviour
         if (!players.Contains(player)) return;
         
         players.Remove(player);
-        OnPlayerListChanged.Invoke();
+        alivePlayers.Remove(player);
+        player.OnPlayerEliminated -= () => EliminatePlayer(player);
+
+        OnPlayerListChanged?.Invoke();
+    }
+
+    /// <summary>
+    /// Eliminates a player from the alive players list.
+    /// </summary>
+    /// <param name="player"></param>
+    public void EliminatePlayer(Player player)
+    {
+        if (!players.Contains(player)) return;
+        
+        if (alivePlayers.Contains(player))
+        {
+            alivePlayers.Remove(player);
+        }
+
+        if (alivePlayers.Count == 0)
+        {
+            OnAllPlayersEliminated?.Invoke();
+        }
+    }
+
+    public bool IsPlayerAlive(Player player)
+    {
+        return alivePlayers.Contains(player);
+    }
+
+    public Player GetRandomAlivePlayer()
+    {
+        if (alivePlayers.Count == 0)
+        {
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, alivePlayers.Count);
+        return alivePlayers[randomIndex];
     }
 
     public Player FindPlayerByNetId(ulong id)

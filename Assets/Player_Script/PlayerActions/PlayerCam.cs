@@ -1,12 +1,17 @@
+using System.Collections.Generic;
+using Unity.Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
-public class PlayerCam : MonoBehaviour
+public class PlayerCam : NetworkBehaviour
 {
     [Header("Refs")]
     public Transform playerBody;                 // root that moves (yaw applied here)
-    [SerializeField] private CapsuleCollider playerCapsule; // assign your player’s CapsuleCollider
-
+    [SerializeField] private CapsuleCollider playerCapsule; // assign your playerï¿½s CapsuleCollider
+    [SerializeField] public CinemachineCamera playerCam;
+    [SerializeField] private List<Renderer> playerRenderers = new();
+    
     [Header("Look")]
     public float sensX = 0.12f;  // Input System delta is per-frame pixels; usually no deltaTime
     public float sensY = 0.12f;
@@ -64,5 +69,42 @@ public class PlayerCam : MonoBehaviour
             lp.y = Mathf.Lerp(lp.y, targetY, Time.deltaTime * eyeLerpSpeed);
             transform.localPosition = lp;
         }
+    }
+
+    /// <summary>
+    /// Forces player camera to look straight.
+    /// Use this to make cinematics like jumpscares look right.
+    /// </summary>
+    public void LookStraight()
+    {
+        transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+    }
+    
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        
+        CameraManager.Instance.AddCam(this);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+        
+        CameraManager.Instance.RemoveCam(this);
+    }
+    private void TogglePlayerBody(bool toggle)
+    {
+        foreach (var renderer in playerRenderers)
+        {
+            renderer.shadowCastingMode = toggle ? ShadowCastingMode.ShadowsOnly : ShadowCastingMode.On;
+        }
+    }
+
+    public void TogglePlayerCam(bool toggle)
+    {
+        playerCam.Priority= toggle ? 10 : 0;
+        TogglePlayerBody(toggle);
     }
 }
