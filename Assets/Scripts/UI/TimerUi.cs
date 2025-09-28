@@ -1,16 +1,43 @@
+using TMPro;
 using UnityEngine;
 
 public class TimerUi : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Timer timer;
+    [SerializeField] private TextMeshProUGUI timerText;
+
+    private void Start()
     {
-        
+        timer = FindAnyObjectByType<Timer>();
+        if (timer != null )
+        {
+            timer.OnTimeTick += UpdateTimer;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        if ( timer != null )
+        {
+            timer.OnTimeTick -= UpdateTimer;
+        }
+    }
+
+    private void UpdateTimer()
+    {
+        timerText.text = timer.GetCurrentTimeAsString();
+    }
+
+    private void OnValidate()
+    {
+        if (timer == null)
+        {
+            Debug.LogWarning($"Timer is null on {name}!");
+        }
+
+        if (timerText == null)
+        {
+            Debug.LogWarning($"Timer text is null on {name}"!);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -16,6 +17,8 @@ public class PlayerSilhouette : NetworkBehaviour
 
     int silhouetteLayer;
     int baselineLayer;
+
+    public event Action OnSilhouetteShown;
 
     void Awake()
     {
@@ -53,6 +56,7 @@ public class PlayerSilhouette : NetworkBehaviour
                 r.enabled = true;
         }
 
+        OnSilhouetteShown?.Invoke();
         yield return new WaitForSeconds(seconds);
 
         // ALWAYS restore to baseline Player layer
