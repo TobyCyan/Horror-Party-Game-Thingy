@@ -1,5 +1,3 @@
-using System;
-using Unity.Netcode;
 using UnityEngine;
 
 public class HPPassingLogic : MonoBehaviour
@@ -8,11 +6,11 @@ public class HPPassingLogic : MonoBehaviour
     {
         Debug.Log("Collided with something");
         // Only marked person should try to pass
-        if (MarkManager.Instance.currentMarkedPlayer != PlayerManager.Instance.localPlayer) return;
+        if (MarkManager.Instance.currentMarkedPlayer.Id != PlayerManager.Instance.localPlayer.Id) return;
         
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
-            MarkManager.Instance.PassMarkToPlayer(other.gameObject.GetComponent<Player>().Id);
+            MarkManager.Instance.PassMarkToPlayer(player.Id);
         }
     }
 }

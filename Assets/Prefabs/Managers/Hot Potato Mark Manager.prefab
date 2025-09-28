@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 787682723935455629}
   - component: {fileID: 2438081669451907453}
   - component: {fileID: 1751716005638177800}
+  - component: {fileID: 8786216099207743283}
   m_Layer: 0
-  m_Name: HotPotatoManager
+  m_Name: Hot Potato Mark Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2868992280
+  GlobalObjectIdHash: 2428308290
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -74,6 +75,20 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   markSymbol: {fileID: 1749243385822768267}
   currentMarkedPlayer: {fileID: 0}
+  postEliminationCoolDownTimer: {fileID: 8786216099207743283}
+  markPassingCoolDownDuration: 4
+--- !u!114 &8786216099207743283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668355135094748375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3732e3e63e17248adef0301dc97b10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1749243385822768267
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3480974536
+  GlobalObjectIdHash: 3088547579
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
