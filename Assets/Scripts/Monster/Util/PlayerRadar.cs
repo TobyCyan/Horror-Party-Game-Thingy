@@ -9,15 +9,16 @@ public class PlayerRadar
         this.searchRadius = searchRadius;
     }
 
-    public bool IsPlayerInRange(Vector3 origin, out Transform player)
+    public bool IsPlayerInRange(Vector3 origin, out Player player)
     {
         // Check for player within search radius
         Collider[] hits = Physics.OverlapSphere(origin, searchRadius);
         foreach (Collider hit in hits)
         {
-            if (hit.CompareTag("Player"))
+            Player playerComp = hit.GetComponent<Player>();
+            if (playerComp)
             {
-                player = hit.transform;
+                player = playerComp;
                 return true;
             }
         }

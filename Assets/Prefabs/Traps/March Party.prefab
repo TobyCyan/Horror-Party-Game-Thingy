@@ -1,0 +1,457 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8083099324181897937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3704927523635827733}
+  - component: {fileID: 1430693788717857195}
+  - component: {fileID: 5085876349425284653}
+  m_Layer: 0
+  m_Name: March Party
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3704927523635827733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8083099324181897937}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.8, y: -1.68344, z: -9.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2005430106498257744}
+  - {fileID: 7862014823710625548}
+  - {fileID: 5285256201281143707}
+  - {fileID: 3157960848233170433}
+  - {fileID: 5262622359313281654}
+  - {fileID: 3310531637188297466}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1430693788717857195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8083099324181897937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc567c9ee7986b47a8bdf3843d4b1ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  placement: 1
+  cooldown: 10
+  oneShot: 0
+  marchObject: {fileID: 8083099324181897937}
+  startPosition: {x: 0.8, y: -1.68344, z: -5}
+  endPosition: {x: 0.8, y: -1.68344, z: 5.28}
+  marchSpeed: 5
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  jumpScareModel: {fileID: 0}
+--- !u!65 &5085876349425284653
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8083099324181897937}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.7957342, y: 2.6042135, z: 3.853899}
+  m_Center: {x: 1.4184316, y: 0.802107, z: 0.6704693}
+--- !u!1001 &627403696553024605
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.77201986
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &5262622359313281654 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 627403696553024605}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &641037211216719280
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.0133276
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier (4)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &5285256201281143707 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 641037211216719280}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &3217566445815374119
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.0133276
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.5000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &7862014823710625548 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 3217566445815374119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6514689404372123003
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.0133276
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.1279999
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &2005430106498257744 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 6514689404372123003}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7669418894555981866
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.77201986
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier (5)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &3157960848233170433 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 7669418894555981866}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &7803952598983584977
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3704927523635827733}
+    m_Modifications:
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.77201986
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.1279999
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: m_Name
+      value: GhostSoldier (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+--- !u!4 &3310531637188297466 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4736779042339565099, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+  m_PrefabInstance: {fileID: 7803952598983584977}
+  m_PrefabAsset: {fileID: 0}

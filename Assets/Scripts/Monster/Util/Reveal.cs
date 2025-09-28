@@ -28,7 +28,7 @@ public class Reveal : MonoBehaviour
         }
 
         Vector3 radarOrigin = shouldRevealFollowOwner ? transform.position : revealPosition;
-        bool shouldReveal = playerRadar.IsPlayerInRange(radarOrigin, out Transform _);
+        bool shouldReveal = playerRadar.IsPlayerInRange(radarOrigin, out Player _);
         if (shouldReveal)
         {
             RevealSelf();

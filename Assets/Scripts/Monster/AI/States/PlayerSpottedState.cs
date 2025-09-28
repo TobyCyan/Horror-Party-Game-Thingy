@@ -2,12 +2,17 @@ using UnityEngine;
 
 public class PlayerSpottedState : BaseState
 {
-    private Transform player;
+    private Player player;
     private readonly LookAt lookAt = new();
-    private readonly Timer timer = new();
+    private readonly Timer timer;
+    private bool hasTimerStarted = false;
 
     public PlayerSpottedState(Monster monster) : base(monster)
     {
+        if (timer == null)
+        {
+            timer = monster.gameObject.AddComponent<Timer>();
+        }
     }
 
     public override void EnterState(StateMachine stateMachine)
@@ -23,9 +28,7 @@ public class PlayerSpottedState : BaseState
             return;
         }
 
-        float countdown = 3.0f;
         monster.SpotPlayer();
-        timer.StartTimer(countdown);
     }
 
     public override void ExitState(StateMachine stateMachine)
@@ -34,19 +37,27 @@ public class PlayerSpottedState : BaseState
         {
             monster.LosePlayer();
         }
+
+        hasTimerStarted = false;
     }
 
     public override void UpdateState(StateMachine stateMachine)
     {
         float lookAtSpeed = 4.0f;
-        bool isFinished = lookAt.LookAtTarget(stateMachine.transform, player, lookAtSpeed);
+        bool isFinished = lookAt.LookAtTarget(stateMachine.transform, player.transform, lookAtSpeed);
         if (!isFinished)
         {
             return;
         }
 
         // After finishing looking at the player, run the timer.
-        timer.RunTimer();
+        if (hasTimerStarted)
+        {
+            return;
+        }
+        float countdown = 3.0f;
+        timer.StartTimer(countdown);
+        hasTimerStarted = true;
     }
 
     public override bool CanTransition(StateMachine stateMachine)
