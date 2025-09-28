@@ -30,7 +30,7 @@ public class HotPotatoMarkUi : MonoBehaviour, IPlayerBindedUi
 
     private void CheckPlayerId(ulong id)
     {
-        if (id == playerId)
+        if (MarkManager.Instance.currentMarkedPlayer.Id == playerId)
         {
             Reveal();
         }
