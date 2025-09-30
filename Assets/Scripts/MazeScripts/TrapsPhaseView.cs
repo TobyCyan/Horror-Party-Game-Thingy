@@ -5,6 +5,15 @@ public class TrapsPhaseView : UIView
 {
     [SerializeField] private Transform content;
     [SerializeField] private GameObject trapButtonPrefab;
+    [SerializeField] private Button undoButton;
+
+    private void Start()
+    {
+        undoButton.onClick.AddListener(() =>
+        {
+            MazeTrapManager.Instance.Undo();
+        });
+    }
 
     public override void Show()
     {
@@ -12,7 +21,7 @@ public class TrapsPhaseView : UIView
         Debug.Log("Showing traps UI");
 
 
-        var trapPrefabs = MazeTrapManager.Instance.trapPrefabs; // get array from manager
+        var trapPrefabs = MazeTrapManager.Instance.trapPrefabs; // maybe available traps are different every cycle?
         if (trapPrefabs == null || trapPrefabs.Length == 0)
         {
             Debug.LogWarning("Traps UI could not get trap list");

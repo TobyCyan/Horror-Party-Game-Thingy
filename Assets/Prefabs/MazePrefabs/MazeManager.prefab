@@ -118,9 +118,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abaa721eee7c37f4296fecabf151dc22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   gridLayer:
     serializedVersion: 2
     m_Bits: 1024
   trapPrefabs:
   - {fileID: 8083099324181897937, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
-  - {fileID: 7784730708835797405, guid: be7c1651a1f7b794396a697eeade79db, type: 3}

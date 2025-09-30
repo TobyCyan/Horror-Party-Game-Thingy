@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     private UIView currentView;
     [SerializeField] 
-    public List<UIView> uiViews; // overwrite per minigame, easier
+    public List<UIView> uiViews; // contains everything right now..?
 
     private void Awake()
     {

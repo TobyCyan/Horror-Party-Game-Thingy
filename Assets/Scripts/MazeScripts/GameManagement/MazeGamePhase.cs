@@ -42,18 +42,21 @@ public class TrapPhase : MazeGamePhase
 {
 
     float timeLimit;
+    int cost;
     float currTime = 0f;
     Player player;
     PlayerMovement movement;
 
     public TrapPhase()
     {
-        timeLimit = 5f;
+        timeLimit = 10f;
+        cost = 20;
     }
 
-    public TrapPhase(float timeLimit)
+    public TrapPhase(float timeLimit, int initCost)
     {
         this.timeLimit = timeLimit;
+        this.cost = initCost;
     }
 
     public override void Enter()
@@ -65,7 +68,7 @@ public class TrapPhase : MazeGamePhase
         MazeCameraManager.Instance.SetToTopDownView();
         UIManager.Instance.SwitchUIView<TrapsPhaseView>();
 
-        MazeTrapManager.Instance.EnablePlacing(true);
+        MazeTrapManager.Instance.EnablePlacing(true, cost);
 
         movement.enabled = false;
 
@@ -79,8 +82,11 @@ public class TrapPhase : MazeGamePhase
            
         base.Exit();
 
-        movement.enabled = true;
+        MazeTrapManager.Instance.FinaliseTraps();
         MazeTrapManager.Instance.EnablePlacing(false);
+
+        movement.enabled = true;
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -116,7 +122,6 @@ public class RunPhase : MazeGamePhase
     public override void Enter()
     {
         base.Enter();
-        // todo enable fps input, change ui
         MazeCameraManager.Instance.SetToPlayerView();
         UIManager.Instance.SwitchUIView<RunPhaseView>();
     }
@@ -132,7 +137,7 @@ public class RunPhase : MazeGamePhase
         currTime += Time.deltaTime;
         if (currTime >= timeLimit)
         {
-            ChangePhase(PhaseID.Traps); // test
+            ChangePhase(PhaseID.Traps); // test, by right should go to results
         }
     }
 }
