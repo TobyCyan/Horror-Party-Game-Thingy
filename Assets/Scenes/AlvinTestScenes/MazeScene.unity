@@ -318,6 +318,7 @@ MonoBehaviour:
   scoreBoardGameObject: {fileID: 1919432053}
   scorePanelParent: {fileID: 1911490448}
   playerCardPrefab: {fileID: 199207142170004656, guid: 569b56773eecbef47929020108fb7f0d, type: 3}
+  potatoMark: {fileID: 1597453589}
 --- !u!1 &330043577
 GameObject:
   m_ObjectHideFlags: 0
