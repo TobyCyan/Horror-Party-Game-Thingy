@@ -69,8 +69,6 @@ public class MarkManager : NetworkBehaviour
 
     private void HandleMarkedPlayerEliminated()
     {
-        // Remove the marked player from the alive players pool
-        PlayerManager.Instance.EliminatePlayer(currentMarkedPlayer);
         currentMarkedPlayer = null;
 
         // Start cooldown timer before assigning the new marked player

@@ -25,11 +25,6 @@ public class Player : NetworkBehaviour
     public float float0 = 0; // HP: Time as Hot Potato
     private float float1 = 0;
 
-    private void Awake()
-    {
-        PlayerManager.Instance.OnLastPlayerStanding += EliminatePlayer;
-    }
-
     // Give owner control to stuff it should control
     public override void OnNetworkSpawn()
     {
