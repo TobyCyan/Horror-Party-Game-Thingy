@@ -6,8 +6,8 @@ using Unity.Netcode;
 
 public struct TrapInfo : INetworkSerializable
 {
-    public int x;
-    public int z;
+    public float x;
+    public float z;
     public int index; // type
     public int cost;
 
@@ -106,8 +106,8 @@ public class MazeTrapManager : NetworkBehaviour
 
         var trapInfo = new TrapInfo
         {
-            x = Mathf.RoundToInt(pos.x),
-            z = Mathf.RoundToInt(pos.z),
+            x = pos.x,
+            z = pos.z,
             index = index,
             cost = cost
         };
