@@ -71,8 +71,8 @@ public class HotPotatoGameManager : NetworkBehaviour
     private void EndGame()
     {
         isGameActive = false;
-        OnNetworkDespawn();
         Debug.Log("Hot Potato game ended.");
+        GetComponent<NetworkObject>().Despawn();
     }
 
     private void HandleMarkPassed(ulong _)

@@ -1,9 +1,10 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class HotPotatoMarkUi : MonoBehaviour, IPlayerBindedUi
 {
     private MarkManager markManager;
-    private ulong playerId;
+    private ulong playerId => PlayerManager.Instance.localPlayer.Id;
 
     private void Start()
     {
@@ -14,7 +15,7 @@ public class HotPotatoMarkUi : MonoBehaviour, IPlayerBindedUi
         }
         else
         {
-            markManager.OnMarkPassed += CheckPlayerId;
+            markManager.OnMarkPassed += CheckPlayerIdClientRpc;
             markManager.OnMarkedPlayerEliminated += Hide;
         }
     }
@@ -23,19 +24,25 @@ public class HotPotatoMarkUi : MonoBehaviour, IPlayerBindedUi
     {
         if (markManager != null)
         {
-            markManager.OnMarkPassed -= CheckPlayerId;
+            markManager.OnMarkPassed -= CheckPlayerIdClientRpc;
             markManager.OnMarkedPlayerEliminated -= Hide;
         }
     }
 
-    private void CheckPlayerId(ulong id)
+    [Rpc(SendTo.Everyone)]
+    private void CheckPlayerIdClientRpc(ulong id)
     {
+        Debug.Log("Should i display mark?");
         if (MarkManager.Instance.currentMarkedPlayer.Id == playerId)
         {
+            Debug.Log("Should i display mark? YES");
+
             Reveal();
         }
         else
         {
+            Debug.Log("Should i display mark? NO");
+
             Hide();
         }
     }
@@ -60,7 +67,7 @@ public class HotPotatoMarkUi : MonoBehaviour, IPlayerBindedUi
 
         if (playerObject.TryGetComponent<Player>(out var player))
         {
-            playerId = player.Id;
+            //playerId = player.Id;
         }
         else
         {

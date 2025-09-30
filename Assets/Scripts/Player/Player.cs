@@ -15,8 +15,20 @@ public class Player : NetworkBehaviour
     public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
     public ulong clientId;
-
+    
     public event Action OnPlayerEliminated;
+
+    // Generic score hooks if needed based on game
+    private int int0 = 0; // HP/Maze: Traps Set
+    private int int1 = 0; // HP/Maze: Sabotage success
+    private int int2 = 0;
+    public float float0 = 0; // HP: Time as Hot Potato
+    private float float1 = 0;
+
+    private void Awake()
+    {
+        PlayerManager.Instance.OnLastPlayerStanding += EliminatePlayer;
+    }
 
     // Give owner control to stuff it should control
     public override void OnNetworkSpawn()
@@ -30,6 +42,14 @@ public class Player : NetworkBehaviour
 
         clientId = OwnerClientId;
         PlayerManager.Instance.AddPlayer(this);
+        ScoreUiManager.Instance.PlayerJoined(clientId);   
+    }
+    
+    public override void OnNetworkDespawn()
+    {
+        base.OnNetworkDespawn();
+        PlayerManager.Instance.RemovePlayer(this);
+        ScoreUiManager.Instance.PlayerLeft(clientId);
     }
 
     public void EnablePlayer(bool enable)
@@ -62,8 +82,11 @@ public class Player : NetworkBehaviour
 
         // TODO: Add logic to hide player and go into spectator mode
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
+        
+        // Update Scoreboard
+        ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
     }
-
+    
     // // Give Last touch player authority to move it
     // [Rpc(SendTo.Server)]
     // void ChangeOwnerServerRpc(NetworkObject other, RpcParams rpcParams = default)

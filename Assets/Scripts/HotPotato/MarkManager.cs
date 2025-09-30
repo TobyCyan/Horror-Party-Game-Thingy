@@ -118,7 +118,7 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
-        if (currentMarkedPlayer != null)
+        if (currentMarkedPlayer)
         {
             // Unsubscribe from previous marked player's elimination event
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
@@ -145,5 +145,13 @@ public class MarkManager : NetworkBehaviour
     private void InvokeOnMarkedPlayerEliminated()
     {
         OnMarkedPlayerEliminated?.Invoke();
+    }
+
+    private void Update()
+    {
+        if (currentMarkedPlayer)
+        {
+            currentMarkedPlayer.float0 += Time.deltaTime;
+        }
     }
 }
