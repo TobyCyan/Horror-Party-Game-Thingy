@@ -15,8 +15,7 @@ public class MazeGameManager : NetworkBehaviour
    );
 
     private MazeGamePhase currPhase;
-    // TESTING
-    private float phaseTimer = 0f;
+
     void Awake()
     {
         // enforce singleton
@@ -36,16 +35,19 @@ public class MazeGameManager : NetworkBehaviour
     {
         NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
 
-        if (IsServer)
-        {
-            currPhaseId.Value = PhaseID.Traps;
-        }
-
         currPhaseId.OnValueChanged += ChangePhase;
 
         if (currPhaseId.Value != PhaseID.Default)
         {
             ChangePhase(PhaseID.Default, currPhaseId.Value);
+        }
+    }
+
+    private void Start()
+    {
+        if (IsServer)
+        {
+            currPhaseId.Value = PhaseID.Run;
         }
     }
 
@@ -75,31 +77,7 @@ public class MazeGameManager : NetworkBehaviour
     private void Update()
     {
         currPhase?.UpdatePhase();
-        // uncomment below to test for now
-
-        if (!IsServer) return;
-
-        phaseTimer += Time.deltaTime;
-        if (phaseTimer >= 3f)
-        {
-            phaseTimer = 0f;
-            ToggleTrapRun();
-        }
     }
-
-    // test, del later
-    private void ToggleTrapRun()
-    {
-        if (currPhaseId.Value == PhaseID.Traps)
-        {
-            currPhaseId.Value = PhaseID.Run;
-        }
-        else if (currPhaseId.Value == PhaseID.Run)
-        {
-            currPhaseId.Value = PhaseID.Traps;
-        }
-    }
-
 
     private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {

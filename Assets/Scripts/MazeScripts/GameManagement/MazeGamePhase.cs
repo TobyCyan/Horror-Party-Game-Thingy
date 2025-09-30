@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
 // these could probably be instances
@@ -42,6 +43,9 @@ public class TrapPhase : MazeGamePhase
 
     float timeLimit;
     float currTime = 0f;
+    Player player;
+    PlayerMovement movement;
+
     public TrapPhase()
     {
         timeLimit = 5f;
@@ -54,16 +58,32 @@ public class TrapPhase : MazeGamePhase
 
     public override void Enter()
     {
-        // todo disbale fps input , change ui
         base.Enter();
+
+        player = PlayerManager.Instance.localPlayer; // handle for local
+        movement = player.gameObject.GetComponent<PlayerMovement>();
         MazeCameraManager.Instance.SetToTopDownView();
         UIManager.Instance.SwitchUIView<TrapsPhaseView>();
-        
+
+        MazeTrapManager.Instance.EnablePlacing(true);
+
+        movement.enabled = false;
+
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+
     }
     public override void Exit()
     {
-        
+           
         base.Exit();
+
+        movement.enabled = true;
+        MazeTrapManager.Instance.EnablePlacing(false);
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
 
     }
 

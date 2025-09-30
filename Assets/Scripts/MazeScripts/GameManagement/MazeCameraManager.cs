@@ -5,7 +5,7 @@ public class MazeCameraManager : MonoBehaviour
 {
     public static MazeCameraManager Instance { get; private set; }
 
-    [SerializeField] private CinemachineCamera topDownCam;
+    [SerializeField] public CinemachineCamera topDownCam;
     [SerializeField] private CinemachineCamera localPlayerCam;
 
     void Awake()
@@ -16,7 +16,6 @@ public class MazeCameraManager : MonoBehaviour
             return;
         }
         Instance = this;
-        topDownCam.Priority = 100; // hack
     }
 
     public void RegisterLocalPlayerCamera(CinemachineCamera cam)
@@ -25,7 +24,7 @@ public class MazeCameraManager : MonoBehaviour
 
         // uh if bad things are happening to the camera look here first xd
         float deez = MazeManager.Instance.size * MazeManager.Instance.scale / 2;
-        Vector3 pos = new (deez, 200f, deez);
+        Vector3 pos = new (deez, 80f, deez);
         topDownCam.transform.position = pos;
     }
 

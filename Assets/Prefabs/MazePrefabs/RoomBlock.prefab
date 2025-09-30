@@ -443,7 +443,7 @@ GameObject:
   - component: {fileID: 6031659806578329147}
   - component: {fileID: 6747622387691823791}
   - component: {fileID: 8293437377479936730}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RoomBlock
   m_TagString: MazeBlock
   m_Icon: {fileID: 0}
