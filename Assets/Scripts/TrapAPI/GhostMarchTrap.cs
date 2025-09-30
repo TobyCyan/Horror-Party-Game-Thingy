@@ -14,6 +14,7 @@ public class GhostMarchTrap : TrapBase
     {
         jumpScareModel.OnJumpScareStart += JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp += CleanUpHandler;
+        jumpScareModel.AfterJumpScarePlayer += AfterJumpScarePlayerHandler;
         jumpScareModel.gameObject.SetActive(false);
 
         OnArmed += PlaceAtStart;
@@ -24,6 +25,7 @@ public class GhostMarchTrap : TrapBase
     {
         jumpScareModel.OnJumpScareStart -= JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp -= CleanUpHandler;
+        jumpScareModel.AfterJumpScarePlayer -= AfterJumpScarePlayerHandler;
         OnArmed -= PlaceAtStart;
     }
 
@@ -38,6 +40,20 @@ public class GhostMarchTrap : TrapBase
         {
             Debug.LogWarning($"Jumpscare model is null on {name}!");
         }
+    }
+
+    private void AfterJumpScarePlayerHandler(Player player)
+    {
+        EliminatePlayer(player);
+    }
+
+    private void EliminatePlayer(Player player)
+    {
+        if (!player.IsOwner)
+        {
+            return;
+        }
+        player.EliminatePlayer();
     }
 
     private void PlaceAtStart(ITrap _)
