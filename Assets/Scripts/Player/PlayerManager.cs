@@ -101,4 +101,9 @@ public class PlayerManager : NetworkBehaviour
     {
         return players.Find(p => p.Id == id);
     }
+
+    public Player FindPlayerByClientId(ulong clientId)
+    {
+        return players.Find(p => p.clientId == clientId);
+    }
 }

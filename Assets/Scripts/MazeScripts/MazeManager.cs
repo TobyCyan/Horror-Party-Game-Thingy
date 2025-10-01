@@ -12,7 +12,7 @@ public class MazeManager : NetworkBehaviour
     public static MazeManager Instance { get; private set; }
     public int size = 15;
     public float roomRate = 0.2f;
-    public float scale = 6f; // should be same as prefab scale, SORRY
+    public float scale = 6f; 
     int[] cells;
     MazeBlock[] mazeBlocks; // ref to all mazeblocks for now
     [SerializeField] private MazeBlock prefab;
@@ -86,7 +86,7 @@ public class MazeManager : NetworkBehaviour
 
         for (int i = 0; i < cells.Length; i++)
         {
-            if (i % size == 0)
+            if (i != 0 && i % size == 0)
             {
                 vert += scale;
                 hor = 0;
@@ -98,6 +98,7 @@ public class MazeManager : NetworkBehaviour
 
             // instantiate mazeblock at hor 0 vert with state
             MazeBlock block = Instantiate(blockPrefab, new Vector3(hor, 0, vert), Quaternion.identity, gameObject.transform);
+            block.transform.localScale = Vector3.one * scale; 
             block.InitState(cells[i]);
             mazeBlocks[i] = block;
             // next

@@ -2,8 +2,8 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using Unity.Cinemachine;
-using System;
+using System.Collections;
+
 public class MazeGameManager : NetworkBehaviour
 {
     public static MazeGameManager Instance;
@@ -15,8 +15,7 @@ public class MazeGameManager : NetworkBehaviour
    );
 
     private MazeGamePhase currPhase;
-    // TESTING
-    private float phaseTimer = 0f;
+
     void Awake()
     {
         // enforce singleton
@@ -27,14 +26,23 @@ public class MazeGameManager : NetworkBehaviour
         }
         Instance = this;
 
-        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnloaded;
     }
 
-
-    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    private void Start()
     {
-        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        StartCoroutine(DelayedStart());
+    }
+
+
+    private IEnumerator DelayedStart()
+    {
+        // sorry
+        yield return new WaitUntil(() =>
+            MazeCameraManager.Instance.localPlayerCam != null &&
+            PlayerManager.Instance.localPlayer != null
+        );
+
 
         if (IsServer)
         {
@@ -43,15 +51,19 @@ public class MazeGameManager : NetworkBehaviour
 
         currPhaseId.OnValueChanged += ChangePhase;
 
+        // latejoin client
         if (currPhaseId.Value != PhaseID.Default)
         {
             ChangePhase(PhaseID.Default, currPhaseId.Value);
         }
     }
 
+
+
     // id change -> actual phase change
     public void ChangePhase(PhaseID prev, PhaseID next)
     {
+        if (prev == next) return;
         currPhase?.Exit();
         switch(next)
         {
@@ -75,31 +87,7 @@ public class MazeGameManager : NetworkBehaviour
     private void Update()
     {
         currPhase?.UpdatePhase();
-        // uncomment below to test for now
-
-        if (!IsServer) return;
-
-        phaseTimer += Time.deltaTime;
-        if (phaseTimer >= 3f)
-        {
-            phaseTimer = 0f;
-            ToggleTrapRun();
-        }
     }
-
-    // test, del later
-    private void ToggleTrapRun()
-    {
-        if (currPhaseId.Value == PhaseID.Traps)
-        {
-            currPhaseId.Value = PhaseID.Run;
-        }
-        else if (currPhaseId.Value == PhaseID.Run)
-        {
-            currPhaseId.Value = PhaseID.Traps;
-        }
-    }
-
 
     private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
@@ -111,4 +99,5 @@ public class MazeGameManager : NetworkBehaviour
     {
         // send scores and win info to persistent game manager?
     }
+
 }
