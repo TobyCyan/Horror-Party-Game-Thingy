@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HotPotatoGameManager : NetworkBehaviour
 {
     public static HotPotatoGameManager Instance;
+    [SerializeField] private List<Transform> spawnPositions;
     
     [SerializeField] private MarkManager markManager;
     [Min(0.0f)]
@@ -12,9 +15,16 @@ public class HotPotatoGameManager : NetworkBehaviour
     public NetworkVariable<float> timer = new();
     private bool isGameActive = true;
 
-    public void Awake()
+    void Awake()
     {
+        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         Instance = this;
+    }
+
+    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        MoveAllPlayersServerRpc();
     }
 
     public override void OnNetworkSpawn()
@@ -47,6 +57,14 @@ public class HotPotatoGameManager : NetworkBehaviour
         markManager.StartHPGame();
     }
 
+    [Rpc(SendTo.Server)]
+    private void MoveAllPlayersServerRpc()
+    {
+        for (int i = 0; i < PlayerManager.Instance.players.Count; i++)
+        {
+            PlayerManager.Instance.players[i].transform.position = spawnPositions[i].position;
+        }
+    }
     public override void OnNetworkDespawn()
     {
         if (markManager != null)
@@ -68,11 +86,17 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
-    private void EndGame()
+    private async void EndGame()
     {
         isGameActive = false;
         Debug.Log("Hot Potato game ended.");
         GetComponent<NetworkObject>().Despawn();
+
+        if (IsServer)
+        {
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked("MazeScene");
+            await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
+        }
     }
 
     private void HandleMarkPassed(ulong _)
