@@ -442,7 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  SceneToLoad: MazeScene
+  SceneToLoad: HospitalScene
 --- !u!1 &206194955
 GameObject:
   m_ObjectHideFlags: 0
