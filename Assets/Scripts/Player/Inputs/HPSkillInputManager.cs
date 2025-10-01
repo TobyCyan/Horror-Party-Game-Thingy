@@ -1,33 +1,49 @@
 using UnityEngine;
 
-public class HPSkillInputManager : InputManager
+public class HPSkillInputManager : MonoBehaviour
 {
+    protected HPSkillInput inputActions;
     // Toggle depending on whether the player is a hunter
     public bool CanUseHunterSkill { get; set; } = false;
 
     // Hunter's skill
     private PlayerSkill huntersSightSkill;
 
+    private MarkManager markManager;
+
     private void Awake()
     {
-        if (inputAction != null)
-        {
-            inputAction.Enable();
-            inputAction.FindAction("HP_Hunter_Skill/Use", true).performed += _ => UseHunterSkill();
-        }
+        inputActions = new HPSkillInput();
+        inputActions.Enable();
+        inputActions.FindAction("HP_Hunter_Skill/Use", true).performed += _ => UseHunterSkill();
 
         if (huntersSightSkill == null)
         {
             huntersSightSkill = gameObject.AddComponent<HuntersSightSkill>();
         }
+
+        if (markManager == null)
+        {
+            markManager = FindFirstObjectByType<MarkManager>();
+        }
+
+        if (markManager != null)
+        {
+            markManager.OnMarkPassed += SetAsHunter;
+        }
     }
 
     private void OnDestroy()
     {
-        if (inputAction != null)
+        if (inputActions != null)
         {
-            inputAction.FindAction("HP_Hunter_Skill/Use", true).performed -= _ => UseHunterSkill();
-            inputAction.Disable();
+            inputActions.FindAction("HP_Hunter_Skill/Use", true).performed -= _ => UseHunterSkill();
+            inputActions.Disable();
+        }
+
+        if (markManager != null)
+        {
+            markManager.OnMarkPassed -= SetAsHunter;
         }
     }
 
@@ -42,8 +58,27 @@ public class HPSkillInputManager : InputManager
         huntersSightSkill.UseSkill();
     }
 
-    protected override void OnValidate()
+    private void SetAsHunter(ulong newHunterId)
     {
-        base.OnValidate();
+        if (!TryGetComponent(out Player owner))
+        {
+            Debug.LogWarning($"HPSkillInputManager could not find Player component on the same GameObject: {name}.");
+            return;
+        }
+        bool isHunter = owner.Id == newHunterId;
+        SetCanUseHunterSkill(isHunter);
+    }
+
+    private void SetCanUseHunterSkill(bool canUse)
+    {
+        CanUseHunterSkill = canUse;
+    }
+
+    private void OnValidate()
+    {
+        if (markManager == null)
+        {
+            markManager = FindFirstObjectByType<MarkManager>();
+        }
     }
 }

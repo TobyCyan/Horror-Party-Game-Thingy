@@ -24,7 +24,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed += HandleMarkPassed;
         }
 
         if (hotPotatoTimer != null)
@@ -52,7 +51,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed -= HandleMarkPassed;
             markManager.StopHPGame();
         }
 
@@ -73,15 +71,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         isGameActive = false;
         Debug.Log("Hot Potato game ended.");
         GetComponent<NetworkObject>().Despawn();
-    }
-
-    private void HandleMarkPassed(ulong _)
-    {
-        // Reset the timer when the mark is passed
-        if (hotPotatoTimer != null)
-        {
-            hotPotatoTimer.StartTimer(hotPotatoDuration);
-        }
     }
 
     private void HotPotatoTimer_OnTimeUp()

@@ -127,7 +127,7 @@ public class MarkManager : NetworkBehaviour
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
         markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
-        
+
         UpdateMarkUiClientRpc(id);
     }
 
