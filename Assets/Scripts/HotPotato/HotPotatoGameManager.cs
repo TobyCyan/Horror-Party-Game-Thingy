@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class HotPotatoGameManager : NetworkBehaviour
 {
     public static HotPotatoGameManager Instance;
-    [SerializeField] private List<Transform> spawnPositions;
     
     [SerializeField] private MarkManager markManager;
     [Min(0.0f)]
@@ -86,6 +85,13 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (IsServer)
         {
+            int playerCount = PlayerManager.Instance.players.Count;
+            // Despawn everyone
+            for (int i = 0; i < playerCount; i++)
+            {
+                SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+            }
+
             // ScoreUiManager.Instance.ShowFinalScore();
             await Task.Delay(1000);
             

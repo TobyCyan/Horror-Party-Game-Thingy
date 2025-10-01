@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SelectorTrigger : NetworkBehaviour
 {
-    private int playerCount = 0;
+    private int triggerCount = 0;
     private void OnTriggerEnter(Collider other)
     {
         if (!IsOwner) return;
@@ -16,16 +16,15 @@ public class SelectorTrigger : NetworkBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!IsOwner) return;
-        
         if (other.CompareTag("Player")) OnGameDeselectedServerRpc();
     }
     [Rpc(SendTo.Server)]
     private void OnGameSelectedServerRpc()
     {
         // Update on server side
-        playerCount++;
+        triggerCount++;
 
-        if (playerCount == PlayerManager.Instance.players.Count)
+        if (triggerCount == PlayerManager.Instance.players.Count)
         {
             ChangeGame();
         }
@@ -33,13 +32,19 @@ public class SelectorTrigger : NetworkBehaviour
 
     private async void ChangeGame()
     {
-        UnloadSceneNotServerRPC("PersistentSessionScene");
+        int playerCount = PlayerManager.Instance.players.Count;
+        // Despawn everyone
+        for (int i = 0; i < playerCount; i++)
+        {
+            SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+        }
+        //UnloadSceneNotServerRPC("PersistentSessionScene");
             
         Debug.Log($"Changing scene cuz {playerCount}, {PlayerManager.Instance.players.Count}");
             
         await Task.Delay(500); // Wait just incase;
         
-        await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("PersistentSessionScene");
+        await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "HospitalScene" });
     }
     
@@ -53,7 +58,7 @@ public class SelectorTrigger : NetworkBehaviour
     private void OnGameDeselectedServerRpc()
     {
         // Update on server side
-        playerCount--;
+        triggerCount--;
     }
     
 }

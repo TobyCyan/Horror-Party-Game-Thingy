@@ -13,7 +13,7 @@ public class SpawnManager : NetworkBehaviour
     void Awake()
     {
         NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
-        NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnload;
+        // NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnload;
         
         if (!Instance)
         {
