@@ -69,7 +69,6 @@ GameObject:
   - component: {fileID: 4948810254320651866}
   - component: {fileID: 5852934485098686934}
   - component: {fileID: 254000051144842602}
-  - component: {fileID: 5639020097905250828}
   m_Layer: 0
   m_Name: FP Camera
   m_TagString: Untagged
@@ -197,19 +196,6 @@ MonoBehaviour:
     Controllers: []
   PlayerIndex: -1
   AutoEnableInputs: 1
---- !u!114 &5639020097905250828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9033277658621435649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 983f01ff7e7c08d4197fdb2faa84eb92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1001 &2040311801244834466
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -342,6 +328,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3436618833130660647}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6706970591225045007}
     - targetCorrespondingSourceObject: {fileID: -4267678088381660852, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1197703584625609843}
@@ -642,6 +631,8 @@ MonoBehaviour:
   cam: {fileID: 9033277658621435649}
   playerMovement: {fileID: 2282382335596024}
   playerCam: {fileID: 7850040235040859059}
+  clientId: 0
+  float0: 0
 --- !u!114 &3436618833130660647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,6 +646,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCam: {fileID: 6777540985549378276}
+--- !u!114 &6706970591225045007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6924e9308acc44b8837f891f6dbe65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  meshRoot: {fileID: 1267403997805736599}
+  silhouetteLayerName: Silhouette
+  baselineLayerName: Player
+  defaultDuration: 2
+--- !u!4 &1267403997805736599 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8230858294829078475, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+  m_PrefabInstance: {fileID: 2040311801244834466}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2006949262448999753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}

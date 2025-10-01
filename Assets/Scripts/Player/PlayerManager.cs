@@ -16,10 +16,8 @@ public class PlayerManager : NetworkBehaviour
     public event Action OnAllPlayersEliminated;
     public event Action OnLastPlayerStanding;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
-        base.OnNetworkSpawn();
-
         if (!Instance)
         {
             Instance = this;
@@ -28,6 +26,11 @@ public class PlayerManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
     }
 
     public void AddPlayer(Player player)

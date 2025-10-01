@@ -42,7 +42,7 @@ public class HuntersSightSkill : PlayerSkill
         {
             if (player.TryGetComponent(out PlayerSilhouette silhouette))
             {
-                silhouette.ShowForSeconds_Server(duration);
+                silhouette.ShowForSecondsRpc(duration);
             }
         }
     }
