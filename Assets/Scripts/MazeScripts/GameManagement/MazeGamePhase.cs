@@ -63,20 +63,23 @@ public class TrapPhase : MazeGamePhase
     {
         base.Enter();
 
-        player = PlayerManager.Instance.localPlayer; // handle for local
-        movement = player.gameObject.GetComponent<PlayerMovement>();
+
         MazeCameraManager.Instance.SetToTopDownView();
         UIManager.Instance.SwitchUIView<TrapsPhaseView>();
 
         MazeTrapManager.Instance.EnablePlacing(true, cost);
 
+        player = PlayerManager.Instance.localPlayer; // handle for local
+        movement = player.gameObject.GetComponent<PlayerMovement>();
         movement.enabled = false;
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
 
+
     }
+
     public override void Exit()
     {
            
@@ -158,6 +161,8 @@ public class ScorePhase : MazeGamePhase
     {
         base.Exit();
         // close score ui
+        // respawn everyone at spawn point
+        // reset player states (health etc) if needed
     }
 }
 

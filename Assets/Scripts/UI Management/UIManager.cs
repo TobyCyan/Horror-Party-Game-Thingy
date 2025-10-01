@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour
 
         if (null == nextView)
         {
-            Debug.LogWarning($"UI view {typeof(T).Name} not found. Assign in inspector/prefab!");
+            Debug.LogWarning($"UI view {typeof(T).Name} not found. Assign in InitScene's UIManager!");
             return;
         }
 

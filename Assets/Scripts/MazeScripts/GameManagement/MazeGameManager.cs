@@ -2,8 +2,8 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using Unity.Cinemachine;
-using System;
+using System.Collections;
+
 public class MazeGameManager : NetworkBehaviour
 {
     public static MazeGameManager Instance;
@@ -26,34 +26,43 @@ public class MazeGameManager : NetworkBehaviour
         }
         Instance = this;
 
-        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         NetworkManager.SceneManager.OnUnloadEventCompleted += OnSceneUnloaded;
     }
 
-
-    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    private void Start()
     {
-        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        StartCoroutine(DelayedStart());
+    }
+
+
+    private IEnumerator DelayedStart()
+    {
+        // sorry
+        yield return new WaitUntil(() =>
+            MazeCameraManager.Instance.localPlayerCam != null &&
+            PlayerManager.Instance.localPlayer != null
+        );
 
         currPhaseId.OnValueChanged += ChangePhase;
 
+        if (IsServer)
+        {
+            currPhaseId.Value = PhaseID.Traps;
+        }
+
+        // latejoin client
         if (currPhaseId.Value != PhaseID.Default)
         {
             ChangePhase(PhaseID.Default, currPhaseId.Value);
         }
     }
 
-    private void Start()
-    {
-        if (IsServer)
-        {
-            currPhaseId.Value = PhaseID.Run;
-        }
-    }
+
 
     // id change -> actual phase change
     public void ChangePhase(PhaseID prev, PhaseID next)
     {
+        if (prev == next) return;
         currPhase?.Exit();
         switch(next)
         {
@@ -89,4 +98,5 @@ public class MazeGameManager : NetworkBehaviour
     {
         // send scores and win info to persistent game manager?
     }
+
 }

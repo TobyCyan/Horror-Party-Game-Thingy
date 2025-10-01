@@ -76,7 +76,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   size: 6
   roomRate: 0.2
-  scale: 6
+  scale: 10
   prefab: {fileID: 6747622387691823791, guid: b7ad1e859d2664046804467c55c8cf5b, type: 3}
   roomPrefab: {fileID: 6747622387691823791, guid: c65baf4d6a19d05448fb52bc8fd69a76, type: 3}
 --- !u!114 &6519136845518210295

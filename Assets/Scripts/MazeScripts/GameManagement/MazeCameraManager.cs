@@ -4,9 +4,10 @@ using Unity.Cinemachine;
 public class MazeCameraManager : MonoBehaviour
 {
     public static MazeCameraManager Instance { get; private set; }
+    [SerializeField] private int camHeight = 8;
 
     [SerializeField] public CinemachineCamera topDownCam;
-    [SerializeField] private CinemachineCamera localPlayerCam;
+    [SerializeField] public CinemachineCamera localPlayerCam;
 
     void Awake()
     {
@@ -24,7 +25,7 @@ public class MazeCameraManager : MonoBehaviour
 
         // uh if bad things are happening to the camera look here first xd
         float deez = MazeManager.Instance.size * MazeManager.Instance.scale / 2;
-        Vector3 pos = new (deez, 80f, deez);
+        Vector3 pos = new (deez, MazeManager.Instance.scale * camHeight, deez);
         topDownCam.transform.position = pos;
     }
 
@@ -32,15 +33,29 @@ public class MazeCameraManager : MonoBehaviour
 
     public void SetToPlayerView()
     {
-        if (localPlayerCam == null || topDownCam == null) return;
+        if (localPlayerCam == null || topDownCam == null)
+        {
+            if (localPlayerCam == null) Debug.LogWarning("SetToPlayerView: localPlayerCam is null!");
+            if (topDownCam == null) Debug.LogWarning("SetToPlayerView: topDownCam is null!");
+            return;
+        }
+
         localPlayerCam.Priority = 20;
         topDownCam.Priority = 10;
     }
 
     public void SetToTopDownView()
     {
-        if (localPlayerCam == null || topDownCam == null) return;
+        Debug.Log("accessing cam");
+        if (localPlayerCam == null || topDownCam == null)
+        {
+            if (localPlayerCam == null) Debug.LogWarning("SetToTopDownView: localPlayerCam is null!");
+            if (topDownCam == null) Debug.LogWarning("SetToTopDownView: topDownCam is null!");
+            return;
+        }
+
         topDownCam.Priority = 20;
         localPlayerCam.Priority = 10;
     }
+
 }
