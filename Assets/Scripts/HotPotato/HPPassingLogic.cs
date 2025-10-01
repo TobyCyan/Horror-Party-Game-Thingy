@@ -6,7 +6,7 @@ public class HPPassingLogic : MonoBehaviour
     {
         Debug.Log("Collided with something");
         // Only marked person should try to pass
-        if (MarkManager.Instance.currentMarkedPlayer.Id != PlayerManager.Instance.localPlayer.Id) return;
+        if (MarkManager.Instance.currentMarkedPlayer?.Id != PlayerManager.Instance.localPlayer?.Id) return;
         
         if (other.gameObject.TryGetComponent(out Player player))
         {
