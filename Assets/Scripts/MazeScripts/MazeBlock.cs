@@ -11,10 +11,8 @@ public class MazeBlock : MonoBehaviour
     [Header("Order must be Left, Up, Right, Down")]
     [Tooltip("Walls array should be assigned in L-U-R-D order")]
     public GameObject[] walls;
-    // public List<Trap> traps = new List<Trap>();
-    /*
-     * removed my placeholder trap system, previously just had the blocks keep track of traps
-     */
+
+    private bool isGoal = false;
 
     public void InitState(int state)
     {
@@ -28,10 +26,24 @@ public class MazeBlock : MonoBehaviour
             }
         }
     }
-    private void OnDestroy()
+
+    public void SetAsGoal()
     {
-        // hello there
-        // clean up traps assigned to it? maybe no need
+        isGoal = true;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isGoal) return;
+        Debug.Log("Maze clear!");
+        Player player = other.GetComponent<Player>();
+        if (player == null) return; 
+
+
+        // tell score manager to STOP THE COUNT
+        MazeScoreManager.Instance.AddTimeScore();
+
+
+        isGoal = false; // locally so no scams
+    }
 }

@@ -1,6 +1,9 @@
 using Unity.Netcode;
 using UnityEngine;
-public class MazeScoreManager : MonoBehaviour
+using System.Collections.Generic;
+
+// for now only updated between rounds
+public class MazeScoreManager : NetworkBehaviour
 {
     public static MazeScoreManager Instance { get; private set; }
 
@@ -10,9 +13,8 @@ public class MazeScoreManager : MonoBehaviour
     [SerializeField] private int soloBonus = 100;
     [SerializeField] private int firstBonus = 150;
 
-    private int currSaboScore;
-    private float currTimeScore;
-    private int currBonusScore;
+    private int roundSaboScore = 0;
+    private float roundTimeScore = 0;
 
     private ulong clientId = NetworkManager.Singleton.LocalClientId;
 
@@ -28,9 +30,8 @@ public class MazeScoreManager : MonoBehaviour
 
     public void ResetScores()
     {
-        currSaboScore = 0;
-        currBonusScore = 0;
-        currTimeScore = 0;
+        roundSaboScore = 0;
+        roundTimeScore = 0;
     }
 
     private void OnEnable()
@@ -55,35 +56,113 @@ public class MazeScoreManager : MonoBehaviour
         }
 
         AddSabotageScore(1); // base scoire 1 for now
-        UpdateUi();
     }
 
     public void AddSabotageScore(int units)
     {
-        currSaboScore += units * sabotageMultiplier;
+        roundSaboScore += units * sabotageMultiplier;
     }
 
     // call this when player wins
     public void AddTimeScore()
     {
-        currTimeScore += MazeGameManager.Instance.currPhase.timeRemaining; // for now i guess display remaining time to align with potato game until custom ui is done
+        roundTimeScore = MazeGameManager.Instance.currPhase.timeRemaining * timeMultiplier; // for now i guess display remaining time to align with potato game until custom ui is done
     }
 
-    // have to detect this and call..? i think maze goal should call this, track clients and their bonuses
-    public void AddBonus(bool isFirst, bool isSolo)
+    public int TotalScore => roundSaboScore + (int)roundTimeScore;
+
+    // for tallying all players' scores
+    public struct PlayerScore
     {
-        int bonus = 0;
-        if (isSolo) bonus += soloBonus;
-        if (isFirst) bonus += firstBonus;
-        currBonusScore += bonus;
+        public int sabotage;
+        public float time;
+        public int bonus;
     }
 
-    private void UpdateUi()
+
+    private static Dictionary<ulong, PlayerScore> submittedRawScores = new Dictionary<ulong, PlayerScore>();
+    private Dictionary<ulong, PlayerScore> roundSubmissions = new Dictionary<ulong, PlayerScore>(); // per round
+
+    public void SubmitRawScore()
     {
-        ScoreUiManager.UpdateScore(clientId, currTimeScore, currSaboScore, currBonusScore);
+        if (!IsOwner) return;
+
+        SubmitRawScoreServerRpc(roundSaboScore, roundTimeScore);
     }
 
-    public int TotalScore => currSaboScore + (int)currTimeScore + currBonusScore;
+    [ServerRpc(RequireOwnership = true)]
+    private void SubmitRawScoreServerRpc(int sabotage, float time, ServerRpcParams rpcParams = default)
+    {
+        ulong client = rpcParams.Receive.SenderClientId;
 
+        Debug.Log($"Server Received raw score from client {client}: sabotage={sabotage}, time={time}");
+
+        // accumulate cumulative scores
+        if (!submittedRawScores.ContainsKey(client))
+            submittedRawScores[client] = new PlayerScore { sabotage = sabotage, time = time, bonus = 0 };
+        else
+        {
+            PlayerScore cumulative = submittedRawScores[client];
+            cumulative.sabotage += sabotage;
+            cumulative.time += time;
+            submittedRawScores[client] = cumulative;
+        }
+
+        roundSubmissions[client] = new PlayerScore { sabotage = sabotage, time = time, bonus = 0 };
+
+        // if all submit calc bonus
+        if (roundSubmissions.Count == NetworkManager.Singleton.ConnectedClientsList.Count)
+        {
+
+            Debug.Log("All clients submitted for this round, calculating bonuses..."); 
+            CalculateBonusesAndBroadcast();
+        }
+    }
+
+    private void CalculateBonusesAndBroadcast()
+    {
+        ulong firstClient = 0;
+        float maxTime = float.MinValue;
+        int clears = 0;
+
+        foreach (var kvp in roundSubmissions)
+        {
+            if (kvp.Value.time > maxTime)
+            {
+                maxTime = kvp.Value.time;
+                firstClient = kvp.Key;
+            }
+
+            if (kvp.Value.time > 0)
+                clears++;
+        }
+
+        bool soloWin = clears == 1;
+
+        Debug.Log($"Round clears={clears}, firstClient={firstClient}, soloWin={soloWin}");
+        if (clears > 0)
+        {
+            PlayerScore cumulative = submittedRawScores[firstClient];
+            int bonus = firstBonus;
+            if (soloWin) bonus += soloBonus;
+            cumulative.bonus += bonus;
+            submittedRawScores[firstClient] = cumulative;
+        }
+
+        foreach (var kvp in submittedRawScores)
+        {
+            UpdateClientScoreClientRpc(kvp.Key, kvp.Value.sabotage, kvp.Value.time, kvp.Value.bonus);
+            Debug.Log($"Broadcasting cumulative score for client {kvp.Key}: sabotage={kvp.Value.sabotage}, time={kvp.Value.time}, bonus={kvp.Value.bonus}");
+        }
+
+        // for next round
+        roundSubmissions.Clear();
+    }
+
+    [ClientRpc]
+    private void UpdateClientScoreClientRpc(ulong client, int sabotage, float time, int bonus)
+    {
+        ScoreUiManager.UpdateScore(client, time, sabotage, bonus);
+    }
 
 }

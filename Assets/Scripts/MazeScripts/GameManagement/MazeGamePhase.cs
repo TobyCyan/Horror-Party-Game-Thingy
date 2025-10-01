@@ -113,7 +113,7 @@ public class RunPhase : MazeGamePhase
 
     public RunPhase()
     {
-        this.timeRemaining = 5f;
+        this.timeRemaining = 500f;
     }
 
     public RunPhase(float timeLimit)
@@ -148,20 +148,21 @@ public class ScorePhase : MazeGamePhase
 {
     public ScorePhase() {
         timeRemaining = 5f;
-    
+
     }
 
     public override void Enter()
     {
         base.Enter();
+        MazeScoreManager.Instance.SubmitRawScore();
         // stop player inputs?
         // display score ui
-        
     }
 
     public override void Exit()
     {
         base.Exit();
+        MazeScoreManager.Instance.ResetScores();
         // close score ui
         // respawn everyone at spawn point
         // reset player states (health etc) if needed
