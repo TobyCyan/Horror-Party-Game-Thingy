@@ -1,4 +1,4 @@
-                                                                                             using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -147,16 +147,24 @@ public class SceneLifetimeManager : MonoBehaviour
                 {
                     SetActiveScene("MazeScene");
                 }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("HospitalScene");
+                }
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
                 if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("InitScene");
+                    SetActiveScene("_InitScene");
                 }
                 else if (sceneEvent.SceneName == "MazeScene")
                 {
-                    SetActiveScene("PersistentSessionScene");
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("_InitScene");
                 }
                 break;
             case SceneEventType.LoadEventCompleted:
@@ -185,15 +193,23 @@ public class SceneLifetimeManager : MonoBehaviour
                 {
                     SetActiveScene("MazeScene");
                 }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("HospitalScene");
+                }
                 break;
             case SceneEventType.UnloadComplete:
                 if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("InitScene");
+                    SetActiveScene("_InitScene");
                 }
                 else if (sceneEvent.SceneName == "MazeScene")
                 {
-                    SetActiveScene("PersistentSessionScene");
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("_InitScene");
                 }
                 break;
         }

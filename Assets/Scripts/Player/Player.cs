@@ -37,14 +37,14 @@ public class Player : NetworkBehaviour
 
         clientId = OwnerClientId;
         PlayerManager.Instance.AddPlayer(this);
-        ScoreUiManager.Instance.PlayerJoined(clientId);   
+        ScoreUiManager.Instance?.PlayerJoined(clientId);   
     }
     
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
         PlayerManager.Instance.RemovePlayer(this);
-        ScoreUiManager.Instance.PlayerLeft(clientId);
+        ScoreUiManager.Instance?.PlayerLeft(clientId);
     }
 
     public void EnablePlayer(bool enable)
@@ -79,7 +79,8 @@ public class Player : NetworkBehaviour
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
         
         // Update Scoreboard
-        ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
+        if (ScoreUiManager.Instance)
+            ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
     }
     
     // // Give Last touch player authority to move it

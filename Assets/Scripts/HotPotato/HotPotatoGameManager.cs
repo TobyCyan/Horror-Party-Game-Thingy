@@ -1,9 +1,13 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HotPotatoGameManager : NetworkBehaviour
 {
     public static HotPotatoGameManager Instance;
+    [SerializeField] private List<Transform> spawnPositions;
     
     [SerializeField] private MarkManager markManager;
     [Min(0.0f)]
@@ -12,9 +16,15 @@ public class HotPotatoGameManager : NetworkBehaviour
     public NetworkVariable<float> timer = new();
     private bool isGameActive = true;
 
-    public void Awake()
+    void Awake()
     {
+        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         Instance = this;
+    }
+
+    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
     }
 
     public override void OnNetworkSpawn()
@@ -24,7 +34,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
-            markManager.PostEliminationCoolDownTimer.OnTimeUp += ResetHpTimer;
+            markManager.OnMarkPassed += HandleMarkPassed;
         }
 
         if (hotPotatoTimer != null)
@@ -52,7 +62,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
-            markManager.PostEliminationCoolDownTimer.OnTimeUp -= ResetHpTimer;
+            markManager.OnMarkPassed -= HandleMarkPassed;
             markManager.StopHPGame();
         }
 
@@ -68,11 +78,29 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
-    private void EndGame()
+    private async void EndGame()
     {
         isGameActive = false;
         Debug.Log("Hot Potato game ended.");
         GetComponent<NetworkObject>().Despawn();
+
+        if (IsServer)
+        {
+            // ScoreUiManager.Instance.ShowFinalScore();
+            await Task.Delay(1000);
+            
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked("HospitalScene");
+            await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
+        }
+    }
+
+    private void HandleMarkPassed(ulong _)
+    {
+        // Reset the timer when the mark is passed
+        if (hotPotatoTimer != null)
+        {
+            hotPotatoTimer.StartTimer(hotPotatoDuration);
+        }
     }
 
     private void HotPotatoTimer_OnTimeUp()
@@ -82,11 +110,6 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.EliminateMarkedPlayer();
         }
     }
-
-    private void ResetHpTimer()
-    {
-        hotPotatoTimer.StartTimer(hotPotatoDuration);
-    }    
 
     private void Update()
     {

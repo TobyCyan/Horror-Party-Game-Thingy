@@ -85,14 +85,14 @@ public class PlayerCam : NetworkBehaviour
     {
         base.OnNetworkSpawn();
         
-        CameraManager.Instance.AddCam(this);
+        CameraManager.Instance?.AddCam(this);
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
         
-        CameraManager.Instance.RemoveCam(this);
+        CameraManager.Instance?.RemoveCam(this);
     }
     private void TogglePlayerBody(bool toggle)
     {

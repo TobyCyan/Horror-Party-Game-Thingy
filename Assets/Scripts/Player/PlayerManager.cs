@@ -15,6 +15,7 @@ public class PlayerManager : NetworkBehaviour
     public List<Player> AlivePlayers => alivePlayers;
     public event Action OnAllPlayersEliminated;
     public event Action OnLastPlayerStanding;
+    public event Action OnLocalPlayerSet;
 
     private void Awake()
     {
@@ -26,6 +27,8 @@ public class PlayerManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+        
+        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()
@@ -37,8 +40,12 @@ public class PlayerManager : NetworkBehaviour
     {
         if (players.Contains(player)) return;
         
-        if (player.IsOwner) localPlayer = player;
-
+        if (player.IsOwner)
+        {
+            localPlayer = player;
+            OnLocalPlayerSet?.Invoke();
+        }
+        
         players.Add(player);
         alivePlayers.Add(player);
         player.OnPlayerEliminated += () => EliminatePlayer(player);
@@ -100,5 +107,10 @@ public class PlayerManager : NetworkBehaviour
     public Player FindPlayerByNetId(ulong id)
     {
         return players.Find(p => p.Id == id);
+    }
+    
+    public Player FindPlayerByClientId(ulong id)
+    {
+        return players.Find(p => p.clientId == id);
     }
 }
