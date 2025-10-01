@@ -1,8 +1,8 @@
-using UnityEngine;
+using Unity.Netcode;
 
-public class HPPlayerControlsAssigner : MonoBehaviour
+public class HPPlayerControlsAssigner : NetworkBehaviour
 {
-    private void Start()
+    public override void OnNetworkSpawn()
     {
         if (PlayerManager.Instance != null)
         {
@@ -11,7 +11,7 @@ public class HPPlayerControlsAssigner : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    public override void OnNetworkDespawn()
     {
         if (PlayerManager.Instance != null)
         {

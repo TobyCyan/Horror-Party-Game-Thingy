@@ -28,6 +28,11 @@ public class PlayerManager : NetworkBehaviour
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+    }
+
     public void AddPlayer(Player player)
     {
         if (players.Contains(player)) return;
