@@ -32,9 +32,9 @@ public class PlayerSilhouette : NetworkBehaviour
     }
 
     // Server entry point
-    public void ShowForSeconds_Server(float seconds = -1f)
+    [Rpc(SendTo.Server)]
+    public void ShowForSecondsRpc(float seconds = -1f)
     {
-        if (!IsServer) return;
         if (seconds <= 0f) seconds = defaultDuration;
         ShowOnceRpc(seconds);
     }
