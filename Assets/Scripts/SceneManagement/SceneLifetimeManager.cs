@@ -154,13 +154,17 @@ public class SceneLifetimeManager : MonoBehaviour
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
-                // if (sceneEvent.SceneName == "PersistentSessionScene")
-                // {
-                //     SetActiveScene("InitScene");
-                // }
-                if (sceneEvent.SceneName == "MazeScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("InitScene");
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("_InitScene");
                 }
                 break;
             case SceneEventType.LoadEventCompleted:
@@ -195,14 +199,17 @@ public class SceneLifetimeManager : MonoBehaviour
                 }
                 break;
             case SceneEventType.UnloadComplete:
-                // if (sceneEvent.SceneName == "PersistentSessionScene")
-                // {
-                //     SetActiveScene("InitScene");
-                // }
-                // else
-                if (sceneEvent.SceneName == "MazeScene")
+                if (sceneEvent.SceneName == "PersistentSessionScene")
                 {
-                    SetActiveScene("PersistentSessionScene");
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "MazeScene")
+                {
+                    SetActiveScene("_InitScene");
+                }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("_InitScene");
                 }
                 break;
         }

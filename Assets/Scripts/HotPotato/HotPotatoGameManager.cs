@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,7 +25,6 @@ public class HotPotatoGameManager : NetworkBehaviour
     private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
-        MoveAllPlayersServerRpc();
     }
 
     public override void OnNetworkSpawn()
@@ -57,14 +57,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         markManager.StartHPGame();
     }
 
-    [Rpc(SendTo.Server)]
-    private void MoveAllPlayersServerRpc()
-    {
-        for (int i = 0; i < PlayerManager.Instance.players.Count; i++)
-        {
-            PlayerManager.Instance.players[i].transform.position = spawnPositions[i].position;
-        }
-    }
     public override void OnNetworkDespawn()
     {
         if (markManager != null)
@@ -94,7 +86,10 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (IsServer)
         {
-            await SceneLifetimeManager.Instance.UnloadSceneNetworked("MazeScene");
+            // ScoreUiManager.Instance.ShowFinalScore();
+            await Task.Delay(1000);
+            
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked("HospitalScene");
             await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
         }
     }
