@@ -24,6 +24,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
+            markManager.PostEliminationCoolDownTimer.OnTimeUp += ResetHpTimer;
         }
 
         if (hotPotatoTimer != null)
@@ -51,6 +52,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
+            markManager.PostEliminationCoolDownTimer.OnTimeUp -= ResetHpTimer;
             markManager.StopHPGame();
         }
 
@@ -80,6 +82,11 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.EliminateMarkedPlayer();
         }
     }
+
+    private void ResetHpTimer()
+    {
+        hotPotatoTimer.StartTimer(hotPotatoDuration);
+    }    
 
     private void Update()
     {
