@@ -43,12 +43,13 @@ public class MazeGameManager : NetworkBehaviour
             PlayerManager.Instance.localPlayer != null
         );
 
-        currPhaseId.OnValueChanged += ChangePhase;
 
         if (IsServer)
         {
             currPhaseId.Value = PhaseID.Traps;
         }
+
+        currPhaseId.OnValueChanged += ChangePhase;
 
         // latejoin client
         if (currPhaseId.Value != PhaseID.Default)
