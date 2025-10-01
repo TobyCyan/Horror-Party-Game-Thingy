@@ -15,6 +15,7 @@ public class MarkManager : NetworkBehaviour
     public event Action OnMarkedPlayerEliminated;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
+    public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
     [Min(0.0f)]
     [SerializeField] private float markPassingCooldown = 4.0f;
 
@@ -127,7 +128,7 @@ public class MarkManager : NetworkBehaviour
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
         markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
-        
+
         UpdateMarkUiClientRpc(id);
     }
 

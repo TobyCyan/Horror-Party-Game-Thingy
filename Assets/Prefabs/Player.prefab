@@ -145,6 +145,8 @@ MonoBehaviour:
   cam: {fileID: 4813874208245030253}
   playerMovement: {fileID: 4583236074999682964}
   playerCam: {fileID: 6008370614335971807}
+  clientId: 0
+  float0: 0
 --- !u!114 &5732882286959827135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -306,6 +308,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5760005982654788094, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5796180968055189829, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -330,6 +336,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8621867743483053186, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621867743483053186, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8621867743483053186, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d0969304f926f34b919fd217baa1b43, type: 2}
     - target: {fileID: 8624662073744487304, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -342,7 +360,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5639020097905250828, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

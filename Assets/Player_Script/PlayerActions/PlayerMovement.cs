@@ -131,13 +131,13 @@ public class PlayerMovement : MonoBehaviour
             return; // skip inputs/anim while frozen
         }
 
-        // --- Blind test key ---
+        /*// --- Blind test key ---
         if (controls.Player.Blind.triggered)
             Blind(5f);
 
         // --- Freeze test key ---
         if (controls.Player.Freeze != null && controls.Player.Freeze.triggered)
-            Stun(5f);
+            Stun(5f);*/
 
         // Inputs
         moveInput = controls.Player.Move.ReadValue<Vector2>();

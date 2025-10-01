@@ -12,6 +12,7 @@ public class Timer : MonoBehaviour
     public event Action OnTimeTick;
 
     private bool isRunning = false;
+    public bool IsRunning => isRunning;
 
     public void StartTimer(float duration)
     {
