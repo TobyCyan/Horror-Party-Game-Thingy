@@ -12,10 +12,10 @@ public class SessionStartButton : NetworkBehaviour
         // Let client start game? NAHHH
         if (!IsServer) return;
         
-        // Send to everyone but Host
         UnloadMainMenuNotServerRPC();
         await Task.Delay(500); // Wait just incase;
         
+        // Send to everyone but Host
         await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { SceneToLoad });
         //SceneLifetimeManager.Instance.SetActiveScene("PersistentRunScene");

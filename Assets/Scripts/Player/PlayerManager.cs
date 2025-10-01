@@ -27,8 +27,6 @@ public class PlayerManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
-        
-        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()
@@ -107,9 +105,5 @@ public class PlayerManager : NetworkBehaviour
     public Player FindPlayerByNetId(ulong id)
     {
         return players.Find(p => p.Id == id);
-    }
-    public Player FindPlayerByClientId(ulong id)
-    {
-        return players.Find(p => p.clientId == id);
     }
 }

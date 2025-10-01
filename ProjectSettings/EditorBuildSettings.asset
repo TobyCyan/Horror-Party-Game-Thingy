@@ -6,7 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-<<<<<<< HEAD
     path: Assets/Scenes/Demo/_InitScene.unity
     guid: 194ff50436c6b5741a8c0740d777036c
   - enabled: 1
@@ -14,15 +13,6 @@ EditorBuildSettings:
     guid: c54df64656de9654dbdbf38a702c5807
   - enabled: 1
     path: Assets/Scenes/Demo/PersistentSessionScene.unity
-=======
-    path: Assets/Scenes/DemoLoop/_InitScene.unity
-    guid: 194ff50436c6b5741a8c0740d777036c
-  - enabled: 1
-    path: Assets/Scenes/DemoLoop/MainMenu.unity
-    guid: c54df64656de9654dbdbf38a702c5807
-  - enabled: 1
-    path: Assets/Scenes/DemoLoop/PersistentSessionScene.unity
->>>>>>> game-selector
     guid: a68f37a82d8e91d4e97ba75bec173e8c
   - enabled: 1
     path: Assets/Scenes/AlvinTestScenes/MazeScene.unity

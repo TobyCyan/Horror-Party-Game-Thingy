@@ -442,11 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-<<<<<<<< HEAD:Assets/Scenes/Demo/MainMenu.unity
   SceneToLoad: HospitalScene
-========
-  SceneToLoad: PersistentSessionScene
->>>>>>>> game-selector:Assets/Scenes/DemoLoop/MainMenu.unity
 --- !u!1 &206194955
 GameObject:
   m_ObjectHideFlags: 0
