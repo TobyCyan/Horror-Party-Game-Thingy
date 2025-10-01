@@ -62,6 +62,10 @@ public class ScoreUiManager : MonoBehaviour
         }
     }
 
+    public void ShowFinalScore()
+    {
+        scoreBoardGameObject.SetActive(true);
+    }
     void Update()
     {
         scoreBoardGameObject.SetActive(Input.GetKey(KeyCode.Tab));
