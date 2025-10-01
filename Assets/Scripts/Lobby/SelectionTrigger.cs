@@ -15,6 +15,8 @@ public class SelectorTrigger : NetworkBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (!IsOwner) return;
+        
         if (other.CompareTag("Player")) OnGameDeselectedServerRpc();
     }
     [Rpc(SendTo.Server)]
@@ -37,7 +39,7 @@ public class SelectorTrigger : NetworkBehaviour
             
         await Task.Delay(500); // Wait just incase;
         
-        await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
+        await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("PersistentSessionScene");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "HospitalScene" });
     }
     
