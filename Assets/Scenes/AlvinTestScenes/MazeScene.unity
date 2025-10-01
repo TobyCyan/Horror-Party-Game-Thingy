@@ -626,12 +626,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 447618764}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.95918, y: 0, z: -10.62762}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 9.03903, y: 0, z: -23.1935}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1637666212}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &480280548
 GameObject:
@@ -1925,6 +1925,7 @@ Transform:
   - {fileID: 1680958439}
   - {fileID: 1741835812}
   - {fileID: 522775381}
+  - {fileID: 447618766}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1680958438
@@ -1938,6 +1939,10 @@ PrefabInstance:
     - target: {fileID: 1772126727649542584, guid: f6a24c52bb239aa4590d4bf9d043fe18, type: 3}
       propertyPath: m_Name
       value: PlayerManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1772126727649542584, guid: f6a24c52bb239aa4590d4bf9d043fe18, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3209535908057187038, guid: f6a24c52bb239aa4590d4bf9d043fe18, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3188,7 +3193,6 @@ SceneRoots:
   - {fileID: 2122359573}
   - {fileID: 1497374528}
   - {fileID: 1773633399}
-  - {fileID: 447618766}
   - {fileID: 149877503}
   - {fileID: 2312513948619997368}
   - {fileID: 1637666212}

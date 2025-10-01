@@ -147,16 +147,20 @@ public class SceneLifetimeManager : MonoBehaviour
                 {
                     SetActiveScene("MazeScene");
                 }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("HospitalScene");
+                }
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "PersistentSessionScene")
+                // if (sceneEvent.SceneName == "PersistentSessionScene")
+                // {
+                //     SetActiveScene("InitScene");
+                // }
+                if (sceneEvent.SceneName == "MazeScene")
                 {
                     SetActiveScene("InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("PersistentSessionScene");
                 }
                 break;
             case SceneEventType.LoadEventCompleted:
@@ -185,13 +189,18 @@ public class SceneLifetimeManager : MonoBehaviour
                 {
                     SetActiveScene("MazeScene");
                 }
+                else if (sceneEvent.SceneName == "HospitalScene")
+                {
+                    SetActiveScene("HospitalScene");
+                }
                 break;
             case SceneEventType.UnloadComplete:
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
+                // if (sceneEvent.SceneName == "PersistentSessionScene")
+                // {
+                //     SetActiveScene("InitScene");
+                // }
+                // else
+                if (sceneEvent.SceneName == "MazeScene")
                 {
                     SetActiveScene("PersistentSessionScene");
                 }

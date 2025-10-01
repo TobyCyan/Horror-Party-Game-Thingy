@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class SelectorTrigger : NetworkBehaviour
     private int playerCount = 0;
     private void OnTriggerEnter(Collider other)
     {
+        if (!IsOwner) return;
+        
         if (other.CompareTag("Player")) OnGameSelectedServerRpc();
     }
 
@@ -22,14 +25,26 @@ public class SelectorTrigger : NetworkBehaviour
 
         if (playerCount == PlayerManager.Instance.players.Count)
         {
-            ChangeToHpScene();
+            ChangeGame();
         }
     }
 
-    private async void ChangeToHpScene()
+    private async void ChangeGame()
     {
+        UnloadSceneNotServerRPC("PersistentSessionScene");
+            
+        Debug.Log($"Changing scene cuz {playerCount}, {PlayerManager.Instance.players.Count}");
+            
+        await Task.Delay(500); // Wait just incase;
+        
         await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked("MazeScene");
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "MazeScene" });
+    }
+    
+    [Rpc(SendTo.NotServer)]
+    private void UnloadSceneNotServerRPC(string sceneName)
+    {
+        SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync(sceneName);
     }
     
     [Rpc(SendTo.Server)]

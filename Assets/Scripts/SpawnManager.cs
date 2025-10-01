@@ -13,7 +13,15 @@ public class SpawnManager : NetworkBehaviour
     void Awake()
     {
         NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
-        Instance = this;
+        
+        if (!Instance)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
@@ -26,6 +34,11 @@ public class SpawnManager : NetworkBehaviour
     private void SpawnPlayersServerRpc(RpcParams ctx = default)
     {
         Debug.Log($"Spawning Player with id: {ctx.Receive.SenderClientId}");
+
+        // Don't spawn if exist already
+        Debug.Log(PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId));
+        if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
+            
         Player player = Instantiate(
             spawnPrefab, 
             spawnPositions[(int) ctx.Receive.SenderClientId].position, 
