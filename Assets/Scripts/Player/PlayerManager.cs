@@ -8,7 +8,8 @@ public class PlayerManager : NetworkBehaviour
     public static PlayerManager Instance;
 
     public List<Player> players = new();
-    public event Action OnPlayerListChanged;
+    public event Action<Player> OnPlayerAdded;
+    public event Action<Player> OnPlayerRemoved;
     public Player localPlayer;
     private readonly List<Player> alivePlayers = new();
     public List<Player> AlivePlayers => alivePlayers;
@@ -39,7 +40,7 @@ public class PlayerManager : NetworkBehaviour
         alivePlayers.Add(player);
         player.OnPlayerEliminated += () => EliminatePlayer(player);
 
-        OnPlayerListChanged?.Invoke();
+        OnPlayerAdded?.Invoke(player);
     }
     
     public void RemovePlayer(Player player)
@@ -50,7 +51,7 @@ public class PlayerManager : NetworkBehaviour
         alivePlayers.Remove(player);
         player.OnPlayerEliminated -= () => EliminatePlayer(player);
 
-        OnPlayerListChanged?.Invoke();
+        OnPlayerRemoved?.Invoke(player);
     }
 
     /// <summary>

@@ -3,13 +3,13 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    [SerializeField] protected PlayerInput playerInput;
+    [SerializeField] protected InputActionAsset inputAction;
 
     protected virtual void OnValidate()
     {
-        if (playerInput == null)
+        if (inputAction == null)
         {
-            Debug.LogWarning($"InputManager on {name} has no PlayerInput assigned.");
+            Debug.LogWarning($"InputManager on {name} has no InputAction assigned.");
         }
     }
 }

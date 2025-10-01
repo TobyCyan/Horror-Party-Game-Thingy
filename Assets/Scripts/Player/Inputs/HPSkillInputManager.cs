@@ -6,18 +6,28 @@ public class HPSkillInputManager : InputManager
     public bool CanUseHunterSkill { get; set; } = false;
 
     // Hunter's skill
-    [SerializeField] private PlayerSkill huntersSightSkill;
+    private PlayerSkill huntersSightSkill;
 
     private void Awake()
     {
-        if (playerInput != null)
+        if (inputAction != null)
         {
-            playerInput.actions["HP_Hunter_Skill"].performed += ctx => UseHunterSkill();
+            inputAction.Enable();
+            inputAction.FindAction("HP_Hunter_Skill/Use", true).performed += _ => UseHunterSkill();
         }
 
         if (huntersSightSkill == null)
         {
-            Debug.LogWarning($"No PlayerSkill component found on {name}."); 
+            huntersSightSkill = gameObject.AddComponent<HuntersSightSkill>();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (inputAction != null)
+        {
+            inputAction.FindAction("HP_Hunter_Skill/Use", true).performed -= _ => UseHunterSkill();
+            inputAction.Disable();
         }
     }
 
