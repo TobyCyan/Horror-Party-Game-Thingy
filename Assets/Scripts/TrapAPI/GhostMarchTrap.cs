@@ -9,11 +9,13 @@ public class GhostMarchTrap : TrapBase
     [SerializeField] private float marchSpeed = 2.0f;
     [SerializeField] private LayerMask playerMask;   // set to "Player" in Inspector
     [SerializeField] private JumpScare jumpScareModel;
+    private bool isJumpScaring = false;
 
     private new void Start()
     {
         jumpScareModel.OnJumpScareStart += JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp += CleanUpHandler;
+        jumpScareModel.AfterJumpScarePlayer += AfterJumpScarePlayerHandler;
         jumpScareModel.gameObject.SetActive(false);
 
         OnArmed += PlaceAtStart;
@@ -24,6 +26,7 @@ public class GhostMarchTrap : TrapBase
     {
         jumpScareModel.OnJumpScareStart -= JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp -= CleanUpHandler;
+        jumpScareModel.AfterJumpScarePlayer -= AfterJumpScarePlayerHandler;
         OnArmed -= PlaceAtStart;
     }
 
@@ -38,6 +41,20 @@ public class GhostMarchTrap : TrapBase
         {
             Debug.LogWarning($"Jumpscare model is null on {name}!");
         }
+    }
+
+    private void AfterJumpScarePlayerHandler(Player player)
+    {
+        EliminatePlayer(player);
+    }
+
+    private void EliminatePlayer(Player player)
+    {
+        if (!player.IsOwner)
+        {
+            return;
+        }
+        player.EliminatePlayer();
     }
 
     private void PlaceAtStart(ITrap _)
@@ -96,12 +113,19 @@ public class GhostMarchTrap : TrapBase
     private void CleanUpHandler()
     {
         jumpScareModel.gameObject.SetActive(false);
+        isJumpScaring = false;
         // Re-arm upon finishing jumpscare.
         Arm();
     }
 
     void OnTriggerEnter(Collider other)
     {
+        // Only allow one jumpscare at a time.
+        if (isJumpScaring)
+        {
+            return;
+        }
+
         bool isNotPlayer = (playerMask.value & (1 << other.gameObject.layer)) == 0;
         if (isNotPlayer)
         {
@@ -113,6 +137,7 @@ public class GhostMarchTrap : TrapBase
             return;
         }
 
+        isJumpScaring = true;
         jumpScareModel.gameObject.SetActive(true);
         jumpScareModel.TriggerJumpScare(player);
     }

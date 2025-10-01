@@ -1,0 +1,34 @@
+{
+    "name": "HPSkillInput",
+    "maps": [
+        {
+            "name": "HP_Hunter_Skill",
+            "id": "dabeda75-7574-4b5a-914d-179eb437f5dd",
+            "actions": [
+                {
+                    "name": "Use",
+                    "type": "Button",
+                    "id": "a27a40de-c9a2-4c07-b4cb-6cf410ba7f9a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b58959f6-71f5-4f23-b5d1-22914097aefc",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

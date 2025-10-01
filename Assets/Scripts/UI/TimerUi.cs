@@ -14,7 +14,7 @@ public class TimerUi : MonoBehaviour
 
     private void UpdateTimerText(float previousvalue, float newvalue)
     {
-        timerText.text = Mathf.Max(0, newvalue).ToString();
+        timerText.text = Mathf.Max(0, newvalue).ToString("0.00");
     }
 
     // private void Start()
