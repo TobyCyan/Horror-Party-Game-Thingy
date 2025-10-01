@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HuntersSightSkill : PlayerSkill
@@ -16,23 +18,32 @@ public class HuntersSightSkill : PlayerSkill
         }
 
         Debug.Log("Hunter's Sight activated!");
-        HighlightEnemies();
+        HighlightPlayers();
         durationTimer.StartTimer(duration);
     }
 
     public override void StopSkill()
     {
         Debug.Log("Hunter's Sight deactivated!");
-        RevertHighlighting();
+        // Empty since server automatically stops highlighting after duration
+        return;
     }
 
-    private void HighlightEnemies()
+    private void HighlightPlayers()
     {
         // Logic to highlight enemies
-    }
+        ulong hunterId = GetComponent<Player>().Id;
 
-    private void RevertHighlighting()
-    {
-        // Logic to revert highlighting
+        // Highlight all players except the hunter
+        List<Player> players = PlayerManager.Instance.AlivePlayers
+            .Where(p => p.Id != hunterId).ToList();
+
+        foreach (var player in players)
+        {
+            if (player.TryGetComponent(out PlayerSilhouette silhouette))
+            {
+                silhouette.ShowForSeconds_Server(duration);
+            }
+        }
     }
 }
