@@ -14,7 +14,7 @@ public class MazeGameManager : NetworkBehaviour
        NetworkVariableWritePermission.Server
    );
 
-    private MazeGamePhase currPhase;
+    public MazeGamePhase currPhase;
 
     void Awake()
     {

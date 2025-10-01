@@ -6,6 +6,7 @@ using Unity.Cinemachine;
 public abstract class MazeGamePhase
 {
     protected PhaseID id; // laze
+    public float timeRemaining;
     public virtual void Enter()
     {
         Debug.Log($"Entering {GetType().Name}");
@@ -41,7 +42,6 @@ public class DefaultPhase : MazeGamePhase
 public class TrapPhase : MazeGamePhase
 {
 
-    float timeLimit;
     int cost;
     float currTime = 0f;
     Player player;
@@ -49,13 +49,13 @@ public class TrapPhase : MazeGamePhase
 
     public TrapPhase()
     {
-        timeLimit = 10f;
+        timeRemaining = 10f;
         cost = 20;
     }
 
     public TrapPhase(float timeLimit, int initCost)
     {
-        this.timeLimit = timeLimit;
+        this.timeRemaining = timeLimit;
         this.cost = initCost;
     }
 
@@ -82,7 +82,7 @@ public class TrapPhase : MazeGamePhase
 
     public override void Exit()
     {
-           
+
         base.Exit();
 
         MazeTrapManager.Instance.FinaliseTraps();
@@ -99,8 +99,8 @@ public class TrapPhase : MazeGamePhase
     public override void UpdatePhase()
     {
         base.UpdatePhase();
-        currTime += Time.deltaTime;
-        if (currTime >= timeLimit)
+        timeRemaining -= Time.deltaTime;
+        if (timeRemaining <= 0)
         {
             ChangePhase(PhaseID.Run);
         }
@@ -109,17 +109,16 @@ public class TrapPhase : MazeGamePhase
 
 public class RunPhase : MazeGamePhase
 {
-    float timeLimit;
-    float currTime = 0f;
+
 
     public RunPhase()
     {
-        this.timeLimit = 5f;
+        this.timeRemaining = 5f;
     }
 
     public RunPhase(float timeLimit)
     {
-        this.timeLimit = timeLimit;
+        this.timeRemaining = timeLimit;
     }
 
     public override void Enter()
@@ -137,17 +136,20 @@ public class RunPhase : MazeGamePhase
     public override void UpdatePhase()
     {
         base.UpdatePhase();
-        currTime += Time.deltaTime;
-        if (currTime >= timeLimit)
+        timeRemaining -= Time.deltaTime;
+        if (timeRemaining <= 0)
         {
-            ChangePhase(PhaseID.Traps); // test, by right should go to results
+            ChangePhase(PhaseID.Traps); // or Results
         }
     }
 }
 
 public class ScorePhase : MazeGamePhase
 {
-    public ScorePhase() { }
+    public ScorePhase() {
+        timeRemaining = 5f;
+    
+    }
 
     public override void Enter()
     {
@@ -163,6 +165,16 @@ public class ScorePhase : MazeGamePhase
         // close score ui
         // respawn everyone at spawn point
         // reset player states (health etc) if needed
+    }
+
+    public override void UpdatePhase()
+    {
+        base.UpdatePhase();
+        timeRemaining -= Time.deltaTime;
+        if (timeRemaining <= 0)
+        {
+            ChangePhase(PhaseID.Traps); // or Results
+        }
     }
 }
 
