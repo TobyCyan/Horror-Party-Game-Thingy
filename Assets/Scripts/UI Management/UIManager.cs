@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-//attach to player
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;

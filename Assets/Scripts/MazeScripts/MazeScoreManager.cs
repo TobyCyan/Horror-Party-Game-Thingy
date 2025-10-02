@@ -28,7 +28,7 @@ public class MazeScoreManager : NetworkBehaviour
         Instance = this;
     }
 
-    public void ResetScores()
+    public void ResetRoundScores()
     {
         roundSaboScore = 0;
         roundTimeScore = 0;

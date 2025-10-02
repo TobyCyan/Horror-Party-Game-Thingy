@@ -23,9 +23,9 @@ public struct TrapInfo : INetworkSerializable
 // kind of stuffed this class full
 // keep track of client's desired trap placements, support undo operations
 // server will spawn traps in from the info collected from clients on phase end
-public class MazeTrapManager : NetworkBehaviour
+public class MazeTrapPlacer : NetworkBehaviour
 {
-    public static MazeTrapManager Instance;
+    public static MazeTrapPlacer Instance;
 
     [SerializeField] private LayerMask gridLayer;
     [SerializeField] public GameObject[] trapPrefabs; // should be TrapBase?
