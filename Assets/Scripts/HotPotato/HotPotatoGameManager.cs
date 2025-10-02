@@ -87,7 +87,8 @@ public class HotPotatoGameManager : NetworkBehaviour
             // Despawn everyone
             for (int i = 0; i < playerCount; i++)
             {
-                SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+                if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
+                    SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
             }
 
             // ScoreUiManager.Instance.ShowFinalScore();
