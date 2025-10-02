@@ -6,8 +6,6 @@ public class Timer : MonoBehaviour
 {
     private float duration;
     private float timer;
-    // Only this property can set the timer value to ensure OnTimeTick is invoked
-    private float RunningTimer { set => SetTimer(value); get => timer; }
     // Only use this property to get the current time
     public float CurrentTime => timer;
     public bool IsComplete => timer <= 0;
@@ -52,10 +50,10 @@ public class Timer : MonoBehaviour
 
     private IEnumerator Tick()
     {
-        RunningTimer = duration;
+        timer = duration;
         while (isRunning)
         {
-            RunningTimer -= Time.deltaTime;
+            timer -= Time.deltaTime;
             if (timer <= 0)
             {
                 if (isRunning)
@@ -64,16 +62,10 @@ public class Timer : MonoBehaviour
                     OnTimeUp?.Invoke();
                     StopTimer();
                 }
-                RunningTimer = 0.0f;
                 yield break;
             }
+            OnTimeTick?.Invoke();
             yield return null;
         }
-    }
-
-    private void SetTimer(float value)
-    {
-        timer = value;
-        OnTimeTick?.Invoke();
     }
 }
