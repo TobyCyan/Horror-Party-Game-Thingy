@@ -33,7 +33,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed += HandleMarkPassed;
         }
 
         if (hotPotatoTimer != null)
@@ -61,7 +60,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed -= HandleMarkPassed;
             markManager.StopHPGame();
         }
 
@@ -97,15 +95,6 @@ public class HotPotatoGameManager : NetworkBehaviour
             
             await SceneLifetimeManager.Instance.UnloadSceneNetworked("HospitalScene");
             await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
-        }
-    }
-
-    private void HandleMarkPassed(ulong _)
-    {
-        // Reset the timer when the mark is passed
-        if (hotPotatoTimer != null)
-        {
-            hotPotatoTimer.StartTimer(hotPotatoDuration);
         }
     }
 
