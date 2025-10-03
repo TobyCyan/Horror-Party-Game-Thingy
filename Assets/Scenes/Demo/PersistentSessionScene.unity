@@ -624,7 +624,7 @@ GameObject:
   - component: {fileID: 784984312}
   - component: {fileID: 784984313}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Selector Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -668,6 +668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  selectedSceneName: HospitalMapScene
 --- !u!65 &784984314
 BoxCollider:
   m_ObjectHideFlags: 0

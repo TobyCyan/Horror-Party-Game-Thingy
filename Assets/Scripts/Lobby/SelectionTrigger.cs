@@ -1,11 +1,20 @@
-using System;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
 public class SelectorTrigger : NetworkBehaviour
 {
+    public enum GameType
+    {
+        Demo,
+        Selected,
+    }
+
     private int triggerCount = 0;
+    [SerializeField] private GameType gameType = GameType.Demo;
+    [SerializeField] private string demoSceneName = "HospitalScene";
+    [SerializeField] private string selectedSceneName = "HospitalMapScene";
+
     private void OnTriggerEnter(Collider other)
     {
         if (!IsOwner) return;
@@ -44,8 +53,16 @@ public class SelectorTrigger : NetworkBehaviour
             
         await Task.Delay(500); // Wait just incase;
         
+        string playSceneName = GetPlaySceneName();
         await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { "HospitalScene" });
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { playSceneName });
+        SceneLifetimeManager.Instance.SetActiveScene(selectedSceneName);
+    }
+
+    private string GetPlaySceneName()
+    {
+        string sceneName = gameType == GameType.Demo ? demoSceneName : selectedSceneName;
+        return sceneName;
     }
     
     [Rpc(SendTo.NotServer)]
