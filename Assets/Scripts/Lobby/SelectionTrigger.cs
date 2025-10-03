@@ -47,6 +47,7 @@ public class SelectorTrigger : NetworkBehaviour
         
         await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { selectedSceneName });
+        SceneLifetimeManager.Instance.SetActiveScene(selectedSceneName);
     }
     
     [Rpc(SendTo.NotServer)]
