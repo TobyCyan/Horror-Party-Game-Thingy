@@ -1,13 +1,30 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HotPotatoGameManager : NetworkBehaviour
 {
+    public static HotPotatoGameManager Instance;
+    
     [SerializeField] private MarkManager markManager;
     [Min(0.0f)]
     [SerializeField] private float hotPotatoDuration = 30.0f;
     [SerializeField] private Timer hotPotatoTimer;
+    public NetworkVariable<float> timer = new();
     private bool isGameActive = true;
+
+    void Awake()
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
+        Instance = this;
+    }
+
+    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+    }
 
     public override void OnNetworkSpawn()
     {
@@ -16,7 +33,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed += HandleMarkPassed;
         }
 
         if (hotPotatoTimer != null)
@@ -27,7 +43,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (PlayerManager.Instance != null)
         {
-            PlayerManager.Instance.OnAllPlayersEliminated += EndGame;
+            PlayerManager.Instance.OnLastPlayerStanding += EndGame;
         }
 
         if (markManager == null)
@@ -44,7 +60,6 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
-            markManager.OnMarkPassed -= HandleMarkPassed;
             markManager.StopHPGame();
         }
 
@@ -56,23 +71,31 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (PlayerManager.Instance != null)
         {
-            PlayerManager.Instance.OnAllPlayersEliminated -= EndGame;
+            PlayerManager.Instance.OnLastPlayerStanding -= EndGame;
         }
     }
 
-    private void EndGame()
+    private async void EndGame()
     {
         isGameActive = false;
-        OnNetworkDespawn();
         Debug.Log("Hot Potato game ended.");
-    }
+        GetComponent<NetworkObject>().Despawn();
 
-    private void HandleMarkPassed(ulong _)
-    {
-        // Reset the timer when the mark is passed
-        if (hotPotatoTimer != null)
+        if (IsServer)
         {
-            hotPotatoTimer.StartTimer(hotPotatoDuration);
+            int playerCount = PlayerManager.Instance.players.Count;
+            // Despawn everyone
+            for (int i = 0; i < playerCount; i++)
+            {
+                if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
+                    SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+            }
+
+            // ScoreUiManager.Instance.ShowFinalScore();
+            await Task.Delay(1000);
+            
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked("HospitalScene");
+            await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
         }
     }
 
@@ -88,6 +111,10 @@ public class HotPotatoGameManager : NetworkBehaviour
     {
         if (!isGameActive) return;
 
+        if (IsServer)
+        {
+            timer.Value = hotPotatoTimer.CurrentTime;
+        }
         // For testing purposes
         if (Input.GetKeyDown(KeyCode.K))
         {

@@ -8,16 +8,17 @@ public class PlayerManager : NetworkBehaviour
     public static PlayerManager Instance;
 
     public List<Player> players = new();
-    public event Action OnPlayerListChanged;
+    public event Action<Player> OnPlayerAdded;
+    public event Action<Player> OnPlayerRemoved;
     public Player localPlayer;
     private readonly List<Player> alivePlayers = new();
     public List<Player> AlivePlayers => alivePlayers;
     public event Action OnAllPlayersEliminated;
+    public event Action OnLastPlayerStanding;
+    public event Action OnLocalPlayerSet;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
-        base.OnNetworkSpawn();
-
         if (!Instance)
         {
             Instance = this;
@@ -26,19 +27,30 @@ public class PlayerManager : NetworkBehaviour
         {
             Destroy(gameObject);
         }
+        
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
     }
 
     public void AddPlayer(Player player)
     {
         if (players.Contains(player)) return;
         
-        if (player.IsOwner) localPlayer = player;
-
+        if (player.IsOwner)
+        {
+            localPlayer = player;
+            OnLocalPlayerSet?.Invoke();
+        }
+        
         players.Add(player);
         alivePlayers.Add(player);
         player.OnPlayerEliminated += () => EliminatePlayer(player);
 
-        OnPlayerListChanged?.Invoke();
+        OnPlayerAdded?.Invoke(player);
     }
     
     public void RemovePlayer(Player player)
@@ -49,7 +61,7 @@ public class PlayerManager : NetworkBehaviour
         alivePlayers.Remove(player);
         player.OnPlayerEliminated -= () => EliminatePlayer(player);
 
-        OnPlayerListChanged?.Invoke();
+        OnPlayerRemoved?.Invoke(player);
     }
 
     /// <summary>
@@ -63,6 +75,11 @@ public class PlayerManager : NetworkBehaviour
         if (alivePlayers.Contains(player))
         {
             alivePlayers.Remove(player);
+        }
+
+        if (alivePlayers.Count <= 1)
+        {
+            OnLastPlayerStanding?.Invoke();
         }
 
         if (alivePlayers.Count == 0)
@@ -90,5 +107,10 @@ public class PlayerManager : NetworkBehaviour
     public Player FindPlayerByNetId(ulong id)
     {
         return players.Find(p => p.Id == id);
+    }
+    
+    public Player FindPlayerByClientId(ulong id)
+    {
+        return players.Find(p => p.clientId == id);
     }
 }

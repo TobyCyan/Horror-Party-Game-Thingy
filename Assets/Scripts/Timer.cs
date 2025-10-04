@@ -6,12 +6,14 @@ public class Timer : MonoBehaviour
 {
     private float duration;
     private float timer;
+    // Only use this property to get the current time
     public float CurrentTime => timer;
     public bool IsComplete => timer <= 0;
     public event Action OnTimeUp;
     public event Action OnTimeTick;
 
     private bool isRunning = false;
+    public bool IsRunning => isRunning;
 
     public void StartTimer(float duration)
     {
@@ -58,6 +60,7 @@ public class Timer : MonoBehaviour
                 {
                     Debug.Log($"Timer finished at {name}.");
                     OnTimeUp?.Invoke();
+                    StopTimer();
                 }
                 yield break;
             }

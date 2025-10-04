@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -17,6 +18,9 @@ public class PlayerSilhouette : NetworkBehaviour
     int silhouetteLayer;
     int baselineLayer;
 
+    public event Action OnSilhouetteShown;
+    public event Action OnSilhouetteHidden;
+
     void Awake()
     {
         silhouetteLayer = LayerMask.NameToLayer(silhouetteLayerName);
@@ -29,9 +33,9 @@ public class PlayerSilhouette : NetworkBehaviour
     }
 
     // Server entry point
-    public void ShowForSeconds_Server(float seconds = -1f)
+    [Rpc(SendTo.Server)]
+    public void ShowForSecondsRpc(float seconds = -1f)
     {
-        if (!IsServer) return;
         if (seconds <= 0f) seconds = defaultDuration;
         ShowOnceRpc(seconds);
     }
@@ -48,16 +52,20 @@ public class PlayerSilhouette : NetworkBehaviour
         // switch to Silhouette (only if that layer exists)
         if (silhouetteLayer >= 0)
         {
+            Debug.Log($"PlayerSilhouette: ShowOnceCo {seconds} seconds on {gameObject}");
             SetLayerRecursively(meshRoot, silhouetteLayer);
             foreach (var r in meshRoot.GetComponentsInChildren<Renderer>(true))
                 r.enabled = true;
         }
 
+        OnSilhouetteShown?.Invoke();
         yield return new WaitForSeconds(seconds);
 
         // ALWAYS restore to baseline Player layer
         if (baselineLayer >= 0)
             SetLayerRecursively(meshRoot, baselineLayer);
+
+        OnSilhouetteHidden?.Invoke();
     }
 
     static void SetLayerRecursively(Transform root, int layer)
