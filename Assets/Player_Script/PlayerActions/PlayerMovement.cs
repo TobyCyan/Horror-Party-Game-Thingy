@@ -6,7 +6,8 @@ public class PlayerMovement : MonoBehaviour
 {
     // --- Movement ---
     [Header("Movement")]
-    [SerializeField] private float movementSpeed = 6f;
+    [SerializeField] private float baseMovementSpeed = 6f;
+    private float movementSpeed = 6f;
     [SerializeField] private float jumpForce = 5.5f; // anim-only
 
     // --- Look ---
@@ -131,13 +132,13 @@ public class PlayerMovement : MonoBehaviour
             return; // skip inputs/anim while frozen
         }
 
-        // --- Blind test key ---
+        /*// --- Blind test key ---
         if (controls.Player.Blind.triggered)
             Blind(5f);
 
         // --- Freeze test key ---
         if (controls.Player.Freeze != null && controls.Player.Freeze.triggered)
-            Stun(5f);
+            Stun(5f);*/
 
         // Inputs
         moveInput = controls.Player.Move.ReadValue<Vector2>();
@@ -236,6 +237,20 @@ public class PlayerMovement : MonoBehaviour
             if (Vector3.Dot(newXZ, vXZ) < 0f)
                 rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f); // 
         }
+    }
+
+    public void ResetMovementSpeed()
+    {
+        movementSpeed = baseMovementSpeed;
+    }
+
+    /// <summary>
+    /// Modifies movement speed by a multiplier.
+    /// </summary>
+    /// <param name="modifier"></param>
+    public void SetMovementSpeedByModifier(float modifier)
+    {
+        movementSpeed *= modifier;
     }
 
     void OnDrawGizmosSelected()

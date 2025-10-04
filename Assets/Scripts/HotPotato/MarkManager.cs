@@ -7,7 +7,7 @@ using System;
 public class MarkManager : NetworkBehaviour
 {
     [SerializeField] private GameObject markSymbol;
-    
+
     public static MarkManager Instance;
     public Player currentMarkedPlayer;
 
@@ -15,8 +15,10 @@ public class MarkManager : NetworkBehaviour
     public event Action OnMarkedPlayerEliminated;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
+    public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
     [Min(0.0f)]
     [SerializeField] private float markPassingCooldown = 4.0f;
+    [SerializeField] private float markedPlayerSpeedModifier = 1.25f;
 
     void Awake()
     {
@@ -69,8 +71,6 @@ public class MarkManager : NetworkBehaviour
 
     private void HandleMarkedPlayerEliminated()
     {
-        // Remove the marked player from the alive players pool
-        PlayerManager.Instance.EliminatePlayer(currentMarkedPlayer);
         currentMarkedPlayer = null;
 
         // Start cooldown timer before assigning the new marked player
@@ -118,17 +118,35 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
-        if (currentMarkedPlayer != null)
+        if (currentMarkedPlayer)
         {
             // Unsubscribe from previous marked player's elimination event
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
+            if (currentMarkedPlayer.TryGetComponent(out PlayerMovement prevPm))
+            {
+                prevPm.ResetMovementSpeed();
+                Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
+            }
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-        Debug.Log($"Passing mark to {player} with id {id}");
+        // Debug.Log($"Passing mark to {player} with id {id}");
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
+        markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
 
+        if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
+        {
+            pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
+            Debug.Log($"Modified movement speed for new marked player {player}");
+        }
+
+        UpdateMarkUiClientRpc(id);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void UpdateMarkUiClientRpc(ulong id)
+    {
         OnMarkPassed?.Invoke(id);
     }
 
@@ -144,5 +162,13 @@ public class MarkManager : NetworkBehaviour
     private void InvokeOnMarkedPlayerEliminated()
     {
         OnMarkedPlayerEliminated?.Invoke();
+    }
+
+    private void Update()
+    {
+        if (currentMarkedPlayer)
+        {
+            currentMarkedPlayer.float0 += Time.deltaTime;
+        }
     }
 }

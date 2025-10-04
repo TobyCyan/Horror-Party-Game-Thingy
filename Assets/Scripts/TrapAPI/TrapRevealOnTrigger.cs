@@ -45,6 +45,6 @@ public class TrapRevealOnTrigger : MonoBehaviour
         if (!go) return;
         var sil = go.GetComponentInParent<PlayerSilhouette>();
         Debug.Log($"TrapRevealOnTrigger: Reveal {go} sil={sil}");
-        if (sil != null) sil.ShowForSeconds_Server(silhouetteSeconds);
+        if (sil != null) sil.ShowForSecondsRpc(silhouetteSeconds);
     }
 }
