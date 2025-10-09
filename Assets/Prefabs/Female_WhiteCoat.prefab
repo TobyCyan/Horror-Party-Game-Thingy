@@ -117,7 +117,7 @@ MonoBehaviour:
   Lens:
     FieldOfView: 80.1507
     OrthographicSize: 5
-    NearClipPlane: 0.3
+    NearClipPlane: 0.01
     FarClipPlane: 1000
     Dutch: 0
     ModeOverride: 0
@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30cb9cf957743e4baf87057168650eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 6
+  baseMovementSpeed: 6
   jumpForce: 5.5
   mouseSensitivity: 50
   groundMask:
