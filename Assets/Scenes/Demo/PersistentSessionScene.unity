@@ -668,6 +668,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  gameType: 1
+  demoSceneName: HospitalScene
   selectedSceneName: HospitalMapScene
 --- !u!65 &784984314
 BoxCollider:
