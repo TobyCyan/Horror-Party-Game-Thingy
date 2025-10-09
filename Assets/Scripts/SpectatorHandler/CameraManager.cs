@@ -10,7 +10,14 @@ public class CameraManager : MonoBehaviour
     private int currentCameraIndex = 0;
     private void Awake()
     {
-        Instance = this;
+        if (!Instance)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void AddCam(PlayerCam cam)
