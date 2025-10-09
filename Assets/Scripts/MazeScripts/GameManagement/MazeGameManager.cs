@@ -58,10 +58,17 @@ public class MazeGameManager : NetworkBehaviour
         }
     }
 
-
+    // SERVER-ONLY: call this to change the phase
+    public void ServerChangePhase(PhaseID next)
+    {
+        // TODO: phase will match server's...phase timer also needs to be made server authoritative
+        // foresee a problem where latency means local phase timers are out of sync, maybe late joiners won't get updated timers
+        if (!IsServer) return; 
+        currPhaseId.Value = next;
+    }
 
     // id change -> actual phase change
-    public void ChangePhase(PhaseID prev, PhaseID next)
+    private void ChangePhase(PhaseID prev, PhaseID next)
     {
         if (prev == next) return;
         currPhase?.Exit();
@@ -94,10 +101,4 @@ public class MazeGameManager : NetworkBehaviour
         NetworkManager.SceneManager.OnUnloadEventCompleted -= OnSceneUnloaded;
         currPhaseId.OnValueChanged -= ChangePhase;
     }
-
-    private void EndMinigame()
-    {
-        // send scores and win info to persistent game manager?
-    }
-
 }

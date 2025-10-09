@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using static CellUtils;
 
@@ -13,7 +14,7 @@ public class MazeBlock : MonoBehaviour
     public GameObject[] walls;
 
     private bool isGoal = false;
-
+    public static event Action OnPlayerWin;
     public void InitState(int state)
     {
         // for now just deactivate walls
@@ -37,12 +38,9 @@ public class MazeBlock : MonoBehaviour
         if (!isGoal) return;
         Debug.Log("Maze clear!");
         Player player = other.GetComponent<Player>();
-        if (player == null) return; 
+        if (player == null) return;
 
-
-        // tell score manager to STOP THE COUNT
-        MazeScoreManager.Instance.AddTimeScore();
-
+        OnPlayerWin?.Invoke(); // for local player
 
         isGoal = false; // locally so no scams
     }

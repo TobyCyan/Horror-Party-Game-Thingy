@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
@@ -21,7 +22,7 @@ public abstract class MazeGamePhase
 
     public virtual void ChangePhase(PhaseID next)
     {
-        MazeGameManager.Instance.ChangePhase(id, next);
+        MazeGameManager.Instance.ServerChangePhase(next);
     }
 }
 
@@ -84,6 +85,7 @@ public class TrapPhase : MazeGamePhase
     {
 
         base.Exit();
+        UIManager.Instance.HideCurrentView();
 
         MazeTrapPlacer.Instance.FinaliseTraps();
         MazeTrapPlacer.Instance.EnablePlacing(false);
@@ -129,7 +131,7 @@ public class RunPhase : MazeGamePhase
     }
     public override void Exit()
     {
-
+        UIManager.Instance.HideCurrentView();
         base.Exit();
     }
 
@@ -139,7 +141,7 @@ public class RunPhase : MazeGamePhase
         timeRemaining -= Time.deltaTime;
         if (timeRemaining <= 0)
         {
-            ChangePhase(PhaseID.Traps); // or Results
+            ChangePhase(PhaseID.Score); // or Results
         }
     }
 }
@@ -154,7 +156,10 @@ public class ScorePhase : MazeGamePhase
     public override void Enter()
     {
         base.Enter();
-        MazeScoreManager.Instance.SubmitRawScore();
+        if (NetworkManager.Singleton.IsServer)
+        {
+            MazeScoreManager.Instance.CalculateBonusesAndBroadcast();
+        }
         // stop player inputs?
         // display score ui
     }
@@ -162,7 +167,6 @@ public class ScorePhase : MazeGamePhase
     public override void Exit()
     {
         base.Exit();
-        MazeScoreManager.Instance.ResetRoundScores();
         // close score ui
         // respawn everyone at spawn point
         // reset player states (health etc) if needed
@@ -174,7 +178,7 @@ public class ScorePhase : MazeGamePhase
         timeRemaining -= Time.deltaTime;
         if (timeRemaining <= 0)
         {
-            ChangePhase(PhaseID.Traps); // or Results
+            ChangePhase(PhaseID.Traps); 
         }
     }
 }

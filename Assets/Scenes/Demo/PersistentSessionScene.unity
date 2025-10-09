@@ -670,7 +670,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   gameType: 1
   demoSceneName: HospitalScene
-  selectedSceneName: HospitalMapScene
+  selectedSceneName: TestMazeScene
 --- !u!65 &784984314
 BoxCollider:
   m_ObjectHideFlags: 0
