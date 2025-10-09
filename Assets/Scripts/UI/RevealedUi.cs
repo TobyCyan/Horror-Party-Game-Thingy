@@ -1,12 +1,16 @@
 using UnityEngine;
 
-public class RevealedUi : MonoBehaviour, IPlayerBindedUi
+public class RevealedUi : MonoBehaviour
 {
     private PlayerSilhouette playerSilhouette;
 
     private void Start()
     {
         Hide();
+        if (PlayerManager.Instance != null)
+        {
+            PlayerManager.Instance.OnLocalPlayerSet += SetAndBindPlayerSilhouette;
+        }
     }
 
     private void OnDestroy()
@@ -14,12 +18,13 @@ public class RevealedUi : MonoBehaviour, IPlayerBindedUi
         if (playerSilhouette != null)
         {
             playerSilhouette.OnSilhouetteShown -= Reveal;
+            playerSilhouette.OnSilhouetteHidden -= Hide;
         }
     }
 
-    private void SetAndBindPlayerSilhouette(PlayerSilhouette silhouette)
+    private void SetAndBindPlayerSilhouette()
     {
-        playerSilhouette = silhouette;
+        playerSilhouette = PlayerManager.Instance.localPlayer.GetComponentInChildren<PlayerSilhouette>();
         if (playerSilhouette == null)
         {
             Debug.LogWarning("PlayerSilhouette is null in RevealUi.");
@@ -27,6 +32,7 @@ public class RevealedUi : MonoBehaviour, IPlayerBindedUi
         }
 
         playerSilhouette.OnSilhouetteShown += Reveal;
+        playerSilhouette.OnSilhouetteHidden += Hide;
     }
 
     private void Reveal()
@@ -37,23 +43,5 @@ public class RevealedUi : MonoBehaviour, IPlayerBindedUi
     private void Hide()
     {
         gameObject.SetActive(false);
-    }
-
-    public void BindPlayer(GameObject playerObject)
-    {
-        if (playerObject == null)
-        {
-            Debug.LogWarning("Player object is null in BindPlayer.");
-            return;
-        }
-
-        if (playerObject.TryGetComponent<PlayerSilhouette>(out var silhouette))
-        {
-            SetAndBindPlayerSilhouette(silhouette);
-        }
-        else
-        {
-            Debug.LogWarning("Player object does not have a PlayerSilhouette component.");
-        }
     }
 }

@@ -18,6 +18,7 @@ public class MarkManager : NetworkBehaviour
     public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
     [Min(0.0f)]
     [SerializeField] private float markPassingCooldown = 4.0f;
+    [SerializeField] private float markedPlayerSpeedModifier = 1.25f;
 
     void Awake()
     {
@@ -121,6 +122,11 @@ public class MarkManager : NetworkBehaviour
         {
             // Unsubscribe from previous marked player's elimination event
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
+            if (currentMarkedPlayer.TryGetComponent(out PlayerMovement prevPm))
+            {
+                prevPm.ResetMovementSpeed();
+                Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
+            }
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
@@ -128,6 +134,12 @@ public class MarkManager : NetworkBehaviour
         markSymbol.transform.SetParent(player.transform);
         markSymbol.transform.position = player.transform.position + 2*Vector3.up;
         markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
+
+        if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
+        {
+            pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
+            Debug.Log($"Modified movement speed for new marked player {player}");
+        }
 
         UpdateMarkUiClientRpc(id);
     }
