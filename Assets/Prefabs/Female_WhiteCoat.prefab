@@ -331,6 +331,18 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6706970591225045007}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1378514592512889471}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6975482300870843651}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6800106002403848690}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 380088931163462958}
     - targetCorrespondingSourceObject: {fileID: -4267678088381660852, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1197703584625609843}
@@ -379,7 +391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30cb9cf957743e4baf87057168650eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 6
+  baseMovementSpeed: 6
   jumpForce: 5.5
   mouseSensitivity: 50
   groundMask:
@@ -663,6 +675,83 @@ MonoBehaviour:
   silhouetteLayerName: Silhouette
   baselineLayerName: Player
   defaultDuration: 2
+--- !u!114 &1378514592512889471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058817dd04a83744bac50af6dcaf0bb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxInventorySlots: 1
+--- !u!114 &6975482300870843651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee10244a460236e47923f009aa3139f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  pickupRange: 3
+  pickupKey: 113
+  pickupLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  pickupPromptUI: {fileID: 0}
+  promptOffset: 1.5
+--- !u!114 &6800106002403848690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a0017348b739334e9373d4284f87186, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  crosshairSprite: {fileID: 0}
+  crosshairSize: {x: 32, y: 32}
+  validColor: {r: 0, g: 1, b: 0, a: 0.8}
+  invalidColor: {r: 1, g: 0, b: 0, a: 0.8}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &380088931163462958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ea47a7c32c16c64aa6b4b02d0185f8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxPlacementDistance: 10
+  placeKey: 323
+  placementModeKey: 101
+  placementLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  placementCooldown: 0
+  spawnHeightOffset: 2
+  playerCamera: {fileID: 0}
+  inventory: {fileID: 1378514592512889471}
+  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
+  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &1267403997805736599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8230858294829078475, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
