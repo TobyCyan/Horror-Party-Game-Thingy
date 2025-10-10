@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     private UIView currentView;
     [SerializeField] 
-    public List<UIView> uiViews; // overwrite per minigame, easier
+    public List<UIView> uiViews; // contains everything right now..?
 
     private void Awake()
     {
@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour
 
         if (null == nextView)
         {
-            Debug.LogWarning($"UI view {typeof(T).Name} not found. Assign in inspector/prefab!");
+            Debug.LogWarning($"UI view {typeof(T).Name} not found. Assign in InitScene's UIManager!");
             return;
         }
 
