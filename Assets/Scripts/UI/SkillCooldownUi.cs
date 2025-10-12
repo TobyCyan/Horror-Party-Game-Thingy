@@ -18,6 +18,7 @@ public class SkillCooldownUi : MonoBehaviour
         }
 
         SkillRegistry.Instance.OnSkillRegistered += OnSkillRegistered;
+        UpdateUi(0);
     }
 
     private void OnDestroy()
