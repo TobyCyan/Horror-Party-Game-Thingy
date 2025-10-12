@@ -1,32 +1,26 @@
 using UnityEngine;
 using Unity.Cinemachine;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
-public class PlayerMazeGameSetup : MonoBehaviour
+
+public class PlayerMazeGameSetup : NetworkBehaviour
 {
     public CinemachineCamera playerCam;
-    private bool isLocalPlayer;
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        if (null == MazeGameManager.Instance) return; // not in maze game
-        isLocalPlayer = GetComponent<NetworkBehaviour>().IsOwner;
-        RegisterCam();
-    }
+        base.OnNetworkSpawn();
 
-    private void RegisterCam()
-    {
-        if (isLocalPlayer)
-        {
-            if (null != MazeCameraManager.Instance)
-            {
-                MazeCameraManager.Instance.RegisterLocalPlayerCamera(playerCam);
-            }
-
-        }
-        else
+        if (!IsOwner)
         {
             playerCam.enabled = false;
+            return;
+        }
+
+        if (MazeCameraManager.Instance != null)
+        {
+            Debug.Log("registering cam");
+            MazeCameraManager.Instance.RegisterLocalPlayerCamera(playerCam);
         }
     }
+
 }

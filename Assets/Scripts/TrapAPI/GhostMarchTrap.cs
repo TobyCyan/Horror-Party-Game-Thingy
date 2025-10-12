@@ -7,7 +7,6 @@ public class GhostMarchTrap : TrapBase
     [SerializeField] private Vector3 startPosition;
     [SerializeField] private Vector3 endPosition;
     [SerializeField] private float marchSpeed = 2.0f;
-    [SerializeField] private LayerMask playerMask;   // set to "Player" in Inspector
     [SerializeField] private JumpScare jumpScareModel;
     private bool isJumpScaring = false;
 
@@ -122,12 +121,6 @@ public class GhostMarchTrap : TrapBase
     {
         // Only allow one jumpscare at a time.
         if (isJumpScaring)
-        {
-            return;
-        }
-
-        bool isNotPlayer = (playerMask.value & (1 << other.gameObject.layer)) == 0;
-        if (isNotPlayer)
         {
             return;
         }

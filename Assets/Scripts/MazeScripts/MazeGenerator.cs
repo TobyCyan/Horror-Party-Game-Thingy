@@ -76,8 +76,8 @@ public class MazeGenerator
         }
 
    
-        cells[0] = RemoveWall(cells[0], Left); // make entrance FOR NOW, i guess we spawn them all inside the maze later on
-        cells[N-1] = RemoveWall(cells[N-1], Right); // exit at top right
+        // cells[0] = RemoveWall(cells[0], Left); // make entrance if desired
+        cells[N-1] = RemoveWall(cells[N-1], Right); // exit always at top right
 
         int roomsToPick = (int)(N * roomRate);
         var chosen = new HashSet<int>();
