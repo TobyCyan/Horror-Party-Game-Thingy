@@ -2,15 +2,19 @@ using UnityEngine;
 
 public abstract class PlayerSkill : MonoBehaviour
 {
+    [Min(0f)]
     [SerializeField] protected float duration = 5.0f;
     public float Duration => duration;
 
+    [Header("Cooldown Must Be Larger Than Duration.")]
+    [Min(0f)]
     [SerializeField] protected float cooldown = 20.0f;
     public float Cooldown => cooldown;
 
     // Skill timers
     protected Timer durationTimer;
     protected Timer coolDownTimer;
+    public Timer CoolDownTimer => coolDownTimer;
 
     protected virtual void Awake()
     {
@@ -25,9 +29,18 @@ public abstract class PlayerSkill : MonoBehaviour
         {
             coolDownTimer = gameObject.AddComponent<Timer>();
         }
+    }
 
-        // When duration ends, start cooldown
-        durationTimer.OnTimeUp += StartCoolDownTimer;
+    protected virtual void Start()
+    {
+        if (SkillRegistry.Instance != null)
+        {
+            SkillRegistry.Instance.RegisterSkill(this);
+        }
+        else
+        {
+            Debug.LogError("SkillRegistry instance not found in the scene.");
+        }
     }
 
     protected virtual void OnDestroy()

@@ -737,7 +737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  gameType: 0
+  gameType: 1
   demoSceneName: HospitalScene
   selectedSceneName: HospitalMapScene
 --- !u!65 &784984314
@@ -2165,6 +2165,7 @@ MonoBehaviour:
   itemCollider: {fileID: 0}
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  despawnDelay: 0.1
 --- !u!1001 &4879504159661261982
 PrefabInstance:
   m_ObjectHideFlags: 0

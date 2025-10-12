@@ -10,7 +10,7 @@ public class Timer : MonoBehaviour
     public float CurrentTime => timer;
     public bool IsComplete => timer <= 0;
     public event Action OnTimeUp;
-    public event Action OnTimeTick;
+    public event Action<float> OnTimeTick;
 
     private bool isRunning = false;
     public bool IsRunning => isRunning;
@@ -64,7 +64,7 @@ public class Timer : MonoBehaviour
                 }
                 yield break;
             }
-            OnTimeTick?.Invoke();
+            OnTimeTick?.Invoke(timer);
             yield return null;
         }
     }
