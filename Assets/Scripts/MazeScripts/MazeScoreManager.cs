@@ -87,7 +87,7 @@ public class MazeScoreManager : NetworkBehaviour
     {
         if (IsOwner)
         {
-            float remaining = MazeGameManager.Instance.currPhase.timeRemaining;
+            float remaining = MazeGameManager.Instance.GetTimeRemaining();
             RequestAddTimeServerRpc(remaining, clientId);
         }
     }
