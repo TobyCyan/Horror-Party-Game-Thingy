@@ -25,7 +25,7 @@ public class MazeGameManager : NetworkBehaviour
         return currPhaseTimer.Value;
     }
 
-    public MazeGamePhase currPhase;
+    private MazeGamePhase currPhase;
 
 
     void Awake()
