@@ -11,7 +11,7 @@ public class HuntersSightSkill : PlayerSkill
 
     public override void UseSkill()
     {
-        if (coolDownTimer.IsRunning)
+        if (coolDownTimer.IsRunning || durationTimer.IsRunning)
         {
             Debug.LogWarning("Skill is on cooldown.");
             return;
@@ -20,6 +20,7 @@ public class HuntersSightSkill : PlayerSkill
         Debug.Log("Hunter's Sight activated!");
         HighlightPlayers();
         durationTimer.StartTimer(duration);
+        coolDownTimer.StartTimer(cooldown);
     }
 
     public override void StopSkill()
