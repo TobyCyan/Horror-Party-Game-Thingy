@@ -12,9 +12,21 @@ public class MazeGameManager : NetworkBehaviour
        PhaseID.Default,
        NetworkVariableReadPermission.Everyone,
        NetworkVariableWritePermission.Server
-   );
+    );
+
+    private NetworkVariable<float> currPhaseTimer = new(
+        0f,
+        NetworkVariableReadPermission.Everyone,
+       NetworkVariableWritePermission.Server
+    );
+
+    public float GetTimeRemaining()
+    {
+        return currPhaseTimer.Value;
+    }
 
     private MazeGamePhase currPhase;
+
 
     void Awake()
     {
@@ -58,18 +70,20 @@ public class MazeGameManager : NetworkBehaviour
         }
     }
 
-
+    // SERVER-ONLY: call this to change the phase
+    public void ServerChangePhase(PhaseID next)
+    {
+        if (!IsServer) return; 
+        currPhaseId.Value = next;
+    }
 
     // id change -> actual phase change
-    public void ChangePhase(PhaseID prev, PhaseID next)
+    private void ChangePhase(PhaseID prev, PhaseID next)
     {
         if (prev == next) return;
         currPhase?.Exit();
         switch(next)
         {
-            case PhaseID.Default:
-                currPhase = new DefaultPhase();
-            break;
             case PhaseID.Traps:
                 currPhase = new TrapPhase();
             break;
@@ -80,13 +94,26 @@ public class MazeGameManager : NetworkBehaviour
                 currPhase = new ScorePhase();
             break;
         }
-
+        if (IsServer) currPhaseTimer.Value = currPhase.TimeLimit;
         currPhase.Enter();
     }
 
     private void Update()
     {
-        currPhase?.UpdatePhase();
+        if (currPhase == null) return;
+
+        currPhase.UpdatePhase();
+
+        if (IsServer)
+        {
+            currPhaseTimer.Value -= Time.deltaTime;
+
+            if (currPhaseTimer.Value <= 0)
+            {
+                currPhaseId.Value = currPhase.GetNextPhase();
+            }
+        }
+
     }
 
     private void OnSceneUnloaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
@@ -94,10 +121,4 @@ public class MazeGameManager : NetworkBehaviour
         NetworkManager.SceneManager.OnUnloadEventCompleted -= OnSceneUnloaded;
         currPhaseId.OnValueChanged -= ChangePhase;
     }
-
-    private void EndMinigame()
-    {
-        // send scores and win info to persistent game manager?
-    }
-
 }

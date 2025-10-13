@@ -11,7 +11,7 @@ public class TrapsPhaseView : UIView
     {
         undoButton.onClick.AddListener(() =>
         {
-            MazeTrapManager.Instance.Undo();
+            MazeTrapPlacer.Instance.Undo();
         });
     }
 
@@ -21,7 +21,7 @@ public class TrapsPhaseView : UIView
         Debug.Log("Showing traps UI");
 
 
-        var trapPrefabs = MazeTrapManager.Instance.trapPrefabs; // maybe available traps are different every cycle?
+        var trapPrefabs = MazeTrapPlacer.Instance.trapPrefabs; // maybe available traps are different every cycle?
         if (trapPrefabs == null || trapPrefabs.Length == 0)
         {
             Debug.LogWarning("Traps UI could not get trap list");
@@ -34,7 +34,7 @@ public class TrapsPhaseView : UIView
             Button btn = btnObj.GetComponent<Button>();
             btn.onClick.AddListener(() =>
             {
-                MazeTrapManager.Instance.SelectTrap(index);
+                MazeTrapPlacer.Instance.SelectTrap(index);
                 Debug.Log($"Selected trap {trapPrefabs[index].name}");
             });
         }

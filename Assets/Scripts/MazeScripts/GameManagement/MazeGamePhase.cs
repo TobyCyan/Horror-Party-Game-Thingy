@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
@@ -6,6 +7,7 @@ using Unity.Cinemachine;
 public abstract class MazeGamePhase
 {
     protected PhaseID id; // laze
+    public float TimeLimit { get; protected set; }
     public virtual void Enter()
     {
         Debug.Log($"Entering {GetType().Name}");
@@ -20,8 +22,10 @@ public abstract class MazeGamePhase
 
     public virtual void ChangePhase(PhaseID next)
     {
-        MazeGameManager.Instance.ChangePhase(id, next);
+        MazeGameManager.Instance.ServerChangePhase(next);
     }
+
+    public abstract PhaseID GetNextPhase();
 }
 
 
@@ -36,26 +40,28 @@ public enum PhaseID
 public class DefaultPhase : MazeGamePhase
 {
     public DefaultPhase() { id = PhaseID.Default; }
+    public override PhaseID GetNextPhase()
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 public class TrapPhase : MazeGamePhase
 {
 
-    float timeLimit;
     int cost;
-    float currTime = 0f;
     Player player;
     PlayerMovement movement;
 
     public TrapPhase()
     {
-        timeLimit = 10f;
+        TimeLimit = 10f;
         cost = 20;
     }
 
     public TrapPhase(float timeLimit, int initCost)
     {
-        this.timeLimit = timeLimit;
+        this.TimeLimit = timeLimit;
         this.cost = initCost;
     }
 
@@ -67,7 +73,7 @@ public class TrapPhase : MazeGamePhase
         MazeCameraManager.Instance.SetToTopDownView();
         UIManager.Instance.SwitchUIView<TrapsPhaseView>();
 
-        MazeTrapManager.Instance.EnablePlacing(true, cost);
+        MazeTrapPlacer.Instance.EnablePlacing(true, cost);
 
         player = PlayerManager.Instance.localPlayer; // handle for local
         movement = player.gameObject.GetComponent<PlayerMovement>();
@@ -82,44 +88,37 @@ public class TrapPhase : MazeGamePhase
 
     public override void Exit()
     {
-           
-        base.Exit();
 
-        MazeTrapManager.Instance.FinaliseTraps();
-        MazeTrapManager.Instance.EnablePlacing(false);
+        base.Exit();
+        UIManager.Instance.HideCurrentView();
+
+        MazeTrapPlacer.Instance.FinaliseTraps();
+        MazeTrapPlacer.Instance.EnablePlacing(false);
 
         movement.enabled = true;
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-
-
     }
 
-    public override void UpdatePhase()
+    public override PhaseID GetNextPhase()
     {
-        base.UpdatePhase();
-        currTime += Time.deltaTime;
-        if (currTime >= timeLimit)
-        {
-            ChangePhase(PhaseID.Run);
-        }
+        return PhaseID.Run;
     }
 }
 
 public class RunPhase : MazeGamePhase
 {
-    float timeLimit;
-    float currTime = 0f;
+
 
     public RunPhase()
     {
-        this.timeLimit = 5f;
+        this.TimeLimit = 5f;
     }
 
     public RunPhase(float timeLimit)
     {
-        this.timeLimit = timeLimit;
+        this.TimeLimit = timeLimit;
     }
 
     public override void Enter()
@@ -130,31 +129,34 @@ public class RunPhase : MazeGamePhase
     }
     public override void Exit()
     {
-
+        UIManager.Instance.HideCurrentView();
         base.Exit();
     }
 
-    public override void UpdatePhase()
+    public override PhaseID GetNextPhase()
     {
-        base.UpdatePhase();
-        currTime += Time.deltaTime;
-        if (currTime >= timeLimit)
-        {
-            ChangePhase(PhaseID.Traps); // test, by right should go to results
-        }
+        return PhaseID.Score;
     }
+
 }
 
 public class ScorePhase : MazeGamePhase
 {
-    public ScorePhase() { }
+    bool isFinal; // transition to some teardown phase for ending the minigame maybe
+    
+    public ScorePhase() {
+        TimeLimit = 5f;
+    }
 
     public override void Enter()
     {
         base.Enter();
+        if (NetworkManager.Singleton.IsServer)
+        {
+            MazeScoreManager.Instance.CalculateBonusesAndBroadcast();
+        }
         // stop player inputs?
         // display score ui
-        
     }
 
     public override void Exit()
@@ -164,6 +166,12 @@ public class ScorePhase : MazeGamePhase
         // respawn everyone at spawn point
         // reset player states (health etc) if needed
     }
+
+    public override PhaseID GetNextPhase()
+    {
+        return PhaseID.Traps;
+    }
+
 }
 
 
