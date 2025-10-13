@@ -115,7 +115,7 @@ public class RunPhase : MazeGamePhase
 
     public RunPhase()
     {
-        this.timeRemaining = 500f;
+        this.timeRemaining = 5f;
     }
 
     public RunPhase(float timeLimit)
