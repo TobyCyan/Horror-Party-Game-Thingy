@@ -104,6 +104,8 @@ public class MazeManager : NetworkBehaviour
             // next
             hor += scale;
         }
+
+        mazeBlocks[size * size - 1].SetAsGoal();
     }
 
     private void DestroyMaze()

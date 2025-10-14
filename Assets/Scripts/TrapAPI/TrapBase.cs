@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public abstract class TrapBase : MonoBehaviour, ITrap
@@ -18,6 +19,7 @@ public abstract class TrapBase : MonoBehaviour, ITrap
 
     public event System.Action<ITrap> OnDeployed, OnArmed, OnDisarmed;
     public event System.Action<ITrap, TrapTriggerContext> OnTriggered;
+    public static event System.Action<ITrap, TrapTriggerContext> StaticOnTriggered; // help
 
     // ----- lifecycle -----
     protected virtual void Start()
@@ -36,6 +38,17 @@ public abstract class TrapBase : MonoBehaviour, ITrap
         owner = ownerGO;
         gameObject.SetActive(true);
         IsDeployed = true;
+
+        // Mark as deployed so it can't be picked up
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            NetworkPickupItem pickupItem = GetComponent<NetworkPickupItem>();
+            if (pickupItem != null)
+            {
+                pickupItem.SetDeployed(true);
+            }
+        }
+
         Arm();
         OnDeployed?.Invoke(this);
     }
@@ -51,6 +64,7 @@ public abstract class TrapBase : MonoBehaviour, ITrap
         if (!CanTrigger()) return;
         lastTriggerTime = Time.time;
         OnTriggered?.Invoke(this, ctx);
+        StaticOnTriggered?.Invoke(this, ctx);
         OnTriggerCore(ctx);
         if (oneShot) Destroy(gameObject);
     }
