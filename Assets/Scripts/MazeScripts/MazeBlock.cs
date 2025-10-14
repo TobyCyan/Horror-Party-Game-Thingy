@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using static CellUtils;
 
@@ -11,11 +12,9 @@ public class MazeBlock : MonoBehaviour
     [Header("Order must be Left, Up, Right, Down")]
     [Tooltip("Walls array should be assigned in L-U-R-D order")]
     public GameObject[] walls;
-    // public List<Trap> traps = new List<Trap>();
-    /*
-     * removed my placeholder trap system, previously just had the blocks keep track of traps
-     */
 
+    private bool isGoal = false;
+    public static event Action OnPlayerWin;
     public void InitState(int state)
     {
         // for now just deactivate walls
@@ -28,10 +27,21 @@ public class MazeBlock : MonoBehaviour
             }
         }
     }
-    private void OnDestroy()
+
+    public void SetAsGoal()
     {
-        // hello there
-        // clean up traps assigned to it? maybe no need
+        isGoal = true;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isGoal) return;
+        Debug.Log("Maze clear!");
+        Player player = other.GetComponent<Player>();
+        if (player == null) return;
+
+        OnPlayerWin?.Invoke(); // for local player
+
+        isGoal = false; // locally so no scams
+    }
 }

@@ -1,21 +1,24 @@
+using System;
 using Unity.Netcode;
 
 public class HPPlayerControlsAssigner : NetworkBehaviour
 {
+    public Action<HPSkillInputManager> OnControlsAssigned;
+
     public override void OnNetworkSpawn()
     {
+        PlayerManager.OnLocalPlayerSet += AssignControlsToPlayer;
         if (PlayerManager.Instance != null)
         {
-            PlayerManager.Instance.OnPlayerAdded += AssignControlsToPlayer;
             PlayerManager.Instance.OnPlayerRemoved += RemoveControlsFromPlayer;
         }
     }
 
     public override void OnNetworkDespawn()
     {
+        PlayerManager.OnLocalPlayerSet -= AssignControlsToPlayer;
         if (PlayerManager.Instance != null)
         {
-            PlayerManager.Instance.OnPlayerAdded -= AssignControlsToPlayer;
             PlayerManager.Instance.OnPlayerRemoved -= RemoveControlsFromPlayer;
         }
     }
@@ -24,7 +27,8 @@ public class HPPlayerControlsAssigner : NetworkBehaviour
     {
         if (player != null && player.IsOwner)
         {
-            var _ = player.gameObject.AddComponent<HPSkillInputManager>();
+            var inputManager = player.gameObject.AddComponent<HPSkillInputManager>();
+            OnControlsAssigned?.Invoke(inputManager);
         }
     }
 
