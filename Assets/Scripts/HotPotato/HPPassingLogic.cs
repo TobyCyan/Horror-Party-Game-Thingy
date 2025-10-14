@@ -15,8 +15,8 @@ public class HPPassingLogic : MonoBehaviour
 
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            MarkManager.Instance.PassMarkToPlayer(player.Id);
             lastPassTime = Time.time;
+            MarkManager.Instance.PassMarkToPlayer(player.Id);
         }
     }
 
