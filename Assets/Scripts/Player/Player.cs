@@ -93,13 +93,15 @@ public class Player : NetworkBehaviour
             ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
     }
 
-    public void ResetLayer()
+    [Rpc(SendTo.Everyone)]
+    public void ResetLayerRpc()
     {
         gameObject.layer = defaultLayer;
-        SetMeshRootLayer(defaultLayer);
+        SetMeshRootLayerRpc(defaultLayer);
     }
 
-    public void SetMeshRootLayer(int layer)
+    [Rpc(SendTo.Everyone)]
+    public void SetMeshRootLayerRpc(int layer)
     {
         if (meshRoot != null)
         {

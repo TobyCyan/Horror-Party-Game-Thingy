@@ -56,7 +56,7 @@ public class SelectorTrigger : NetworkBehaviour
         string playSceneName = GetPlaySceneName();
         await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { playSceneName });
-        SceneLifetimeManager.Instance.SetActiveScene(selectedSceneName);
+        SceneLifetimeManager.Instance.SetActiveScene(playSceneName);
     }
 
     private string GetPlaySceneName()

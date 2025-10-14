@@ -137,7 +137,7 @@ public class MarkManager : NetworkBehaviour
                 prevPm.ResetMovementSpeed();
                 Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
             }
-            currentMarkedPlayer.ResetLayer();
+            currentMarkedPlayer.ResetLayerRpc();
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
@@ -156,7 +156,7 @@ public class MarkManager : NetworkBehaviour
             Debug.Log($"Modified movement speed for new marked player {player}");
         }
 
-        player.SetMeshRootLayer(auraLayer);
+        player.SetMeshRootLayerRpc(auraLayer);
         lastMarkPassTime = Time.time;
         UpdateMarkUiClientRpc(id);
     }
