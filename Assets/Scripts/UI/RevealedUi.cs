@@ -4,13 +4,10 @@ public class RevealedUi : MonoBehaviour
 {
     private PlayerSilhouette playerSilhouette;
 
-    private void Start()
+    private void Awake()
     {
         Hide();
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnLocalPlayerSet += SetAndBindPlayerSilhouette;
-        }
+        PlayerManager.OnLocalPlayerSet += SetAndBindPlayerSilhouette;
     }
 
     private void OnDestroy()
@@ -22,9 +19,9 @@ public class RevealedUi : MonoBehaviour
         }
     }
 
-    private void SetAndBindPlayerSilhouette()
+    private void SetAndBindPlayerSilhouette(Player player)
     {
-        playerSilhouette = PlayerManager.Instance.localPlayer.GetComponentInChildren<PlayerSilhouette>();
+        playerSilhouette = player.GetComponentInChildren<PlayerSilhouette>();
         if (playerSilhouette == null)
         {
             Debug.LogWarning("PlayerSilhouette is null in RevealUi.");
