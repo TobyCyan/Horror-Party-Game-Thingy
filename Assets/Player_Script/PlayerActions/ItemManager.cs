@@ -20,6 +20,9 @@ public class ItemManager : NetworkBehaviour
     // Track spawned items
     private readonly List<NetworkObject> spawnedItems = new List<NetworkObject>();
 
+    // Track pending spawn requests (clientId -> callback)
+    private readonly Dictionary<ulong, System.Action<NetworkObject>> pendingSpawnCallbacks = new Dictionary<ulong, System.Action<NetworkObject>>();
+
     // =========================================================
     // === SINGLETON SETUP =====================================
     // =========================================================
@@ -117,6 +120,25 @@ public class ItemManager : NetworkBehaviour
         return spawnedItems.Count;
     }
 
+    /// <summary>
+    /// Request to spawn an item and get a callback with the spawned object reference
+    /// </summary>
+    public void RequestSpawnItem(int itemId, Vector3 position, Quaternion rotation, System.Action<NetworkObject> onSpawned)
+    {
+        if (!IsOwner)
+        {
+            Debug.LogError("[ItemManager] RequestSpawnItem must be called by the owner!");
+            return;
+        }
+
+        // Store callback
+        ulong clientId = NetworkManager.Singleton.LocalClientId;
+        pendingSpawnCallbacks[clientId] = onSpawned;
+
+        // Send request to server
+        RequestSpawnItemServerRpc(itemId, position, rotation, clientId);
+    }
+
     // =========================================================
     // === SERVER RPC - SPAWN ITEM =============================
     // =========================================================
@@ -134,6 +156,7 @@ public class ItemManager : NetworkBehaviour
         if (!HasItemData(itemId))
         {
             Debug.LogWarning($"[ItemManager] Invalid item ID {itemId} requested by client {senderClientId}");
+            NotifySpawnFailedClientRpc(senderClientId);
             return;
         }
 
@@ -142,6 +165,7 @@ public class ItemManager : NetworkBehaviour
         if (spawnedItems.Count >= maxActiveItems)
         {
             Debug.LogWarning($"[ItemManager] Max item limit reached ({maxActiveItems}). Cannot spawn more items.");
+            NotifySpawnFailedClientRpc(senderClientId);
             return;
         }
 
@@ -156,6 +180,7 @@ public class ItemManager : NetworkBehaviour
         if (prefab == null)
         {
             Debug.LogError($"[ItemManager] Failed to get prefab for item ID {itemId}");
+            NotifySpawnFailedClientRpc(senderClientId);
             return;
         }
 
@@ -167,6 +192,7 @@ public class ItemManager : NetworkBehaviour
         {
             Debug.LogError($"[ItemManager] Prefab for item ID {itemId} missing NetworkObject!");
             Destroy(newItem.gameObject);
+            NotifySpawnFailedClientRpc(senderClientId);
             return;
         }
 
@@ -185,6 +211,57 @@ public class ItemManager : NetworkBehaviour
 
         // Track spawned item
         spawnedItems.Add(netObj);
+
+        Debug.Log($"[ItemManager] Spawned item ID {itemId} with NetworkObjectId {netObj.NetworkObjectId} for client {senderClientId}");
+
+        // Notify the requesting client with the NetworkObjectId
+        NotifySpawnSuccessClientRpc(senderClientId, netObj.NetworkObjectId);
+    }
+
+    // =========================================================
+    // === CLIENT RPC - SPAWN NOTIFICATIONS ====================
+    // =========================================================
+
+    [ClientRpc]
+    private void NotifySpawnSuccessClientRpc(ulong targetClientId, ulong networkObjectId)
+    {
+        // Only process if this is the client that requested the spawn
+        if (NetworkManager.Singleton.LocalClientId != targetClientId)
+            return;
+
+        Debug.Log($"[ItemManager] Client received spawn success for NetworkObjectId {networkObjectId}");
+
+        // Find the spawned network object
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject spawnedObject))
+        {
+            // Invoke callback if it exists
+            if (pendingSpawnCallbacks.TryGetValue(targetClientId, out var callback))
+            {
+                callback?.Invoke(spawnedObject);
+                pendingSpawnCallbacks.Remove(targetClientId);
+            }
+        }
+        else
+        {
+            Debug.LogError($"[ItemManager] Could not find spawned NetworkObject with ID {networkObjectId}");
+        }
+    }
+
+    [ClientRpc]
+    private void NotifySpawnFailedClientRpc(ulong targetClientId)
+    {
+        // Only process if this is the client that requested the spawn
+        if (NetworkManager.Singleton.LocalClientId != targetClientId)
+            return;
+
+        Debug.LogWarning("[ItemManager] Spawn request failed on server");
+
+        // Invoke callback with null to indicate failure
+        if (pendingSpawnCallbacks.TryGetValue(targetClientId, out var callback))
+        {
+            callback?.Invoke(null);
+            pendingSpawnCallbacks.Remove(targetClientId);
+        }
     }
 
     // =========================================================
