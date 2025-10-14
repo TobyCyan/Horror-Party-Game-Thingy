@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class HPSkillInputManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class HPSkillInputManager : MonoBehaviour
     private PlayerSkill huntersSightSkill;
 
     private MarkManager markManager;
+
+    public Action<bool> OnHunterRoleSet;
 
     private void Awake()
     {
@@ -67,6 +70,7 @@ public class HPSkillInputManager : MonoBehaviour
         }
         bool isHunter = owner.Id == newHunterId;
         SetCanUseHunterSkill(isHunter);
+        OnHunterRoleSet?.Invoke(isHunter);
     }
 
     private void SetCanUseHunterSkill(bool canUse)

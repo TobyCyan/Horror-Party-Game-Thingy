@@ -15,7 +15,7 @@ public class PlayerManager : NetworkBehaviour
     public List<Player> AlivePlayers => alivePlayers;
     public event Action OnAllPlayersEliminated;
     public event Action OnLastPlayerStanding;
-    public event Action OnLocalPlayerSet;
+    public static event Action<Player> OnLocalPlayerSet;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class PlayerManager : NetworkBehaviour
         if (player.IsOwner)
         {
             localPlayer = player;
-            OnLocalPlayerSet?.Invoke();
+            OnLocalPlayerSet?.Invoke(localPlayer);
         }
         
         players.Add(player);
