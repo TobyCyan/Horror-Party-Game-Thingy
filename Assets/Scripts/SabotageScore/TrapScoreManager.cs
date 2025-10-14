@@ -12,18 +12,6 @@ public class TrapScoreManager : NetworkBehaviour
     // Dictionary to track scores for each player (clientId -> score)
     private NetworkList<PlayerTrapScore> playerScores;
 
-    // Struct to hold player score data
-    public struct PlayerTrapScore : INetworkSerializable
-    {
-        public ulong clientId;
-        public int trapScore;
-
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-        {
-            serializer.SerializeValue(ref clientId);
-            serializer.SerializeValue(ref trapScore);
-        }
-    }
 
     private void Awake()
     {
@@ -128,32 +116,32 @@ public class TrapScoreManager : NetworkBehaviour
                 Debug.Log($"TrapScoreManager: Awarded {pointsPerTrapTriggered} points to player {ownerClientId}. New score: {playerScore.trapScore}");
 
                 // Update the UI score system
-                UpdatePlayerTrapScoreRpc(ownerClientId, playerScore.trapScore);
+                //UpdatePlayerTrapScoreRpc(ownerClientId, playerScore.trapScore);
                 break;
             }
         }
     }
 
-    /// <summary>
-    /// RPC to update the UI with new trap scores
-    /// </summary>
-    [Rpc(SendTo.Everyone)]
-    private void UpdatePlayerTrapScoreRpc(ulong clientId, int newTrapScore)
-    {
-        // Update the existing score UI system
-        var player = PlayerManager.Instance.GetPlayerByClientId(clientId);
-        if (player != null)
-        {
-            // Update the player's int0 field (trap score)
-            player.UpdateTrapScore(newTrapScore);
+    ///// <summary>
+    ///// RPC to update the UI with new trap scores
+    ///// </summary>
+    //[Rpc(SendTo.Everyone)]
+    //private void UpdatePlayerTrapScoreRpc(ulong clientId, int newTrapScore)
+    //{
+    //    // Update the existing score UI system
+    //    var player = PlayerManager.Instance.FindPlayerByClientId(clientId);
+    //    if (player != null)
+    //    {
+    //        // Update the player's int0 field (trap score)
+    //        // player.UpdateTrapScore(newTrapScore);
 
-            // Update the ScoreUiManager if it exists
-            if (ScoreUiManager.Instance != null)
-            {
-                ScoreUiManager.UpdateScore(clientId, player.float0, newTrapScore, player.GetSabotageScore());
-            }
-        }
-    }
+    //        // Update the ScoreUiManager if it exists
+    //        if (ScoreUiManager.Instance != null)
+    //        {
+    //            ScoreUiManager.UpdateScore(clientId, player.float0, newTrapScore, player.GetSabotageScore());
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// Get the current trap score for a specific player
