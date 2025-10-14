@@ -8,48 +8,47 @@ public class SkillUi : MonoBehaviour
         Runner
     }
 
-    [SerializeField] private GameObject skillIcon;
+    private GameObject self;
     [SerializeField] private SkillCooldownUi skillCooldownUi;
     [SerializeField] private SkillType skillType;
+    [SerializeField] private HPPlayerControlsAssigner playerControlsAssigner;
     private HPSkillInputManager skillInputManager;
 
     private void Awake()
     {
-        PlayerManager.OnLocalPlayerSet += BindPlayerToUi;
+        playerControlsAssigner.OnControlsAssigned += BindControlsToUi;
+        self = gameObject;
     }
 
     private void Start()
     {
         skillInputManager = PlayerManager.Instance.localPlayer.GetComponent<HPSkillInputManager>();
 
-        if (skillIcon == null || skillCooldownUi == null)
+        if (skillCooldownUi == null)
         {
-            Debug.LogError("SkillIcon or SkillCooldownUi is not assigned in the inspector.");
+            Debug.LogError("SkillCooldownUi is not assigned in the inspector.");
             return;
         }
 
         ShowSkillUi(false);
     }
 
-    public void ShowSkillUi(bool show)
+    private void ShowSkillUi(bool show)
     {
-        skillIcon.SetActive(show);
+        self.SetActive(show);
         skillCooldownUi.gameObject.SetActive(show);
     }
 
-    private void BindPlayerToUi(Player player)
+    private void BindControlsToUi(HPSkillInputManager inputManager)
     {
-        if (player == null)
+        if (inputManager == null)
         {
-            Debug.LogError("Player is null in BindPlayerToUi.");
+            Debug.LogError("Input manager is null in BindControlsToUi.");
             return;
         }
 
-        skillInputManager = player.GetComponent<HPSkillInputManager>();
-        if (skillInputManager != null)
-        {
-            skillInputManager.OnHunterRoleSet += DetermineShowUi;
-        }
+        skillInputManager = inputManager;
+        skillInputManager.OnHunterRoleSet += DetermineShowUi;
     }
 
     private void OnDestroy()
@@ -58,7 +57,11 @@ public class SkillUi : MonoBehaviour
         {
             skillInputManager.OnHunterRoleSet -= DetermineShowUi;
         }
-        PlayerManager.OnLocalPlayerSet -= BindPlayerToUi;
+
+        if (playerControlsAssigner != null)
+        {
+            playerControlsAssigner.OnControlsAssigned -= BindControlsToUi;
+        }
     }
 
     private void DetermineShowUi(bool isHunter)

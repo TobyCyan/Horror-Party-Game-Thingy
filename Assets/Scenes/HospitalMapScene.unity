@@ -22938,6 +22938,10 @@ PrefabInstance:
       propertyPath: markManager
       value: 
       objectReference: {fileID: 1037705726}
+    - target: {fileID: 4763654069973844931, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: hotPotatoDuration
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 5344255828373437579, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
       propertyPath: m_Name
       value: Hot Potato Game Manager
@@ -23006,6 +23010,17 @@ MonoBehaviour:
   scoreBoardGameObject: {fileID: 1463852809}
   scorePanelParent: {fileID: 1132800876}
   playerCardPrefab: {fileID: 199207142170004656, guid: 569b56773eecbef47929020108fb7f0d, type: 3}
+--- !u!114 &1037705728 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6688886203240905939, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+  m_PrefabInstance: {fileID: 1037705724}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e2fd50e93b7e0d4a8acf49ad2f7f413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1042189968
 GameObject:
   m_ObjectHideFlags: 0
@@ -39626,6 +39641,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hunter Sight Skill
       objectReference: {fileID: 0}
+    - target: {fileID: 8311525877939866373, guid: b28e5272cb0e3104c8c0e65e9d292022, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -39645,11 +39664,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a257fd26e03f5247ae840922d62f998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1680400203 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1774611814823846544, guid: b28e5272cb0e3104c8c0e65e9d292022, type: 3}
-  m_PrefabInstance: {fileID: 1680400201}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1680400204 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8311525877939866373, guid: b28e5272cb0e3104c8c0e65e9d292022, type: 3}
@@ -50336,9 +50350,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 421d9c91ea8beca49b0da8e5053e2bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillIcon: {fileID: 1680400203}
   skillCooldownUi: {fileID: 1680400202}
   skillType: 0
+  playerControlsAssigner: {fileID: 1037705728}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
