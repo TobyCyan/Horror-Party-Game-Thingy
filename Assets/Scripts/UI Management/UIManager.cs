@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 
-//attach to player
+// only being used for mazegame right now
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -38,5 +38,10 @@ public class UIManager : MonoBehaviour
         if (null != currentView) currentView.Hide();
         currentView = nextView;
         currentView.Show();
+    }
+
+    public void HideCurrentView()
+    {
+        currentView.Hide();
     }
 }

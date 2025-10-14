@@ -17,7 +17,10 @@ public class MarkManager : NetworkBehaviour
     [SerializeField] private Timer postEliminationCoolDownTimer;
     public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
     [Min(0.0f)]
-    [SerializeField] private float markPassingCooldown = 4.0f;
+    [SerializeField] private float postEliminateMarkPassingCooldown = 4.0f;
+    [Min(0.0f)]
+    [SerializeField] private float playerToPlayerMarkPassingCooldown = 2.0f;
+    private float lastMarkPassTime = -Mathf.Infinity;
     [SerializeField] private float markedPlayerSpeedModifier = 1.25f;
 
     void Awake()
@@ -52,7 +55,7 @@ public class MarkManager : NetworkBehaviour
     public async void StartHPGame()
     {
         await Task.Delay(500);
-        
+
         AssignRandomPlayerWithMark();
         AddHpComponentClientRpc();
     }
@@ -64,7 +67,7 @@ public class MarkManager : NetworkBehaviour
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
             currentMarkedPlayer = null;
         }
-        
+
         postEliminationCoolDownTimer.StopTimer();
         markSymbol.SetActive(false);
     }
@@ -74,7 +77,7 @@ public class MarkManager : NetworkBehaviour
         currentMarkedPlayer = null;
 
         // Start cooldown timer before assigning the new marked player
-        postEliminationCoolDownTimer.StartTimer(markPassingCooldown);
+        postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -85,7 +88,7 @@ public class MarkManager : NetworkBehaviour
             Debug.Log("PlayerManager or localPlayer is null, cannot add HPPassingLogic component.");
             return;
         }
-        
+
         Debug.Log($"Adding hp component to {PlayerManager.Instance.localPlayer} with {PlayerManager.Instance.localPlayer.Id}");
         PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
@@ -118,6 +121,12 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
+        if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
+        {
+            Debug.LogWarning("Mark passing is on cooldown.");
+            return;
+        }
+
         if (currentMarkedPlayer)
         {
             // Unsubscribe from previous marked player's elimination event
@@ -132,7 +141,7 @@ public class MarkManager : NetworkBehaviour
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
         // Debug.Log($"Passing mark to {player} with id {id}");
         markSymbol.transform.SetParent(player.transform);
-        markSymbol.transform.position = player.transform.position + 2*Vector3.up;
+        markSymbol.transform.position = player.transform.position + 2 * Vector3.up;
         markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
 
         if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
@@ -141,6 +150,7 @@ public class MarkManager : NetworkBehaviour
             Debug.Log($"Modified movement speed for new marked player {player}");
         }
 
+        lastMarkPassTime = Time.time;
         UpdateMarkUiClientRpc(id);
     }
 
