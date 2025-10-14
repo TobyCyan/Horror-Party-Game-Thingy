@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public abstract class TrapBase : MonoBehaviour, ITrap
@@ -36,6 +37,17 @@ public abstract class TrapBase : MonoBehaviour, ITrap
         owner = ownerGO;
         gameObject.SetActive(true);
         IsDeployed = true;
+
+        // Mark as deployed so it can't be picked up
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            NetworkPickupItem pickupItem = GetComponent<NetworkPickupItem>();
+            if (pickupItem != null)
+            {
+                pickupItem.SetDeployed(true);
+            }
+        }
+
         Arm();
         OnDeployed?.Invoke(this);
     }
