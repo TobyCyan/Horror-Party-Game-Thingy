@@ -6,8 +6,6 @@ using System;
 
 public class MarkManager : NetworkBehaviour
 {
-    [SerializeField] private GameObject markSymbol;
-
     public static MarkManager Instance;
     public Player currentMarkedPlayer;
 
@@ -23,9 +21,13 @@ public class MarkManager : NetworkBehaviour
     private float lastMarkPassTime = -Mathf.Infinity;
     [SerializeField] private float markedPlayerSpeedModifier = 1.25f;
 
+    [SerializeField] private string auraLayerName = "Aura";
+    int auraLayer;
+
     void Awake()
     {
         Instance = this;
+        auraLayer = LayerMask.NameToLayer(auraLayerName);
     }
 
     public override void OnNetworkSpawn()
@@ -69,7 +71,6 @@ public class MarkManager : NetworkBehaviour
         }
 
         postEliminationCoolDownTimer.StopTimer();
-        markSymbol.SetActive(false);
     }
 
     private void HandleMarkedPlayerEliminated()
@@ -136,20 +137,26 @@ public class MarkManager : NetworkBehaviour
                 prevPm.ResetMovementSpeed();
                 Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
             }
+            currentMarkedPlayer.ResetLayer();
         }
 
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-        // Debug.Log($"Passing mark to {player} with id {id}");
-        markSymbol.transform.SetParent(player.transform);
-        markSymbol.transform.position = player.transform.position + 2 * Vector3.up;
-        markSymbol.GetComponent<NetworkObject>().ChangeOwnership(player.clientId); // Disable if causing issues
 
+        if (player == null)
+        {
+            Debug.LogWarning($"Player with id {id} not found.");
+            return;
+        }
+
+        Debug.Log($"Passing mark to player {player} with id {id}");
+        
         if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
         {
             pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
             Debug.Log($"Modified movement speed for new marked player {player}");
         }
 
+        player.SetMeshRootLayer(auraLayer);
         lastMarkPassTime = Time.time;
         UpdateMarkUiClientRpc(id);
     }

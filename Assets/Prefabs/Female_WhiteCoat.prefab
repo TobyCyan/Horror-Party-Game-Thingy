@@ -643,7 +643,9 @@ MonoBehaviour:
   cam: {fileID: 9033277658621435649}
   playerMovement: {fileID: 2282382335596024}
   playerCam: {fileID: 7850040235040859059}
+  meshRoot: {fileID: 1267403997805736599}
   clientId: 0
+  playerLayerName: Player
   float0: 0
 --- !u!114 &3436618833130660647
 MonoBehaviour:
@@ -657,6 +659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74ded238ed5e77f4583ebd2ca00dd208, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   playerCam: {fileID: 6777540985549378276}
 --- !u!114 &6706970591225045007
 MonoBehaviour:
@@ -750,8 +753,9 @@ MonoBehaviour:
   spawnHeightOffset: 2
   playerCamera: {fileID: 0}
   inventory: {fileID: 1378514592512889471}
-  validPlacementColor: {r: 0, g: 1, b: 0, a: 1}
-  invalidPlacementColor: {r: 1, g: 0, b: 0, a: 1}
+  showDebugVisuals: 1
+  debugCubePrefab: {fileID: 0}
+  debugCubeAlpha: 0.15
 --- !u!4 &1267403997805736599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8230858294829078475, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
