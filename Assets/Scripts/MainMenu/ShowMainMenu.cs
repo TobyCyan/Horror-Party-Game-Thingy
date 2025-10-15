@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class InitSceneLoader : MonoBehaviour
+public class ShowMainMenu : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-     	SceneLifetimeManager.Instance.clientSceneLoader.LoadSceneAsync("NewMainMenu"); 
+        UIManager.Instance.SwitchUIView<MainMenuView>();
     }
+
 }
