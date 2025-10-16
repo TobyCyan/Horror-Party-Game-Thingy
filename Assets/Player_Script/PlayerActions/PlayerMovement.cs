@@ -95,8 +95,17 @@ public class PlayerMovement : MonoBehaviour
         if (blindEffect) blindEffect.SetActive(false);
     }
 
-    void OnEnable() => controls.Player.Enable();
-    void OnDisable() => controls.Player.Disable();
+    void OnEnable()
+    {
+        controls.Player.Enable();
+        rb.useGravity = true;
+    }
+
+    void OnDisable()
+    {
+        controls.Player.Disable();
+        rb.useGravity = false;
+    }
 
     private bool ComputeGrounded()
     {
@@ -271,6 +280,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void FreezeInPlace()
+    {
+        rb.linearVelocity = Vector3.zero;
+        anim.SetBool("IsWalking", false);
+        anim.SetFloat("MoveX", 0f);
+        anim.SetFloat("MoveZ", 0f);
+    }
+
     public void ResetMovementSpeed()
     {
         movementSpeed = baseMovementSpeed;
@@ -362,10 +379,7 @@ public class PlayerMovement : MonoBehaviour
         isStunned = true;
         stunTimer = Mathf.Max(0f, duration);
 
-        rb.linearVelocity = Vector3.zero;
-        anim.SetBool("IsWalking", false);
-        anim.SetFloat("MoveX", 0f);
-        anim.SetFloat("MoveZ", 0f);
+        FreezeInPlace();
         Debug.Log($"[PlayerMovement] Frozen for {duration:0.00}s");
     }
 
