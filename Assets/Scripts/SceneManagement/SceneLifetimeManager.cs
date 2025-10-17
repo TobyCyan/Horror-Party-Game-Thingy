@@ -18,6 +18,8 @@ public class SceneLifetimeManager : MonoBehaviour
     private bool isCurrentlyProcessingScenes => _sceneQueue != null;
     private bool isServerUp;
 
+    public static readonly string LobbyScene = "LobbyScene";
+
     private struct ProcessingScene
     {
         public string SceneName;
@@ -143,18 +145,7 @@ public class SceneLifetimeManager : MonoBehaviour
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
+                SetActiveScene("_InitScene");
                 break;
             case SceneEventType.LoadEventCompleted:
 
@@ -177,18 +168,7 @@ public class SceneLifetimeManager : MonoBehaviour
                 SetActiveScene(sceneEvent.SceneName);
                 break;
             case SceneEventType.UnloadComplete:
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
+                SetActiveScene("_InitScene");
                 break;
         }
     }
@@ -328,6 +308,16 @@ public class SceneLifetimeManager : MonoBehaviour
         }
 
         SceneManager.SetActiveScene(newActive);
+    }
+
+    public async Task ReturnToLobby()
+    {
+        await LoadSceneNetworked(LobbyScene);
+    }
+
+    public async Task LeaveLobby()
+    {
+        await UnloadSceneNetworked(LobbyScene);
     }
 
 }

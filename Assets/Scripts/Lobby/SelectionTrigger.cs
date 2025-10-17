@@ -47,14 +47,13 @@ public class SelectorTrigger : NetworkBehaviour
         {
             SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
         }
-        //UnloadSceneNotServerRPC("PersistentSessionScene");
-            
+
         Debug.Log($"Changing scene cuz {playerCount}, {PlayerManager.Instance.players.Count}");
             
         await Task.Delay(500); // Wait just incase;
         
         string playSceneName = GetPlaySceneName();
-        await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
+        await SceneLifetimeManager.Instance.LeaveLobby();
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { playSceneName });
         SceneLifetimeManager.Instance.SetActiveScene(playSceneName);
     }
