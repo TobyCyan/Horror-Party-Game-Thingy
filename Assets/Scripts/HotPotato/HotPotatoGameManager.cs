@@ -95,7 +95,7 @@ public class HotPotatoGameManager : NetworkBehaviour
             await Task.Delay(1000);
             
             await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
-            await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
+            await SceneLifetimeManager.Instance.ReturnToLobby();
         }
     }
 
