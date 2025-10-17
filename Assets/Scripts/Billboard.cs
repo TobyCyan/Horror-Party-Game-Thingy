@@ -29,6 +29,7 @@ public class Billboard : MonoBehaviour
         if (lockX) eulerAngles.x = initialRotation.x;
         if (lockY) eulerAngles.y = initialRotation.y;
         if (lockZ) eulerAngles.z = initialRotation.z;
+        billboardObject.transform.eulerAngles = eulerAngles;
     }
 
     private void OnDestroy()

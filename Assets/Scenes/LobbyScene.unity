@@ -9283,7 +9283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   billboardObject: {fileID: 1773336348}
-  lockX: 0
+  lockX: 1
   lockY: 0
   lockZ: 0
 --- !u!114 &1773336351
