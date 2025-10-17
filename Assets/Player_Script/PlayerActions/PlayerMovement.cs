@@ -252,13 +252,6 @@ public class PlayerMovement : MonoBehaviour
         Vector3 wish = (moveInput.x * transform.right + moveInput.y * transform.forward);
         if (wish.sqrMagnitude > 1f) wish.Normalize();
 
-        // Check for wall contact within capsule radius
-        if (Physics.Raycast(rb.position, wish, out RaycastHit hit, 0.6f))
-        {
-            // Project movement along the wall to enable sliding
-            wish = Vector3.ProjectOnPlane(wish, hit.normal).normalized;
-        }
-
         float topSpeed = movementSpeed * (isCrouching ? crouchSpeedMultiplier : 1f);
         Vector3 v = rb.linearVelocity;
         Vector3 vXZ = new Vector3(v.x, 0f, v.z);
