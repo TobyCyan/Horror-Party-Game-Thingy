@@ -102,10 +102,17 @@ public class ItemManager : NetworkBehaviour
     public bool HasItemData(int itemId)
     {
         int index = itemId - 1;
-        return itemPrefabs != null &&
-               index >= 0 &&
-               index < itemPrefabs.Length &&
-               itemPrefabs[index] != null;
+        bool hasData = itemPrefabs != null &&
+                       index >= 0 &&
+                       index < itemPrefabs.Length &&
+                       itemPrefabs[index] != null;
+
+        if (!hasData)
+        {
+            Debug.LogError($"[ItemManager] HasItemData failed for ID {itemId}. Array length: {itemPrefabs?.Length ?? 0}, Index: {index}, Prefab at index: {(itemPrefabs != null && index >= 0 && index < itemPrefabs.Length ? itemPrefabs[index]?.name ?? "NULL" : "OUT OF BOUNDS")}");
+        }
+
+        return hasData;
     }
 
     public string GetItemName(int itemId)
@@ -197,8 +204,7 @@ public class ItemManager : NetworkBehaviour
         }
 
         // Set item data
-        newItem.GetType().GetField("itemID",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(newItem, itemId);
+        newItem.SetItemID(itemId);
 
         if (string.IsNullOrEmpty(newItem.ItemName))
         {

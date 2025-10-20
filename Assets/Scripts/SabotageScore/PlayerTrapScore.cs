@@ -1,6 +1,7 @@
 using System;
 using Unity.Netcode;
 
+[Serializable]
 public struct PlayerTrapScore : INetworkSerializable, IEquatable<PlayerTrapScore>
 {
     public ulong clientId;

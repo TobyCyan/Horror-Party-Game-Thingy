@@ -9,6 +9,8 @@ public class TrapScoreManager : NetworkBehaviour
     [Header("Scoring Settings")]
     [SerializeField] private int pointsPerTrapTriggered = 1;
 
+    [SerializeField] private List<PlayerTrapScore> debugPlayerScores;
+
     // Dictionary to track scores for each player (clientId -> score)
     private NetworkList<PlayerTrapScore> playerScores;
 
@@ -122,27 +124,6 @@ public class TrapScoreManager : NetworkBehaviour
         }
     }
 
-    ///// <summary>
-    ///// RPC to update the UI with new trap scores
-    ///// </summary>
-    //[Rpc(SendTo.Everyone)]
-    //private void UpdatePlayerTrapScoreRpc(ulong clientId, int newTrapScore)
-    //{
-    //    // Update the existing score UI system
-    //    var player = PlayerManager.Instance.FindPlayerByClientId(clientId);
-    //    if (player != null)
-    //    {
-    //        // Update the player's int0 field (trap score)
-    //        // player.UpdateTrapScore(newTrapScore);
-
-    //        // Update the ScoreUiManager if it exists
-    //        if (ScoreUiManager.Instance != null)
-    //        {
-    //            ScoreUiManager.UpdateScore(clientId, player.float0, newTrapScore, player.GetSabotageScore());
-    //        }
-    //    }
-    //}
-
     /// <summary>
     /// Get the current trap score for a specific player
     /// </summary>
@@ -156,6 +137,7 @@ public class TrapScoreManager : NetworkBehaviour
         return 0;
     }
 
+
     /// <summary>
     /// Get all player scores (for leaderboards, etc.)
     /// </summary>
@@ -167,5 +149,14 @@ public class TrapScoreManager : NetworkBehaviour
             scores.Add(playerScores[i]);
         }
         return scores;
+    }
+
+    public void UpdateDebugScores()
+    {
+        debugPlayerScores.Clear();
+        foreach (var score in playerScores)
+        {
+            debugPlayerScores.Add(score);
+        }
     }
 }
