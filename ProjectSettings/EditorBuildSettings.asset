@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Resources/Scenes/HospitalMapScene.unity
     guid: e04ba6faa77f1a348837132b372beba8
+  - enabled: 1
+    path: Assets/Scenes/LobbyScene.unity
+    guid: 3a4c5eaa002c81748a8d4ff24923085f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 439ec4286ce81ea45b80b5acb3a916ab, type: 3}
   m_UseUCBPForAssetBundles: 0

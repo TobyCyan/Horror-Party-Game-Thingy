@@ -11,8 +11,6 @@ public class SelectorTrigger : NetworkBehaviour
     }
 
     private int triggerCount = 0;
-    [SerializeField] private GameType gameType = GameType.Demo;
-    [SerializeField] private string demoSceneName = "HospitalScene";
     [SerializeField] private string selectedSceneName = "HospitalMapScene";
 
     private void OnTriggerEnter(Collider other)
@@ -47,22 +45,14 @@ public class SelectorTrigger : NetworkBehaviour
         {
             SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
         }
-        //UnloadSceneNotServerRPC("PersistentSessionScene");
-            
+
         Debug.Log($"Changing scene cuz {playerCount}, {PlayerManager.Instance.players.Count}");
             
         await Task.Delay(500); // Wait just incase;
         
-        string playSceneName = GetPlaySceneName();
-        await SceneLifetimeManager.Instance.UnloadSceneNetworked("PersistentSessionScene");
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { playSceneName });
-        SceneLifetimeManager.Instance.SetActiveScene(playSceneName);
-    }
-
-    private string GetPlaySceneName()
-    {
-        string sceneName = gameType == GameType.Demo ? demoSceneName : selectedSceneName;
-        return sceneName;
+        await SceneLifetimeManager.Instance.LeaveLobby();
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { selectedSceneName });
+        SceneLifetimeManager.Instance.SetActiveScene(selectedSceneName);
     }
     
     [Rpc(SendTo.NotServer)]

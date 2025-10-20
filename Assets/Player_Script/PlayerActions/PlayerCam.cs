@@ -80,7 +80,6 @@ public class PlayerCam : NetworkBehaviour
         transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
     
-
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
