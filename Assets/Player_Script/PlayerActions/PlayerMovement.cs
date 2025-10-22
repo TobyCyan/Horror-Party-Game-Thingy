@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using Unity.Netcode;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     // --- Movement ---
     [Header("Movement")]
@@ -92,7 +93,21 @@ public class PlayerMovement : MonoBehaviour
         targetHeight = originalHeight;
         targetCenter = originalCenter;
 
-        if (blindEffect) blindEffect.SetActive(false);
+        if (blindEffect)
+        {
+            blindEffect.SetActive(false);
+
+            // Set blind effect to LocalBarrier layer
+            int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
+            if (localBarrierLayer != -1)
+            {
+                blindEffect.layer = localBarrierLayer;
+                foreach (Transform child in blindEffect.transform.GetComponentsInChildren<Transform>())
+                {
+                    child.gameObject.layer = localBarrierLayer;
+                }
+            }
+        }
     }
 
     void OnEnable()
@@ -327,6 +342,23 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        // Find camera - try assigned first, then children, then main
+        Camera cameraToUse = ownerCamera;
+        if (cameraToUse == null)
+        {
+            cameraToUse = GetComponentInChildren<Camera>();
+        }
+        if (cameraToUse == null)
+        {
+            cameraToUse = Camera.main;
+        }
+
+        if (cameraToUse == null)
+        {
+            Debug.LogError("[Blind] No camera found to modify culling mask!");
+            return;
+        }
+
         isBlinded = true;
         blindTimer = Mathf.Max(0f, duration);
         blindEffect.SetActive(true);
@@ -338,22 +370,10 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (ownerCamera == null)
-        {
-            ownerCamera = GetComponentInChildren<Camera>();
-            if (ownerCamera == null) ownerCamera = Camera.main;
-
-            if (ownerCamera == null)
-            {
-                Debug.LogError("[Blind] No camera found to modify culling mask!");
-                return;
-            }
-        }
-
         int layerBit = 1 << localBarrierLayer;
-        ownerCamera.cullingMask |= layerBit;
+        cameraToUse.cullingMask |= layerBit;
 
-        Debug.Log($"[PlayerMovement] Blinded - Added LocalBarrier layer to camera. New mask: {ownerCamera.cullingMask}");
+        Debug.Log($"[PlayerMovement] Blinded - Added LocalBarrier layer to camera. New mask: {cameraToUse.cullingMask}");
     }
 
     private void Unblind()
@@ -363,13 +383,24 @@ public class PlayerMovement : MonoBehaviour
 
         if (blindEffect) blindEffect.SetActive(false);
 
+        // Find camera - try assigned first, then children, then main
+        Camera cameraToUse = ownerCamera;
+        if (cameraToUse == null)
+        {
+            cameraToUse = GetComponentInChildren<Camera>();
+        }
+        if (cameraToUse == null)
+        {
+            cameraToUse = Camera.main;
+        }
+
         int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-        if (localBarrierLayer != -1 && ownerCamera != null)
+        if (localBarrierLayer != -1 && cameraToUse != null)
         {
             int layerBit = 1 << localBarrierLayer;
-            ownerCamera.cullingMask &= ~layerBit;
+            cameraToUse.cullingMask &= ~layerBit;
 
-            Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer from camera. New mask: {ownerCamera.cullingMask}");
+            Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer from camera. New mask: {cameraToUse.cullingMask}");
         }
     }
 

@@ -507,6 +507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30cb9cf957743e4baf87057168650eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   baseMovementSpeed: 6
   jumpForce: 5.5
   mouseSensitivity: 50
@@ -827,7 +828,7 @@ MonoBehaviour:
   pickupKey: 113
   pickupLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 17408
   isPickupEnabled: 1
   pickupPromptUI: {fileID: 0}
   promptOffset: 1.5

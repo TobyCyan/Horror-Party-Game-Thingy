@@ -31,13 +31,16 @@ public class PlayerPickup : NetworkBehaviour
 
     private void Start()
     {
-        if (!IsOwner) return;
-
+        // Get component references regardless of ownership
+        // (needed for ServerRpc execution on server)
         inventory = GetComponent<PlayerInventory>();
         if (inventory == null)
         {
             Debug.LogError("[PlayerPickup] No PlayerInventory component found!");
         }
+
+        // Only the owner client needs camera and UI setup
+        if (!IsOwner) return;
 
         playerCamera = Camera.main;
 
@@ -48,7 +51,6 @@ public class PlayerPickup : NetworkBehaviour
 
         Debug.Log($"[PlayerPickup] Initialized for player {OwnerClientId}. Use {pickupKey} to pick up items.");
     }
-
     // =========================================================
     // === UPDATE ==============================================
     // =========================================================

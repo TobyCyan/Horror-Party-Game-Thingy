@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5412315512732617714}
   - component: {fileID: 8188964138647392445}
   - component: {fileID: 3582072618010984028}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Trap Object
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 1019075240893277350}
   - component: {fileID: 2177196675444018694}
   - component: {fileID: 8728138874870149105}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Blind Trap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,9 +256,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56334a2143dad774da7027de1fd6e8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   placement: 0
   cooldown: 0.5
   oneShot: 1
+  ownerClientId:
+    m_InternalValue: 0
   playerMask:
     serializedVersion: 2
     m_Bits: 64
