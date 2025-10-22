@@ -145,7 +145,9 @@ MonoBehaviour:
   cam: {fileID: 4813874208245030253}
   playerMovement: {fileID: 4583236074999682964}
   playerCam: {fileID: 6008370614335971807}
+  meshRoot: {fileID: 0}
   clientId: 0
+  defaultLayerName: Default
   float0: 0
 --- !u!114 &5732882286959827135
 MonoBehaviour:
@@ -314,7 +316,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5760005982654788094, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5760005982654788094, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_IsActive
