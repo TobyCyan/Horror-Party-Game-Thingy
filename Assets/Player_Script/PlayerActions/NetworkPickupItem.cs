@@ -57,6 +57,12 @@ public class NetworkPickupItem : NetworkBehaviour
         }
     }
 
+    public void SetItemID(int id)
+    {
+        itemID = id;
+        Debug.Log($"[NetworkPickupItem] Item ID set to: {itemID}");
+    }
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();

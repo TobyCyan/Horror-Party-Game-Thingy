@@ -145,7 +145,9 @@ MonoBehaviour:
   cam: {fileID: 4813874208245030253}
   playerMovement: {fileID: 4583236074999682964}
   playerCam: {fileID: 6008370614335971807}
+  meshRoot: {fileID: 0}
   clientId: 0
+  defaultLayerName: Player
   float0: 0
 --- !u!114 &5732882286959827135
 MonoBehaviour:
@@ -161,8 +163,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   meshRoot: {fileID: 3315861010179993851}
-  silhouetteLayerName: Silhouette
-  baselineLayerName: Player
+  silhouetteLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  baselineLayer:
+    serializedVersion: 2
+    m_Bits: 64
   defaultDuration: 2
 --- !u!1001 &4580995615848546924
 PrefabInstance:
@@ -314,7 +320,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5760005982654788094, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5760005982654788094, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_IsActive
@@ -323,6 +329,10 @@ PrefabInstance:
     - target: {fileID: 5796180968055189829, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030850509846992678, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2704040361
       objectReference: {fileID: 0}
     - target: {fileID: 6383445266862136302, guid: 5b5b866df77efbb499b51c8e94c2d8ff, type: 3}
       propertyPath: m_Layer
