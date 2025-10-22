@@ -31,7 +31,10 @@ public class PlayerInventory : NetworkBehaviour
 
     public override void OnDestroy()
     {
-        networkItems.OnListChanged -= _ => SyncQueueWithNetworkList();
+        if (networkItems != null)
+        {
+            networkItems.OnListChanged -= _ => SyncQueueWithNetworkList();
+        }
         base.OnDestroy();
     }
 
@@ -44,10 +47,25 @@ public class PlayerInventory : NetworkBehaviour
         return itemQueue.Count >= maxInventorySlots;
     }
 
+    /// <summary>
+    /// ServerRpc version - for clients to call
+    /// </summary>
     [ServerRpc]
     public void AddItemServerRpc(int itemID)
     {
-        if (!IsServer) return;
+        AddItem(itemID);
+    }
+
+    /// <summary>
+    /// Direct server method - for server code to call
+    /// </summary>
+    public void AddItem(int itemID)
+    {
+        if (!IsServer)
+        {
+            Debug.LogError("[PlayerInventory] AddItem called on client! Use AddItemServerRpc instead.");
+            return;
+        }
 
         if (IsInventoryFull())
         {
@@ -60,10 +78,25 @@ public class PlayerInventory : NetworkBehaviour
         Debug.Log($"[PlayerInventory - SERVER] Added item ID {itemID}. Now holding {itemQueue.Count}/{maxInventorySlots}");
     }
 
+    /// <summary>
+    /// ServerRpc version - for clients to call
+    /// </summary>
     [ServerRpc]
     public void PopItemServerRpc(ulong clientId)
     {
-        if (!IsServer) return;
+        PopItem(clientId);
+    }
+
+    /// <summary>
+    /// Direct server method - for server code to call
+    /// </summary>
+    public void PopItem(ulong clientId)
+    {
+        if (!IsServer)
+        {
+            Debug.LogError("[PlayerInventory] PopItem called on client! Use PopItemServerRpc instead.");
+            return;
+        }
 
         if (itemQueue.Count == 0)
         {
@@ -91,10 +124,13 @@ public class PlayerInventory : NetworkBehaviour
     // ============================================================
     // === INTERNAL SYNC HELPERS =================================
     // ============================================================
+
     private void SyncQueueWithNetworkList()
     {
         itemQueue.Clear();
         foreach (int id in networkItems)
             itemQueue.Enqueue(id);
+
+        Debug.Log($"[PlayerInventory] Synced queue with network list. Count: {itemQueue.Count}");
     }
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.Netcode;
 
 /// <summary>
@@ -22,6 +22,7 @@ public class PlayerPickup : NetworkBehaviour
     private NetworkPickupItem nearestItem = null;
     private PlayerInventory inventory;
     private Camera playerCamera;
+    private bool isPendingPickup = false; // Prevents multiple pickup requests
 
     public bool IsPickupEnabled { get => isPickupEnabled; set => isPickupEnabled = value; }
 
@@ -31,7 +32,7 @@ public class PlayerPickup : NetworkBehaviour
 
     private void Start()
     {
-        // Get component references regardless of ownership
+        // Initialize component references regardless of ownership
         // (needed for ServerRpc execution on server)
         inventory = GetComponent<PlayerInventory>();
         if (inventory == null)
@@ -51,6 +52,7 @@ public class PlayerPickup : NetworkBehaviour
 
         Debug.Log($"[PlayerPickup] Initialized for player {OwnerClientId}. Use {pickupKey} to pick up items.");
     }
+
     // =========================================================
     // === UPDATE ==============================================
     // =========================================================
@@ -116,6 +118,13 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
+        // Prevent multiple pickup requests in flight
+        if (isPendingPickup)
+        {
+            Debug.Log("[PlayerPickup] Already processing a pickup request");
+            return;
+        }
+
         if (nearestItem == null)
         {
             Debug.LogWarning("[PlayerPickup] No item nearby to pick up!");
@@ -137,6 +146,9 @@ public class PlayerPickup : NetworkBehaviour
             ShowInventoryFullFeedback();
             return;
         }
+
+        // Lock to prevent rapid-fire pickups
+        isPendingPickup = true;
 
         Debug.Log($"[PlayerPickup] Requesting pickup of {nearestItem.ItemName} (NetworkObjectId: {nearestItem.NetworkObjectId})");
         RequestPickupServerRpc(nearestItem.NetworkObjectId);
@@ -211,8 +223,8 @@ public class PlayerPickup : NetworkBehaviour
 
         // === ALL CHECKS PASSED - EXECUTE PICKUP ===
 
-        // Add to inventory
-        inventory.AddItemServerRpc(item.ItemID);
+        // Add to inventory - USE DIRECT METHOD, NOT ServerRpc
+        inventory.AddItem(item.ItemID);  // ← CHANGED FROM AddItemServerRpc
 
         // Mark item as picked up (triggers visual changes via NetworkVariable)
         item.PickupItem();
@@ -235,6 +247,9 @@ public class PlayerPickup : NetworkBehaviour
         Debug.Log($"[PlayerPickup - CLIENT] Successfully picked up: {itemName}");
         nearestItem = null;
 
+        // Unlock for next pickup
+        isPendingPickup = false;
+
         // Add success feedback (sound, UI notification, etc.)
         ShowPickupSuccessFeedback(itemName);
     }
@@ -244,6 +259,10 @@ public class PlayerPickup : NetworkBehaviour
     {
         if (!IsOwner) return;
         Debug.LogWarning("[PlayerPickup - CLIENT] Inventory is full!");
+
+        // Unlock to allow retry
+        isPendingPickup = false;
+
         ShowInventoryFullFeedback();
     }
 
@@ -252,6 +271,9 @@ public class PlayerPickup : NetworkBehaviour
     {
         if (!IsOwner) return;
         Debug.LogWarning($"[PlayerPickup - CLIENT] Pickup failed: {reason}");
+
+        // Unlock to allow retry
+        isPendingPickup = false;
     }
 
     // =========================================================

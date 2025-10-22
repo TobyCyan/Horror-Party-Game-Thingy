@@ -40,6 +40,14 @@ public class TrapPlacer : NetworkBehaviour
 
     private void Start()
     {
+        // Initialize component references regardless of ownership
+        // (needed for proper networked behavior)
+        if (inventory == null)
+        {
+            inventory = GetComponent<PlayerInventory>();
+        }
+
+        // Only the owner client needs camera, UI, and preview setup
         if (!IsOwner) return;
 
         // Find camera more reliably
@@ -62,11 +70,6 @@ public class TrapPlacer : NetworkBehaviour
         if (!playerCamera.enabled)
         {
             Debug.LogWarning("[TrapPlacer] Assigned camera is disabled!");
-        }
-
-        if (inventory == null)
-        {
-            inventory = GetComponent<PlayerInventory>();
         }
 
         if (crosshairUI == null)
@@ -319,20 +322,29 @@ public class TrapPlacer : NetworkBehaviour
             previewCube.SetActive(false);
         }
 
+        Debug.Log($"[TrapPlacer] Requesting spawn for item {itemId} at {spawnPosition}");
+
         // Use callback version to get spawned object reference
         ItemManager.Instance.RequestSpawnItem(itemId, spawnPosition, placementRotation, (spawnedObject) =>
         {
             if (spawnedObject != null)
             {
+                Debug.Log($"[TrapPlacer] Item spawned successfully: {spawnedObject.name}");
+
                 TrapBase trap = spawnedObject.GetComponent<TrapBase>();
                 if (trap != null)
                 {
                     trap.Deploy(spawnPosition, placementRotation, gameObject);
                 }
             }
+            else
+            {
+                Debug.LogError("[TrapPlacer] Item spawn failed!");
+            }
         });
 
-        inventory.PopItemServerRpc(OwnerClientId);
+        // Remove item from inventory - USE ServerRpc since we're on client
+        inventory.PopItemServerRpc(OwnerClientId);  // ← This is correct (client calling ServerRpc)
 
         lastPlacementTime = Time.time;
 
