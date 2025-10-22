@@ -31,9 +31,9 @@ public class PlayerPickup : NetworkBehaviour
 
     private void Start()
     {
+        inventory = GetComponent<PlayerInventory>();
         if (!IsOwner) return;
 
-        inventory = GetComponent<PlayerInventory>();
         if (inventory == null)
         {
             Debug.LogError("[PlayerPickup] No PlayerInventory component found!");
