@@ -13,13 +13,13 @@ public class SessionStartButton : NetworkBehaviour
         await Task.Delay(500); // Wait just incase;
         
         // Send to everyone but Host
-        await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
+        await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("NewMainMenu");
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { SceneLifetimeManager.LobbyScene });
     }
 
     [Rpc(SendTo.NotServer)]
     public void UnloadMainMenuNotServerRPC()
     {
-        SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("MainMenu");
+        SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("NewMainMenu");
     }
 }
