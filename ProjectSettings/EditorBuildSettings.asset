@@ -12,17 +12,14 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/Demo/MainMenu.unity
     guid: c54df64656de9654dbdbf38a702c5807
   - enabled: 1
-    path: Assets/Resources/Scenes/Demo/PersistentSessionScene.unity
-    guid: a68f37a82d8e91d4e97ba75bec173e8c
+    path: Assets/Resources/Scenes/NewMainMenu.unity
+    guid: 48d6dd3d971aaf248b67fc4211199930
   - enabled: 1
     path: Assets/Resources/Scenes/Demo/HospitalScene.unity
     guid: 9c5ccf5636614a94187c4d50a962b238
   - enabled: 1
     path: Assets/Resources/Scenes/AlvinTestScenes/MazeScene.unity
     guid: 8c65693288187664c9fd21676c002d98
-  - enabled: 1
-    path: Assets/Resources/Scenes/HotPotatoGameLoopScene.unity
-    guid: 21845808c551651408201d864be5e98c
   - enabled: 1
     path: Assets/Resources/Scenes/HospitalMapScene.unity
     guid: e04ba6faa77f1a348837132b372beba8
