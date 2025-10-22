@@ -67,6 +67,7 @@ public class Player : NetworkBehaviour
     public void LockPlayerInPlace()
     {
         EnablePlayer(false);
+        playerMovement.FreezeInPlace();
         playerCam.LookStraight();
     }
 
