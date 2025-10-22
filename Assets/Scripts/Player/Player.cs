@@ -9,6 +9,7 @@ public class Player : NetworkBehaviour
     public NetworkVariable<FixedString64Bytes> playerName = new(writePerm: NetworkVariableWritePermission.Owner);
     
     [SerializeField] protected GameObject cam;
+    [SerializeField] protected AudioListener audioListener; 
     [SerializeField] protected PlayerMovement playerMovement;
     [SerializeField] protected PlayerCam playerCam;
     [SerializeField] protected Transform meshRoot;
@@ -62,6 +63,7 @@ public class Player : NetworkBehaviour
         // cam.SetActive(enable); // Switching to cinemachine priority
         playerMovement.enabled = enable;
         playerCam.enabled = enable;
+        audioListener.enabled = enable;
     }
 
     public void LockPlayerInPlace()
