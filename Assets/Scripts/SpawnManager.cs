@@ -38,7 +38,7 @@ public class SpawnManager : NetworkBehaviour
     }
     
     [Rpc(SendTo.Server)]
-    private void SpawnPlayersServerRpc(RpcParams ctx = default)
+    public void SpawnPlayersServerRpc(RpcParams ctx = default)
     {
         // Don't spawn if exist already
         if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
@@ -56,7 +56,7 @@ public class SpawnManager : NetworkBehaviour
     public void DespawnPlayerServerRpc(ulong id, RpcParams ctx = default)
     {
         // Destroy current player
-        Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId}");
+        Debug.Log($"Despawning Player with id: {id}");
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
 
         player.GetComponent<NetworkObject>().Despawn(); // Despawn Calls Camera Switch

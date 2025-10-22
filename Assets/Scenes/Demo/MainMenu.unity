@@ -2038,7 +2038,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 692906560}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 139135254}
+        m_TargetAssemblyTypeName: SessionStartButton, Assembly-CSharp
+        m_MethodName: JoinGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &692906560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3992,11 +4004,14 @@ MonoBehaviour:
   WidgetConfiguration: {fileID: 11400000, guid: 867ee2c581ec3844698a7f80587ab07e, type: 2}
   JoiningSession:
     m_PersistentCalls:
+      m_Calls: []
+  JoinedSession:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 139135254}
         m_TargetAssemblyTypeName: SessionStartButton, Assembly-CSharp
         m_MethodName: StartGame
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4005,9 +4020,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  JoinedSession:
-    m_PersistentCalls:
-      m_Calls: []
   FailedToJoinSession:
     m_PersistentCalls:
       m_Calls: []
