@@ -370,7 +370,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325121486}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &325121489
 Camera:
   m_ObjectHideFlags: 0
@@ -664,7 +664,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  SceneToLoad: PersistentSessionScene
 --- !u!114 &1217076183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -746,6 +745,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 339014771100798193, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556832264673492233, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556832264673492233, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556832264673492233, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556832264673492233, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 556832264673492233, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
