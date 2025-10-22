@@ -27,9 +27,17 @@ public class NetworkPickupItem : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
+    // Network variable for deployed state (for traps)
+    private NetworkVariable<bool> isDeployed = new NetworkVariable<bool>(
+        false,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
     public string ItemName => itemName;
     public int ItemID => itemID;
     public bool IsPickedUp => isPickedUp.Value;
+    public bool IsDeployed => isDeployed.Value;
 
     // =========================================================
     // === LIFECYCLE ===========================================
@@ -79,6 +87,29 @@ public class NetworkPickupItem : NetworkBehaviour
     // =========================================================
 
     /// <summary>
+    /// Check if this item can be picked up (not picked up AND not deployed)
+    /// </summary>
+    public bool CanBePickedUp()
+    {
+        return !isPickedUp.Value && !isDeployed.Value;
+    }
+
+    /// <summary>
+    /// Server-only method to mark item as deployed (for traps)
+    /// </summary>
+    public void SetDeployed(bool deployed)
+    {
+        if (!IsServer)
+        {
+            Debug.LogError($"[NetworkPickupItem] SetDeployed() called on client! This should only be called on server.");
+            return;
+        }
+
+        isDeployed.Value = deployed;
+        Debug.Log($"[NetworkPickupItem] {itemName} deployed state set to: {deployed}");
+    }
+
+    /// <summary>
     /// Server-only method to mark item as picked up
     /// </summary>
     public void PickupItem()
@@ -92,6 +123,13 @@ public class NetworkPickupItem : NetworkBehaviour
         if (isPickedUp.Value)
         {
             Debug.LogWarning($"[NetworkPickupItem] {itemName} already picked up!");
+            return;
+        }
+
+        // Check if item is deployed (trap that shouldn't be picked up)
+        if (isDeployed.Value)
+        {
+            Debug.LogWarning($"[NetworkPickupItem] {itemName} is deployed and cannot be picked up!");
             return;
         }
 
@@ -245,6 +283,10 @@ public class NetworkPickupItem : NetworkBehaviour
         if (isPickedUp.Value)
         {
             Gizmos.color = Color.red;
+        }
+        else if (isDeployed.Value)
+        {
+            Gizmos.color = Color.blue; // Blue for deployed items
         }
         else
         {

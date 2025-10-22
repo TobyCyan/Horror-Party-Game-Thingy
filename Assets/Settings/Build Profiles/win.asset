@@ -47,6 +47,8 @@ MonoBehaviour:
     m_path: Assets/Scenes/NewMainMenu.unity
   - m_enabled: 1
     m_path: Assets/Scenes/HospitalMapScene.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/LobbyScene.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings: []

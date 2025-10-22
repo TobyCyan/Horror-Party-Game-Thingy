@@ -18,6 +18,8 @@ public class SceneLifetimeManager : MonoBehaviour
     private bool isCurrentlyProcessingScenes => _sceneQueue != null;
     private bool isServerUp;
 
+    public static readonly string LobbyScene = "LobbyScene";
+
     private struct ProcessingScene
     {
         public string SceneName;
@@ -139,33 +141,11 @@ public class SceneLifetimeManager : MonoBehaviour
             case SceneEventType.LoadComplete:
                 Debug.Log($"Adding {sceneEvent.SceneName} to networkedSceneNames after clientSceneEventLoadComplete");
                 networkedSceneNames.Add(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("PersistentSessionScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("MazeScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("HospitalScene");
-                }
+                SetActiveScene(sceneEvent.SceneName);
                 break;
             case SceneEventType.UnloadComplete:
                 networkedSceneNames.Remove(sceneEvent.SceneName);
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
+                SetActiveScene("_InitScene");
                 break;
             case SceneEventType.LoadEventCompleted:
 
@@ -185,32 +165,10 @@ public class SceneLifetimeManager : MonoBehaviour
                 sceneEvent.AsyncOperation.completed += OnSceneEventCompletion;
                 break;
             case SceneEventType.LoadComplete:
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("PersistentSessionScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("MazeScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("HospitalScene");
-                }
+                SetActiveScene(sceneEvent.SceneName);
                 break;
             case SceneEventType.UnloadComplete:
-                if (sceneEvent.SceneName == "PersistentSessionScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "MazeScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
-                else if (sceneEvent.SceneName == "HospitalScene")
-                {
-                    SetActiveScene("_InitScene");
-                }
+                SetActiveScene("_InitScene");
                 break;
         }
     }
@@ -350,6 +308,16 @@ public class SceneLifetimeManager : MonoBehaviour
         }
 
         SceneManager.SetActiveScene(newActive);
+    }
+
+    public async Task ReturnToLobby()
+    {
+        await LoadSceneNetworked(LobbyScene);
+    }
+
+    public async Task LeaveLobby()
+    {
+        await UnloadSceneNetworked(LobbyScene);
     }
 
 }

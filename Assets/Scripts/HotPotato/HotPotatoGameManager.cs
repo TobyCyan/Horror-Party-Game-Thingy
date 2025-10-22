@@ -94,8 +94,8 @@ public class HotPotatoGameManager : NetworkBehaviour
             // ScoreUiManager.Instance.ShowFinalScore();
             await Task.Delay(1000);
             
-            await SceneLifetimeManager.Instance.UnloadSceneNetworked("HospitalScene");
-            await SceneLifetimeManager.Instance.LoadSceneNetworked("PersistentSessionScene");
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
+            await SceneLifetimeManager.Instance.ReturnToLobby();
         }
     }
 

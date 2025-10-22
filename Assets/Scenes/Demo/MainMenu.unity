@@ -442,7 +442,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  SceneToLoad: PersistentSessionScene
 --- !u!1 &206194955
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,7 +1198,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  SceneToLoad: 
 --- !u!114 &302312100
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using Unity.Netcode;
 
@@ -10,8 +9,11 @@ public class PlayerPickup : NetworkBehaviour
 {
     [Header("Pickup Settings")]
     [SerializeField] private float pickupRange = 3f;
-    [SerializeField] private KeyCode pickupKey = KeyCode.Q; 
+    [SerializeField] private KeyCode pickupKey = KeyCode.Q;
     [SerializeField] private LayerMask pickupLayer;
+
+    [Header("Control")]
+    [SerializeField] private bool isPickupEnabled = true;
 
     [Header("UI Feedback (Optional)")]
     [SerializeField] private GameObject pickupPromptUI;
@@ -20,6 +22,8 @@ public class PlayerPickup : NetworkBehaviour
     private NetworkPickupItem nearestItem = null;
     private PlayerInventory inventory;
     private Camera playerCamera;
+
+    public bool IsPickupEnabled { get => isPickupEnabled; set => isPickupEnabled = value; }
 
     // =========================================================
     // === INITIALIZATION ======================================
@@ -52,6 +56,7 @@ public class PlayerPickup : NetworkBehaviour
     private void Update()
     {
         if (!IsOwner) return;
+        if (!isPickupEnabled) return;
 
         FindNearestPickupItem();
         UpdatePickupPrompt();
@@ -78,6 +83,13 @@ public class PlayerPickup : NetworkBehaviour
             // Skip already picked up items
             if (item.IsPickedUp) continue;
 
+            // Skip deployed traps - check if item has a deployed trap component
+            TrapBase trap = item.GetComponent<TrapBase>();
+            if (trap != null && trap.IsDeployed)
+            {
+                continue;
+            }
+
             float distance = Vector3.Distance(transform.position, item.transform.position);
 
             if (distance <= closestDistance)
@@ -96,9 +108,23 @@ public class PlayerPickup : NetworkBehaviour
 
     private void TryPickup()
     {
+        if (!isPickupEnabled)
+        {
+            Debug.Log("[PlayerPickup] Pickup is currently disabled");
+            return;
+        }
+
         if (nearestItem == null)
         {
             Debug.LogWarning("[PlayerPickup] No item nearby to pick up!");
+            return;
+        }
+
+        // Double-check that it's not a deployed trap
+        TrapBase trap = nearestItem.GetComponent<TrapBase>();
+        if (trap != null && trap.IsDeployed)
+        {
+            Debug.LogWarning("[PlayerPickup] Cannot pick up deployed trap!");
             return;
         }
 
@@ -145,6 +171,15 @@ public class PlayerPickup : NetworkBehaviour
         {
             Debug.LogWarning($"[PlayerPickup - SERVER] Item {item.ItemName} already picked up!");
             NotifyPickupFailedClientRpc("Item already taken");
+            return;
+        }
+
+        // Check if it's a deployed trap
+        TrapBase trap = item.GetComponent<TrapBase>();
+        if (trap != null && trap.IsDeployed)
+        {
+            Debug.LogWarning($"[PlayerPickup - SERVER] Cannot pick up deployed trap!");
+            NotifyPickupFailedClientRpc("Cannot pick up deployed trap");
             return;
         }
 
@@ -225,8 +260,22 @@ public class PlayerPickup : NetworkBehaviour
     {
         if (pickupPromptUI == null) return;
 
+        if (!isPickupEnabled)
+        {
+            pickupPromptUI.SetActive(false);
+            return;
+        }
+
         if (nearestItem != null && !nearestItem.IsPickedUp)
         {
+            // Additional check for deployed traps
+            TrapBase trap = nearestItem.GetComponent<TrapBase>();
+            if (trap != null && trap.IsDeployed)
+            {
+                pickupPromptUI.SetActive(false);
+                return;
+            }
+
             pickupPromptUI.SetActive(true);
 
             // Position prompt above item
@@ -252,6 +301,17 @@ public class PlayerPickup : NetworkBehaviour
     {
         // Implement UI notification
         // Example: UIManager.Instance.ShowNotification("Inventory Full!", Color.red);
+    }
+
+    public void SetPickupEnabled(bool enabled)
+    {
+        isPickupEnabled = enabled;
+        Debug.Log($"[PlayerPickup] Pickup {(enabled ? "enabled" : "disabled")}");
+
+        if (!enabled && pickupPromptUI != null)
+        {
+            pickupPromptUI.SetActive(false);
+        }
     }
 
     // =========================================================
