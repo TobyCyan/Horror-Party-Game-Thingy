@@ -29,7 +29,7 @@ namespace com.mansion.Entities.Audio
         private void Update()
         {
             // Might be playing too fast
-            if (!_movement.moveInput.Equals(UnityEngine.Vector2.zero))
+            if (!_movement.moveInput.Equals(UnityEngine.Vector2.zero) && _movement.grounded)
             {
                 _t += Time.deltaTime * _movement.movementSpeed * _speedModifier;
             }

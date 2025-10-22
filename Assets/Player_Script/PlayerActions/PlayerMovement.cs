@@ -63,7 +63,7 @@ public class PlayerMovement : NetworkBehaviour
     private PlayerControls controls;
     private Animator anim;
     public Vector2 moveInput;
-    private bool grounded;
+    public bool grounded;
     private bool prevGrounded;
     private bool isGroundedForAnimation;  // NEW: Buffered ground state for animation
 

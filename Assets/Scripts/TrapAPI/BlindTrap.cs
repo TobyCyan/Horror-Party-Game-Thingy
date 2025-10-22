@@ -195,7 +195,7 @@ public class BlindTrap : TrapBase
 
         Debug.Log($"[BlindTrap - SERVER] Applying blind effect to player {player.clientId}");
 
-        blindEffect.Apply(player);
+        // blindEffect.Apply(player); // Locally occuring?
 
         if (player.TryGetComponent(out PlayerSilhouette silhouette))
         {
