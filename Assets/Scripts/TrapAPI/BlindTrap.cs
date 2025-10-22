@@ -109,7 +109,7 @@ public class BlindTrap : TrapBase
         var player = ctx.instigator.GetComponentInParent<Player>();
         if (player == null) return;
 
-        blindEffect.Apply(player);
+        // blindEffect.Apply(player); // Local?
         Debug.Log($"BlindTrap: blinded {ctx.instigator.name}");
 
         if (player.TryGetComponent(out PlayerSilhouette silhouette))
