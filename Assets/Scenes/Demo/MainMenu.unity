@@ -2041,7 +2041,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 139135254}
         m_TargetAssemblyTypeName: SessionStartButton, Assembly-CSharp
-        m_MethodName: JoinGame
+        m_MethodName: UnloadMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4010,7 +4010,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 139135254}
         m_TargetAssemblyTypeName: SessionStartButton, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: SaveSession
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

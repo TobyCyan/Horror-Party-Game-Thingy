@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,7 @@ public class SceneLifetimeManager : MonoBehaviour
 {
     public static SceneLifetimeManager Instance;
     public ClientSceneLoader clientSceneLoader;
+    public ISession activeSession;
     private TaskCompletionSource<bool> _isCurrentlyPendingSceneEvent;
     private Queue<ProcessingScene> _sceneQueue;
 

@@ -2,11 +2,11 @@ using System;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
-public class SessionManager : MonoBehaviour
+public class MySessionManager : MonoBehaviour
 {
-    public static SessionManager Instance;
+    public static MySessionManager Instance;
 
-    private ISession activeSession;
+    public ISession activeSession;
 
     private void Start()
     {

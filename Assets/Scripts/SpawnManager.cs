@@ -41,7 +41,7 @@ public class SpawnManager : NetworkBehaviour
     public void SpawnPlayersServerRpc(RpcParams ctx = default)
     {
         // Don't spawn if exist already
-        if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
+        // if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
         
         Debug.Log($"Spawning Player with id: {ctx.Receive.SenderClientId}");
         Player player = Instantiate(

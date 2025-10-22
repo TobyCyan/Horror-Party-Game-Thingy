@@ -975,8 +975,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  gameType: 1
-  demoSceneName: HospitalScene
   selectedSceneName: HospitalMapScene
 --- !u!65 &784984314
 BoxCollider:
@@ -2236,8 +2234,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1956445353}
-  - component: {fileID: 1956445352}
   - component: {fileID: 1956445355}
+  - component: {fileID: 1956445352}
   - component: {fileID: 1956445354}
   m_Layer: 0
   m_Name: LobbyManager
@@ -2258,6 +2256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f33228a5299ba38498fd0a71972d15e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!4 &1956445353
 Transform:
   m_ObjectHideFlags: 0

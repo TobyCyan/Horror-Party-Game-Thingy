@@ -9,7 +9,7 @@ public class LobbyCodeUi : NetworkBehaviour
     {
         if (HasAuthority)
         {
-            codeText.text = SessionManager.Instance.GetJoinCode();
+            codeText.text = MySessionManager.Instance.GetJoinCode();
         }
         else
         {
