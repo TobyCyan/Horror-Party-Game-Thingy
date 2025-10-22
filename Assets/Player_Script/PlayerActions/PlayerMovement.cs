@@ -49,13 +49,16 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float groundDrag = 2f;
     [SerializeField] private float airDrag = 0.2f;
 
+    // --- Layers ---
+    [Header("Layers")]
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private LayerMask localBarrierLayer;
+
     // --- Blindness VFX ---
     [Header("Blind Effect")]
     [SerializeField] private GameObject blindEffect;
 
     // --- Internals ---
-    [SerializeField] private Camera ownerCamera;
-
     private Rigidbody rb;
     private PlayerControls controls;
     private Animator anim;
@@ -78,8 +81,23 @@ public class PlayerMovement : NetworkBehaviour
     private bool isStunned = false;
     private float stunTimer = 0f;
 
+    // Camera cache
+    private Camera cachedCamera;
+
     void Awake()
     {
+        // Set player to Player layer
+        int playerLayerIndex = GetLayerIndex(playerLayer);
+        if (playerLayerIndex >= 0)
+        {
+            gameObject.layer = playerLayerIndex;
+            Debug.Log($"[PlayerMovement] Set player to layer {playerLayerIndex}");
+        }
+        else
+        {
+            Debug.LogError("[PlayerMovement] Player layer not set or invalid!");
+        }
+
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -98,14 +116,10 @@ public class PlayerMovement : NetworkBehaviour
             blindEffect.SetActive(false);
 
             // Set blind effect to LocalBarrier layer
-            int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-            if (localBarrierLayer != -1)
+            int localBarrierLayerIndex = GetLayerIndex(localBarrierLayer);
+            if (localBarrierLayerIndex >= 0)
             {
-                blindEffect.layer = localBarrierLayer;
-                foreach (Transform child in blindEffect.transform.GetComponentsInChildren<Transform>())
-                {
-                    child.gameObject.layer = localBarrierLayer;
-                }
+                SetLayerRecursively(blindEffect.transform, localBarrierLayerIndex);
             }
         }
     }
@@ -120,6 +134,46 @@ public class PlayerMovement : NetworkBehaviour
     {
         controls.Player.Disable();
         rb.useGravity = false;
+    }
+
+    private int GetLayerIndex(LayerMask layerMask)
+    {
+        int layerNumber = 0;
+        int layer = layerMask.value;
+
+        if (layer == 0) return -1;
+
+        while (layer > 1)
+        {
+            layer = layer >> 1;
+            layerNumber++;
+        }
+        return layerNumber;
+    }
+
+    private void SetLayerRecursively(Transform root, int layer)
+    {
+        root.gameObject.layer = layer;
+        foreach (Transform child in root)
+        {
+            SetLayerRecursively(child, layer);
+        }
+    }
+
+    private Camera FindPlayerCamera()
+    {
+        // Return cached camera if already found
+        if (cachedCamera != null)
+            return cachedCamera;
+
+        // Try to find camera in children first
+        cachedCamera = GetComponentInChildren<Camera>();
+        if (cachedCamera != null)
+            return cachedCamera;
+
+        // Fall back to main camera
+        cachedCamera = Camera.main;
+        return cachedCamera;
     }
 
     private bool ComputeGrounded()
@@ -342,20 +396,17 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        // Find camera - try assigned first, then children, then main
-        Camera cameraToUse = ownerCamera;
+        Camera cameraToUse = FindPlayerCamera();
         if (cameraToUse == null)
         {
-            cameraToUse = GetComponentInChildren<Camera>();
-        }
-        if (cameraToUse == null)
-        {
-            cameraToUse = Camera.main;
+            Debug.LogError("[Blind] No camera found!");
+            return;
         }
 
-        if (cameraToUse == null)
+        int localBarrierLayerIndex = GetLayerIndex(localBarrierLayer);
+        if (localBarrierLayerIndex < 0)
         {
-            Debug.LogError("[Blind] No camera found to modify culling mask!");
+            Debug.LogError("[Blind] LocalBarrier layer not set or invalid!");
             return;
         }
 
@@ -363,14 +414,8 @@ public class PlayerMovement : NetworkBehaviour
         blindTimer = Mathf.Max(0f, duration);
         blindEffect.SetActive(true);
 
-        int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-        if (localBarrierLayer == -1)
-        {
-            Debug.LogError("[Blind] LocalBarrier layer does not exist! Add it in Project Settings > Tags and Layers");
-            return;
-        }
-
-        int layerBit = 1 << localBarrierLayer;
+        // Add LocalBarrier layer to culling mask
+        int layerBit = 1 << localBarrierLayerIndex;
         cameraToUse.cullingMask |= layerBit;
 
         Debug.Log($"[PlayerMovement] Blinded - Added LocalBarrier layer to camera. New mask: {cameraToUse.cullingMask}");
@@ -383,25 +428,25 @@ public class PlayerMovement : NetworkBehaviour
 
         if (blindEffect) blindEffect.SetActive(false);
 
-        // Find camera - try assigned first, then children, then main
-        Camera cameraToUse = ownerCamera;
+        Camera cameraToUse = FindPlayerCamera();
         if (cameraToUse == null)
         {
-            cameraToUse = GetComponentInChildren<Camera>();
-        }
-        if (cameraToUse == null)
-        {
-            cameraToUse = Camera.main;
+            Debug.LogWarning("[Unblind] No camera found!");
+            return;
         }
 
-        int localBarrierLayer = LayerMask.NameToLayer("LocalBarrier");
-        if (localBarrierLayer != -1 && cameraToUse != null)
+        int localBarrierLayerIndex = GetLayerIndex(localBarrierLayer);
+        if (localBarrierLayerIndex < 0)
         {
-            int layerBit = 1 << localBarrierLayer;
-            cameraToUse.cullingMask &= ~layerBit;
-
-            Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer from camera. New mask: {cameraToUse.cullingMask}");
+            Debug.LogWarning("[Unblind] LocalBarrier layer not set or invalid!");
+            return;
         }
+
+        // Remove LocalBarrier layer from culling mask
+        int layerBit = 1 << localBarrierLayerIndex;
+        cameraToUse.cullingMask &= ~layerBit;
+
+        Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer from camera. New mask: {cameraToUse.cullingMask}");
     }
 
     // ----------------- Stun API -----------------

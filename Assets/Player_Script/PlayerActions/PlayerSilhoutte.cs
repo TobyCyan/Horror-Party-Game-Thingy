@@ -10,13 +10,10 @@ public class PlayerSilhouette : NetworkBehaviour
     [SerializeField] Transform meshRoot;
 
     [Header("Layers")]
-    [SerializeField] string silhouetteLayerName = "Silhouette"; // layer used by URP RenderObjects
-    [SerializeField] string baselineLayerName = "Player";      // restore target
+    [SerializeField] LayerMask silhouetteLayer; // layer used by URP RenderObjects
+    [SerializeField] LayerMask baselineLayer;   // restore target
 
     [SerializeField] float defaultDuration = 2f;
-
-    int silhouetteLayer;
-    int baselineLayer;
 
     // Store the original layers before we change them
     private Dictionary<GameObject, int> originalLayers = new Dictionary<GameObject, int>();
@@ -27,13 +24,11 @@ public class PlayerSilhouette : NetworkBehaviour
 
     void Awake()
     {
-        silhouetteLayer = LayerMask.NameToLayer(silhouetteLayerName);
-        baselineLayer = LayerMask.NameToLayer(baselineLayerName);
-
-        if (baselineLayer < 0)
-            Debug.LogError($"Baseline layer '{baselineLayerName}' not found. Set it in Project Settings > Tags and Layers.");
-        if (silhouetteLayer < 0)
-            Debug.LogWarning($"Silhouette layer '{silhouetteLayerName}' not found. Silhouette effect will be skipped.");
+        // Validate that we have valid single layers
+        if (silhouetteLayer == 0)
+            Debug.LogError("Silhouette layer not set!");
+        if (baselineLayer == 0)
+            Debug.LogError("Baseline layer not set!");
     }
 
     // Server entry point
@@ -61,7 +56,9 @@ public class PlayerSilhouette : NetworkBehaviour
     IEnumerator ShowOnceCo(float seconds)
     {
         // Save original layers and switch to Silhouette
-        if (silhouetteLayer >= 0 && !isSilhouetteActive)
+        int silhouetteLayerIndex = LayerMaskToLayer(silhouetteLayer);
+
+        if (silhouetteLayerIndex >= 0 && !isSilhouetteActive)
         {
             Debug.Log($"PlayerSilhouette: ShowOnceCo {seconds} seconds on {gameObject}");
 
@@ -69,7 +66,7 @@ public class PlayerSilhouette : NetworkBehaviour
             SaveOriginalLayers(meshRoot);
 
             // Switch to silhouette layer
-            SetLayerRecursively(meshRoot, silhouetteLayer);
+            SetLayerRecursively(meshRoot, silhouetteLayerIndex);
 
             foreach (var r in meshRoot.GetComponentsInChildren<Renderer>(true))
                 r.enabled = true;
@@ -85,6 +82,21 @@ public class PlayerSilhouette : NetworkBehaviour
         isSilhouetteActive = false;
 
         OnSilhouetteHidden?.Invoke();
+    }
+
+    /// <summary>
+    /// Converts a LayerMask to a single layer index
+    /// </summary>
+    private int LayerMaskToLayer(LayerMask layerMask)
+    {
+        int layerNumber = 0;
+        int layer = layerMask.value;
+        while (layer > 1)
+        {
+            layer = layer >> 1;
+            layerNumber++;
+        }
+        return layerNumber;
     }
 
     /// <summary>
@@ -118,8 +130,9 @@ public class PlayerSilhouette : NetworkBehaviour
             Debug.LogWarning("[PlayerSilhouette] No original layers to restore! Falling back to baseline.");
 
             // Fallback: restore to baseline if we somehow lost the original layers
-            if (baselineLayer >= 0 && meshRoot != null)
-                SetLayerRecursively(meshRoot, baselineLayer);
+            int baselineLayerIndex = LayerMaskToLayer(baselineLayer);
+            if (baselineLayerIndex >= 0 && meshRoot != null)
+                SetLayerRecursively(meshRoot, baselineLayerIndex);
 
             return;
         }

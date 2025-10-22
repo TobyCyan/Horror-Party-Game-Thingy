@@ -554,7 +554,13 @@ MonoBehaviour:
   airAcceleration: 15
   groundDrag: 2
   airDrag: 0.2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
   blindEffect: {fileID: 5760005982654788094}
+  localBarrierLayer:
+    serializedVersion: 2
+    m_Bits: 256
   ownerCamera: {fileID: 0}
 --- !u!136 &449398581575738235
 CapsuleCollider:
@@ -764,7 +770,7 @@ MonoBehaviour:
   playerCam: {fileID: 7850040235040859059}
   meshRoot: {fileID: 1267403997805736599}
   clientId: 0
-  defaultLayerName: Default
+  defaultLayerName: Player
   float0: 0
 --- !u!114 &3436618833130660647
 MonoBehaviour:
@@ -794,8 +800,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   meshRoot: {fileID: 1267403997805736599}
-  silhouetteLayerName: Silhouette
-  baselineLayerName: Player
+  silhouetteLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  baselineLayer:
+    serializedVersion: 2
+    m_Bits: 64
   defaultDuration: 2
 --- !u!114 &1378514592512889471
 MonoBehaviour:
