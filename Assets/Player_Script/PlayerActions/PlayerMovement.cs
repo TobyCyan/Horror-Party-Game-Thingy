@@ -8,7 +8,7 @@ public class PlayerMovement : NetworkBehaviour
     // --- Movement ---
     [Header("Movement")]
     [SerializeField] private float baseMovementSpeed = 6f;
-    private float movementSpeed = 6f;
+    public float movementSpeed = 6f;
     [SerializeField] private float jumpForce = 5.5f; // anim-only
 
     // --- Look ---
@@ -62,7 +62,7 @@ public class PlayerMovement : NetworkBehaviour
     private Rigidbody rb;
     private PlayerControls controls;
     private Animator anim;
-    private Vector2 moveInput;
+    public Vector2 moveInput;
     private bool grounded;
     private bool prevGrounded;
     private bool isGroundedForAnimation;  // NEW: Buffered ground state for animation
