@@ -18,7 +18,7 @@ public class TrapTriggerForwarder : MonoBehaviour
     {
         if (parentTrap != null)
         {
-            parentTrap.ProcessTrigger(other);
+            parentTrap.HandleTriggerEnter(other);
             Debug.Log($"[TrapTriggerForwarder] Forwarded trigger from {other.name}");
         }
     }

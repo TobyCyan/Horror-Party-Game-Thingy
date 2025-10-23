@@ -81,9 +81,6 @@ public class PlayerMovement : NetworkBehaviour
     private bool isStunned = false;
     private float stunTimer = 0f;
 
-    // Camera cache
-    private Camera cachedCamera;
-
     void Awake()
     {
         // Set player to Player layer
@@ -160,22 +157,6 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    private Camera FindPlayerCamera()
-    {
-        // Return cached camera if already found
-        if (cachedCamera != null)
-            return cachedCamera;
-
-        // Try to find camera in children first
-        cachedCamera = GetComponentInChildren<Camera>();
-        if (cachedCamera != null)
-            return cachedCamera;
-
-        // Fall back to main camera
-        cachedCamera = Camera.main;
-        return cachedCamera;
-    }
-
     private bool ComputeGrounded()
     {
         // Multiple ground checks for better reliability
@@ -216,6 +197,9 @@ public class PlayerMovement : NetworkBehaviour
 
     void Update()
     {
+        // Only process input for the owner
+        if (!IsOwner) return;
+
         // Freeze timer
         if (isStunned)
         {
@@ -388,6 +372,13 @@ public class PlayerMovement : NetworkBehaviour
     // ----------------- Blind API -----------------
     public void Blind(float duration)
     {
+        // Only run on the owner's client
+        if (!IsOwner)
+        {
+            Debug.LogWarning("[Blind] Called on non-owner client, ignoring.");
+            return;
+        }
+
         Debug.Log($"BLIND - Starting blind effect for {duration} seconds");
 
         if (blindEffect == null)
@@ -396,10 +387,11 @@ public class PlayerMovement : NetworkBehaviour
             return;
         }
 
-        Camera cameraToUse = FindPlayerCamera();
-        if (cameraToUse == null)
+        // Always use the scene's main camera
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
         {
-            Debug.LogError("[Blind] No camera found!");
+            Debug.LogError("[Blind] Camera.main not found in scene!");
             return;
         }
 
@@ -416,22 +408,29 @@ public class PlayerMovement : NetworkBehaviour
 
         // Add LocalBarrier layer to culling mask
         int layerBit = 1 << localBarrierLayerIndex;
-        cameraToUse.cullingMask |= layerBit;
+        mainCamera.cullingMask |= layerBit;
 
-        Debug.Log($"[PlayerMovement] Blinded - Added LocalBarrier layer to camera. New mask: {cameraToUse.cullingMask}");
+        Debug.Log($"[PlayerMovement] Blinded - Added LocalBarrier layer {localBarrierLayerIndex} to Camera.main. New mask: {mainCamera.cullingMask}");
     }
 
     private void Unblind()
     {
+        // Only run on the owner's client
+        if (!IsOwner)
+        {
+            return;
+        }
+
         isBlinded = false;
         blindTimer = 0f;
 
         if (blindEffect) blindEffect.SetActive(false);
 
-        Camera cameraToUse = FindPlayerCamera();
-        if (cameraToUse == null)
+        // Always use the scene's main camera
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
         {
-            Debug.LogWarning("[Unblind] No camera found!");
+            Debug.LogWarning("[Unblind] Camera.main not found in scene!");
             return;
         }
 
@@ -444,9 +443,9 @@ public class PlayerMovement : NetworkBehaviour
 
         // Remove LocalBarrier layer from culling mask
         int layerBit = 1 << localBarrierLayerIndex;
-        cameraToUse.cullingMask &= ~layerBit;
+        mainCamera.cullingMask &= ~layerBit;
 
-        Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer from camera. New mask: {cameraToUse.cullingMask}");
+        Debug.Log($"[PlayerMovement] Unblinded - Removed LocalBarrier layer {localBarrierLayerIndex} from Camera.main. New mask: {mainCamera.cullingMask}");
     }
 
     // ----------------- Stun API -----------------
