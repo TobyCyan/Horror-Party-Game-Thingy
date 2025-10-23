@@ -1260,6 +1260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e2fd50e93b7e0d4a8acf49ad2f7f413, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &1030645820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1272,7 +1273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608c38f157b5f6e43b0bcf5cc7a71a50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputAction: {fileID: -944628639613478452, guid: 948a63233a39a804fa726b51efef4ed2, type: 3}
 --- !u!4 &1030645821
 Transform:
   m_ObjectHideFlags: 0
@@ -1427,10 +1427,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  markSymbol: {fileID: 0}
   currentMarkedPlayer: {fileID: 863411021}
   postEliminationCoolDownTimer: {fileID: 0}
-  markPassingCooldown: 4
+  postEliminateMarkPassingCooldown: 4
+  playerToPlayerMarkPassingCooldown: 2
+  markedPlayerSpeedModifier: 1.25
+  auraLayerName: Aura
 --- !u!4 &1062260105
 Transform:
   m_ObjectHideFlags: 0
@@ -3103,6 +3105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30cb9cf957743e4baf87057168650eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseMovementSpeed: 6
   movementSpeed: 6
   jumpForce: 5.5
   mouseSensitivity: 50
@@ -3111,6 +3114,8 @@ MonoBehaviour:
     m_Bits: 128
   groundCheckRadius: 0.2
   groundCheckOffset: 0.05
+  coyoteTime: 0.15
+  groundedBuffer: 0.1
   maxHorizontalSpeed: 10
   crouchHeight: 1
   crouchCenterY: 0.5
@@ -3124,6 +3129,7 @@ MonoBehaviour:
   airDrag: 0.2
   blindEffect: {fileID: 837487077}
   ownerCamera: {fileID: 942566274}
+  moveInput: {x: 0, y: 0}
 --- !u!54 &1941651971
 Rigidbody:
   m_ObjectHideFlags: 0

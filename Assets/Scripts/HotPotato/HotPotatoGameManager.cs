@@ -105,6 +105,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         {
             markManager.EliminateMarkedPlayer();
         }
+        hotPotatoTimer.StartTimer(hotPotatoDuration);
     }
 
     private void Update()

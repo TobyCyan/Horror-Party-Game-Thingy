@@ -633,7 +633,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1032294950}
   m_CullTransparentMesh: 1
---- !u!1 &1217076181
+--- !u!1 &1382358256
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -641,9 +641,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1217076184}
-  - component: {fileID: 1217076183}
-  - component: {fileID: 1217076182}
+  - component: {fileID: 1382358259}
+  - component: {fileID: 1382358258}
+  - component: {fileID: 1382358257}
   m_Layer: 0
   m_Name: StartSession
   m_TagString: Untagged
@@ -651,32 +651,32 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1217076182
+--- !u!114 &1382358257
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217076181}
+  m_GameObject: {fileID: 1382358256}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 64a59a4e5514a6343b50c53469eb7dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
---- !u!114 &1217076183
+--- !u!114 &1382358258
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217076181}
+  m_GameObject: {fileID: 1382358256}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1307287324
+  GlobalObjectIdHash: 1244790726
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -689,13 +689,13 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!4 &1217076184
+--- !u!4 &1382358259
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1217076181}
+  m_GameObject: {fileID: 1382358256}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 960, y: 540, z: 0}
@@ -795,7 +795,7 @@ PrefabInstance:
     - target: {fileID: 1076667411676936282, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1217076182}
+      objectReference: {fileID: 1382358257}
     - target: {fileID: 1076667411676936282, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: StartGame
@@ -1218,4 +1218,4 @@ SceneRoots:
   - {fileID: 91638807}
   - {fileID: 6176882058114122019}
   - {fileID: 185811836}
-  - {fileID: 1217076184}
+  - {fileID: 1382358259}
