@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Unified pickup item component - attach to all pickable objects
 /// Handles network synchronization and visual state
+/// FIXED: Removed auto-despawn, added explicit server-controlled lifecycle
 /// </summary>
 public class NetworkPickupItem : NetworkBehaviour
 {
@@ -18,9 +19,8 @@ public class NetworkPickupItem : NetworkBehaviour
     [Header("Effects (Optional)")]
     [SerializeField] private ParticleSystem pickupEffect;
     [SerializeField] private AudioClip pickupSound;
-    [SerializeField] private float despawnDelay = 0.1f; // Quick despawn after pickup
 
-    // Network state
+    // Network state - these are the source of truth
     private NetworkVariable<bool> isPickedUp = new NetworkVariable<bool>(
         false,
         NetworkVariableReadPermission.Everyone,
@@ -34,10 +34,14 @@ public class NetworkPickupItem : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
+    // Track if we're in the process of being picked up (prevents double-pickup)
+    private bool pickupInProgress = false;
+
     public string ItemName => itemName;
     public int ItemID => itemID;
     public bool IsPickedUp => isPickedUp.Value;
     public bool IsDeployed => isDeployed.Value;
+    public bool IsPickupInProgress => pickupInProgress;
 
     // =========================================================
     // === LIFECYCLE ===========================================
@@ -57,18 +61,13 @@ public class NetworkPickupItem : NetworkBehaviour
         }
     }
 
-    public void SetItemID(int id)
-    {
-        itemID = id;
-        Debug.Log($"[NetworkPickupItem] Item ID set to: {itemID}");
-    }
-
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
-        // Subscribe to pickup state changes
+        // Subscribe to state changes
         isPickedUp.OnValueChanged += OnPickupStateChanged;
+        isDeployed.OnValueChanged += OnDeployedStateChanged;
 
         // Apply current state if joining late
         if (isPickedUp.Value)
@@ -79,12 +78,13 @@ public class NetworkPickupItem : NetworkBehaviour
         // Validate setup
         ValidateSetup();
 
-        Debug.Log($"[NetworkPickupItem] {itemName} (ID:{itemID}) spawned. NetworkObjectId: {NetworkObjectId}");
+        Debug.Log($"[NetworkPickupItem] {itemName} (ID:{itemID}) spawned. NetworkObjectId: {NetworkObjectId}, IsPickedUp: {isPickedUp.Value}");
     }
 
     public override void OnNetworkDespawn()
     {
         isPickedUp.OnValueChanged -= OnPickupStateChanged;
+        isDeployed.OnValueChanged -= OnDeployedStateChanged;
         base.OnNetworkDespawn();
     }
 
@@ -93,11 +93,105 @@ public class NetworkPickupItem : NetworkBehaviour
     // =========================================================
 
     /// <summary>
-    /// Check if this item can be picked up (not picked up AND not deployed)
+    /// Check if this item can be picked up
     /// </summary>
     public bool CanBePickedUp()
     {
-        return !isPickedUp.Value && !isDeployed.Value;
+        return !isPickedUp.Value && !isDeployed.Value && !pickupInProgress;
+    }
+
+    /// <summary>
+    /// Server-only: Start the pickup process (mark as in-progress)
+    /// This prevents double-pickup while we verify inventory
+    /// </summary>
+    public bool StartPickupProcess()
+    {
+        if (!IsServer)
+        {
+            Debug.LogError($"[NetworkPickupItem] StartPickupProcess() called on client!");
+            return false;
+        }
+
+        if (!CanBePickedUp())
+        {
+            Debug.LogWarning($"[NetworkPickupItem] {itemName} cannot start pickup - already picked up or deployed");
+            return false;
+        }
+
+        pickupInProgress = true;
+        Debug.Log($"[NetworkPickupItem - SERVER] {itemName} pickup process started");
+        return true;
+    }
+
+    /// <summary>
+    /// Server-only: Complete the pickup process (mark as picked up)
+    /// Only call this AFTER inventory has confirmed receipt
+    /// </summary>
+    public void CompletePickup()
+    {
+        if (!IsServer)
+        {
+            Debug.LogError($"[NetworkPickupItem] CompletePickup() called on client!");
+            return;
+        }
+
+        if (isPickedUp.Value)
+        {
+            Debug.LogWarning($"[NetworkPickupItem] {itemName} already marked as picked up");
+            return;
+        }
+
+        Debug.Log($"[NetworkPickupItem - SERVER] {itemName} pickup completed - setting network variable");
+        isPickedUp.Value = true;
+        pickupInProgress = false;
+    }
+
+    /// <summary>
+    /// Server-only: Cancel the pickup process (rollback)
+    /// Call this if inventory add failed
+    /// </summary>
+    public void CancelPickup()
+    {
+        if (!IsServer)
+        {
+            Debug.LogError($"[NetworkPickupItem] CancelPickup() called on client!");
+            return;
+        }
+
+        Debug.LogWarning($"[NetworkPickupItem - SERVER] {itemName} pickup cancelled (rollback)");
+        pickupInProgress = false;
+    }
+
+    /// <summary>
+    /// Legacy method - now calls the new secure method
+    /// </summary>
+    public void PickupItem()
+    {
+        CompletePickup();
+    }
+
+    /// <summary>
+    /// Server-only: Explicitly despawn this item
+    /// Should only be called AFTER pickup is complete
+    /// </summary>
+    public void DespawnItem()
+    {
+        if (!IsServer)
+        {
+            Debug.LogError($"[NetworkPickupItem] DespawnItem() called on client!");
+            return;
+        }
+
+        if (!isPickedUp.Value)
+        {
+            Debug.LogWarning($"[NetworkPickupItem] Attempting to despawn {itemName} but it's not marked as picked up!");
+        }
+
+        if (NetworkObject != null && NetworkObject.IsSpawned)
+        {
+            Debug.Log($"[NetworkPickupItem - SERVER] Despawning {itemName}");
+            NetworkObject.Despawn(true);
+        }
     }
 
     /// <summary>
@@ -107,40 +201,12 @@ public class NetworkPickupItem : NetworkBehaviour
     {
         if (!IsServer)
         {
-            Debug.LogError($"[NetworkPickupItem] SetDeployed() called on client! This should only be called on server.");
+            Debug.LogError($"[NetworkPickupItem] SetDeployed() called on client!");
             return;
         }
 
         isDeployed.Value = deployed;
-        Debug.Log($"[NetworkPickupItem] {itemName} deployed state set to: {deployed}");
-    }
-
-    /// <summary>
-    /// Server-only method to mark item as picked up
-    /// </summary>
-    public void PickupItem()
-    {
-        if (!IsServer)
-        {
-            Debug.LogError($"[NetworkPickupItem] PickupItem() called on client! This should only be called on server.");
-            return;
-        }
-
-        if (isPickedUp.Value)
-        {
-            Debug.LogWarning($"[NetworkPickupItem] {itemName} already picked up!");
-            return;
-        }
-
-        // Check if item is deployed (trap that shouldn't be picked up)
-        if (isDeployed.Value)
-        {
-            Debug.LogWarning($"[NetworkPickupItem] {itemName} is deployed and cannot be picked up!");
-            return;
-        }
-
-        Debug.Log($"[NetworkPickupItem - SERVER] Picking up {itemName}");
-        isPickedUp.Value = true;
+        Debug.Log($"[NetworkPickupItem - SERVER] {itemName} deployed state set to: {deployed}");
     }
 
     /// <summary>
@@ -148,17 +214,19 @@ public class NetworkPickupItem : NetworkBehaviour
     /// </summary>
     private void OnPickupStateChanged(bool oldValue, bool newValue)
     {
-        if (!newValue) return; // Only handle pickup, not un-pickup
+        if (!newValue) return; // Only handle true (picked up)
 
-        Debug.Log($"[NetworkPickupItem] {itemName} picked up - hiding immediately");
-
+        Debug.Log($"[NetworkPickupItem] {itemName} pickup state changed to TRUE - hiding visuals");
         HideItemImmediate();
+        PlayPickupEffects();
+    }
 
-        // Server despawns after very short delay
-        if (IsServer)
-        {
-            Invoke(nameof(DespawnItem), despawnDelay);
-        }
+    /// <summary>
+    /// Called when deployed state changes
+    /// </summary>
+    private void OnDeployedStateChanged(bool oldValue, bool newValue)
+    {
+        Debug.Log($"[NetworkPickupItem] {itemName} deployed state changed: {oldValue} -> {newValue}");
     }
 
     /// <summary>
@@ -195,9 +263,6 @@ public class NetworkPickupItem : NetworkBehaviour
                 c.enabled = false;
             }
         }
-
-        // Play pickup effects
-        PlayPickupEffects();
     }
 
     // =========================================================
@@ -226,21 +291,6 @@ public class NetworkPickupItem : NetworkBehaviour
 
             // Destroy audio object after clip finishes
             Destroy(audioObj, pickupSound.length);
-        }
-    }
-
-    // =========================================================
-    // === DESPAWN =============================================
-    // =========================================================
-
-    private void DespawnItem()
-    {
-        if (!IsServer) return;
-
-        if (NetworkObject != null && NetworkObject.IsSpawned)
-        {
-            Debug.Log($"[NetworkPickupItem - SERVER] Despawning {itemName}");
-            NetworkObject.Despawn(true);
         }
     }
 
@@ -288,17 +338,46 @@ public class NetworkPickupItem : NetworkBehaviour
         // Show different colors based on state
         if (isPickedUp.Value)
         {
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.red; // Red = picked up
+        }
+        else if (pickupInProgress)
+        {
+            Gizmos.color = Color.magenta; // Magenta = pickup in progress
         }
         else if (isDeployed.Value)
         {
-            Gizmos.color = Color.blue; // Blue for deployed items
+            Gizmos.color = Color.blue; // Blue = deployed
         }
         else
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.green; // Green = available
         }
 
         Gizmos.DrawWireSphere(transform.position, 0.5f);
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Force Reset State")]
+    private void ForceResetState()
+    {
+        if (IsServer)
+        {
+            isPickedUp.Value = false;
+            isDeployed.Value = false;
+            pickupInProgress = false;
+
+            // Show visuals
+            if (visualObject != null)
+                visualObject.SetActive(true);
+            if (itemCollider != null)
+                itemCollider.enabled = true;
+
+            Debug.Log($"[NetworkPickupItem] {itemName} state reset");
+        }
+        else
+        {
+            Debug.LogWarning("Can only reset state on server");
+        }
+    }
+#endif
 }

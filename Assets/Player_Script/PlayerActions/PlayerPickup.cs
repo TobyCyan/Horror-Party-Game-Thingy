@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.Netcode;
 
 /// <summary>
@@ -19,9 +19,13 @@ public class PlayerPickup : NetworkBehaviour
     [SerializeField] private GameObject pickupPromptUI;
     [SerializeField] private float promptOffset = 1.5f;
 
+    [Header("Pickup Protection")]
+    [SerializeField] private float pickupCooldown = 0.2f; // Prevent spam clicks
+
     private NetworkPickupItem nearestItem = null;
     private PlayerInventory inventory;
     private Camera playerCamera;
+    private float lastPickupAttemptTime = 0f;
 
     public bool IsPickupEnabled { get => isPickupEnabled; set => isPickupEnabled = value; }
 
@@ -37,9 +41,17 @@ public class PlayerPickup : NetworkBehaviour
         if (inventory == null)
         {
             Debug.LogError("[PlayerPickup] No PlayerInventory component found!");
+            enabled = false;
+            return;
         }
 
         playerCamera = Camera.main;
+        if (playerCamera == null)
+        {
+            Debug.LogError("[PlayerPickup] No main camera found!");
+            enabled = false;
+            return;
+        }
 
         if (pickupPromptUI != null)
         {
@@ -61,10 +73,18 @@ public class PlayerPickup : NetworkBehaviour
         FindNearestPickupItem();
         UpdatePickupPrompt();
 
-        // Attempt pickup
+        // Attempt pickup with cooldown protection
         if (Input.GetKeyDown(pickupKey) && nearestItem != null)
         {
-            TryPickup();
+            if (Time.time - lastPickupAttemptTime >= pickupCooldown)
+            {
+                TryPickup();
+                lastPickupAttemptTime = Time.time;
+            }
+            else
+            {
+                Debug.Log("[PlayerPickup] Pickup on cooldown");
+            }
         }
     }
 
@@ -80,10 +100,10 @@ public class PlayerPickup : NetworkBehaviour
 
         foreach (NetworkPickupItem item in allItems)
         {
-            // Skip already picked up items
-            if (item.IsPickedUp) continue;
+            // Use the item's own method to check if it can be picked up
+            if (!item.CanBePickedUp()) continue;
 
-            // Skip deployed traps - check if item has a deployed trap component
+            // Skip deployed traps
             TrapBase trap = item.GetComponent<TrapBase>();
             if (trap != null && trap.IsDeployed)
             {
@@ -120,6 +140,14 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
+        // Verify item can still be picked up (double-check)
+        if (!nearestItem.CanBePickedUp())
+        {
+            Debug.LogWarning("[PlayerPickup] Item is no longer available for pickup!");
+            nearestItem = null;
+            return;
+        }
+
         // Double-check that it's not a deployed trap
         TrapBase trap = nearestItem.GetComponent<TrapBase>();
         if (trap != null && trap.IsDeployed)
@@ -137,11 +165,16 @@ public class PlayerPickup : NetworkBehaviour
         }
 
         Debug.Log($"[PlayerPickup] Requesting pickup of {nearestItem.ItemName} (NetworkObjectId: {nearestItem.NetworkObjectId})");
+
+        // Send pickup request to server
         RequestPickupServerRpc(nearestItem.NetworkObjectId);
+
+        // Clear nearest item immediately to prevent double-clicks
+        nearestItem = null;
     }
 
     // =========================================================
-    // === SERVER RPC ==========================================
+    // === SERVER RPC - TRANSACTIONAL PICKUP ===================
     // =========================================================
 
     [ServerRpc]
@@ -149,7 +182,9 @@ public class PlayerPickup : NetworkBehaviour
     {
         Debug.Log($"[PlayerPickup - SERVER] Client {OwnerClientId} requesting pickup of item {itemNetworkId}");
 
-        // Validate network object exists
+        // === VALIDATION PHASE ===
+
+        // 1. Validate network object exists
         if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(itemNetworkId, out NetworkObject itemNetObj))
         {
             Debug.LogError($"[PlayerPickup - SERVER] Item {itemNetworkId} not found in spawned objects!");
@@ -157,7 +192,7 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
-        // Get pickup component
+        // 2. Get pickup component
         NetworkPickupItem item = itemNetObj.GetComponent<NetworkPickupItem>();
         if (item == null)
         {
@@ -166,15 +201,15 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
-        // Check if already picked up
-        if (item.IsPickedUp)
+        // 3. Check if item can be picked up (using item's own method)
+        if (!item.CanBePickedUp())
         {
-            Debug.LogWarning($"[PlayerPickup - SERVER] Item {item.ItemName} already picked up!");
+            Debug.LogWarning($"[PlayerPickup - SERVER] Item {item.ItemName} cannot be picked up! IsPickedUp: {item.IsPickedUp}, IsDeployed: {item.IsDeployed}, InProgress: {item.IsPickupInProgress}");
             NotifyPickupFailedClientRpc("Item already taken");
             return;
         }
 
-        // Check if it's a deployed trap
+        // 4. Check if it's a deployed trap (extra safety)
         TrapBase trap = item.GetComponent<TrapBase>();
         if (trap != null && trap.IsDeployed)
         {
@@ -183,16 +218,16 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
-        // Validate range (server authoritative)
+        // 5. Validate range (server authoritative)
         float distance = Vector3.Distance(transform.position, item.transform.position);
-        if (distance > pickupRange)
+        if (distance > pickupRange + 1f) // Small tolerance for latency
         {
             Debug.LogWarning($"[PlayerPickup - SERVER] Player too far from item! Distance: {distance:F2}m");
             NotifyPickupFailedClientRpc("Too far away");
             return;
         }
 
-        // Check inventory space
+        // 6. Check inventory space
         if (inventory == null)
         {
             Debug.LogError($"[PlayerPickup - SERVER] No PlayerInventory component!");
@@ -207,17 +242,40 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
-        // === ALL CHECKS PASSED - EXECUTE PICKUP ===
+        // === TRANSACTION PHASE ===
 
-        // Add to inventory
-        inventory.AddItemServerRpc(item.ItemID);
+        // 7. Start pickup transaction (marks item as in-progress)
+        if (!item.StartPickupProcess())
+        {
+            Debug.LogError($"[PlayerPickup - SERVER] Failed to start pickup process for {item.ItemName}");
+            NotifyPickupFailedClientRpc("Pickup failed to start");
+            return;
+        }
 
-        // Mark item as picked up (triggers visual changes via NetworkVariable)
-        item.PickupItem();
+        // 8. Try to add to inventory
+        bool inventorySuccess = inventory.TryAddItemServer(item.ItemID);
+
+        if (!inventorySuccess)
+        {
+            // ROLLBACK: Inventory add failed
+            Debug.LogError($"[PlayerPickup - SERVER] Failed to add item {item.ItemID} to inventory! Rolling back...");
+            item.CancelPickup();
+            NotifyPickupFailedClientRpc("Failed to add to inventory");
+            return;
+        }
+
+        // === COMMIT PHASE ===
+
+        // 9. Inventory add succeeded - complete the pickup
+        item.CompletePickup();
 
         Debug.Log($"[PlayerPickup - SERVER] Successfully picked up {item.ItemName} for client {OwnerClientId}");
 
-        // Notify client of success
+        // 10. Despawn item after a short delay (gives time for effects to play)
+        Invoke(nameof(DespawnItemDelayed), 0.1f);
+        void DespawnItemDelayed() => item.DespawnItem();
+
+        // 11. Notify client of success
         NotifyPickupSuccessClientRpc(item.ItemName);
     }
 
@@ -231,9 +289,11 @@ public class PlayerPickup : NetworkBehaviour
         if (!IsOwner) return;
 
         Debug.Log($"[PlayerPickup - CLIENT] Successfully picked up: {itemName}");
+
+        // Clear nearest item reference
         nearestItem = null;
 
-        // Add success feedback (sound, UI notification, etc.)
+        // Show success feedback
         ShowPickupSuccessFeedback(itemName);
     }
 
@@ -250,6 +310,9 @@ public class PlayerPickup : NetworkBehaviour
     {
         if (!IsOwner) return;
         Debug.LogWarning($"[PlayerPickup - CLIENT] Pickup failed: {reason}");
+
+        // Allow trying to find another item
+        nearestItem = null;
     }
 
     // =========================================================
@@ -266,7 +329,7 @@ public class PlayerPickup : NetworkBehaviour
             return;
         }
 
-        if (nearestItem != null && !nearestItem.IsPickedUp)
+        if (nearestItem != null && nearestItem.CanBePickedUp())
         {
             // Additional check for deployed traps
             TrapBase trap = nearestItem.GetComponent<TrapBase>();
@@ -293,24 +356,34 @@ public class PlayerPickup : NetworkBehaviour
 
     private void ShowPickupSuccessFeedback(string itemName)
     {
-        // Implement UI notification, sound, etc.
+        // TODO: Implement UI notification, sound, etc.
         // Example: UIManager.Instance.ShowNotification($"Picked up {itemName}");
+        Debug.Log($"[PlayerPickup] 🎯 Picked up: {itemName}");
     }
 
     private void ShowInventoryFullFeedback()
     {
-        // Implement UI notification
+        // TODO: Implement UI notification
         // Example: UIManager.Instance.ShowNotification("Inventory Full!", Color.red);
+        Debug.Log("[PlayerPickup] ❌ Inventory Full!");
     }
+
+    // =========================================================
+    // === PUBLIC API ==========================================
+    // =========================================================
 
     public void SetPickupEnabled(bool enabled)
     {
         isPickupEnabled = enabled;
         Debug.Log($"[PlayerPickup] Pickup {(enabled ? "enabled" : "disabled")}");
 
-        if (!enabled && pickupPromptUI != null)
+        if (!enabled)
         {
-            pickupPromptUI.SetActive(false);
+            nearestItem = null;
+            if (pickupPromptUI != null)
+            {
+                pickupPromptUI.SetActive(false);
+            }
         }
     }
 
@@ -325,8 +398,27 @@ public class PlayerPickup : NetworkBehaviour
 
         if (nearestItem != null && Application.isPlaying)
         {
-            Gizmos.color = Color.green;
+            Gizmos.color = nearestItem.CanBePickedUp() ? Color.green : Color.red;
             Gizmos.DrawLine(transform.position, nearestItem.transform.position);
+            Gizmos.DrawWireSphere(nearestItem.transform.position, 0.3f);
         }
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Print Inventory Status")]
+    private void PrintInventoryStatus()
+    {
+        if (inventory != null)
+        {
+            Debug.Log($"=== Inventory Status ===");
+            Debug.Log($"Count: {inventory.GetItemCount()}");
+            Debug.Log($"Front Item: {inventory.PeekFrontItem()}");
+            Debug.Log($"Is Full: {inventory.IsInventoryFull()}");
+        }
+        else
+        {
+            Debug.LogWarning("No inventory component");
+        }
+    }
+#endif
 }
