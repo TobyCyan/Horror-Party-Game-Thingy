@@ -143,6 +143,7 @@ MonoBehaviour:
         byte0060: 0
         byte0061: 0
   cam: {fileID: 4813874208245030253}
+  audioListener: {fileID: 0}
   playerMovement: {fileID: 4583236074999682964}
   playerCam: {fileID: 6008370614335971807}
   meshRoot: {fileID: 0}

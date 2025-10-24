@@ -468,6 +468,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 564054361041756309}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1649739449299599426}
     - targetCorrespondingSourceObject: {fileID: -4267678088381660852, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1197703584625609843}
@@ -582,11 +585,10 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  blindEffect: {fileID: 5760005982654788094}
   localBarrierLayer:
     serializedVersion: 2
     m_Bits: 256
-  ownerCamera: {fileID: 0}
+  blindEffect: {fileID: 5760005982654788094}
   moveInput: {x: 0, y: 0}
 --- !u!136 &449398581575738235
 CapsuleCollider:
@@ -869,6 +871,7 @@ MonoBehaviour:
   isPickupEnabled: 1
   pickupPromptUI: {fileID: 0}
   promptOffset: 1.5
+  pickupCooldown: 0.2
 --- !u!114 &6800106002403848690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1019,6 +1022,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1649739449299599426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e4250040687a84ebaecb949803ae30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  defaultDuration: 5
 --- !u!4 &1267403997805736599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8230858294829078475, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
