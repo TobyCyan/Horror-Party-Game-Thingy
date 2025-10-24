@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Handles trap/item placement with visual feedback
 /// Hold E to enter placement mode, Left-click to place
+/// FIXED: Better error handling and callback integration
 /// </summary>
 public class TrapPlacer : NetworkBehaviour
 {
@@ -25,7 +26,7 @@ public class TrapPlacer : NetworkBehaviour
     [Header("Preview Settings")]
     [SerializeField] private float previewCubeAlpha = 0.15f;
     [SerializeField] private float previewCubeSize = 0.4f;
-    [SerializeField] private float previewCubeVerticalOffset = -0.2f; // Negative to lower, positive to raise
+    [SerializeField] private float previewCubeVerticalOffset = -0.2f;
 
     private LocalCrosshairUI crosshairUI;
 
@@ -36,7 +37,8 @@ public class TrapPlacer : NetworkBehaviour
     private Vector3 placementPosition;
     private Quaternion placementRotation;
     private float lastPlacementTime;
-    private GameObject previewCube; // For visualizing placement position
+    private GameObject previewCube;
+    private bool isPlacementInProgress = false; // Prevent multiple simultaneous placements
 
     private void Start()
     {
@@ -67,6 +69,12 @@ public class TrapPlacer : NetworkBehaviour
         if (inventory == null)
         {
             inventory = GetComponent<PlayerInventory>();
+            if (inventory == null)
+            {
+                Debug.LogError("[TrapPlacer] No PlayerInventory found!");
+                enabled = false;
+                return;
+            }
         }
 
         if (crosshairUI == null)
@@ -194,6 +202,12 @@ public class TrapPlacer : NetworkBehaviour
                 return;
             }
 
+            if (isPlacementInProgress)
+            {
+                Debug.Log("[TrapPlacer] Placement already in progress, please wait...");
+                return;
+            }
+
             if (canPlaceHere)
             {
                 TryPlaceItem();
@@ -238,7 +252,7 @@ public class TrapPlacer : NetworkBehaviour
     {
         if (previewCube == null) return;
 
-        if (canPlaceHere && placementModeActive)
+        if (canPlaceHere && placementModeActive && !isPlacementInProgress)
         {
             if (!previewCube.activeSelf)
             {
@@ -267,7 +281,7 @@ public class TrapPlacer : NetworkBehaviour
     private void UpdateCrosshairFeedback()
     {
         if (crosshairUI == null) return;
-        crosshairUI.SetValidPlacement(canPlaceHere);
+        crosshairUI.SetValidPlacement(canPlaceHere && !isPlacementInProgress);
     }
 
     private void TryPlaceItem()
@@ -281,6 +295,7 @@ public class TrapPlacer : NetworkBehaviour
 
         if (Time.time - lastPlacementTime < placementCooldown)
         {
+            Debug.Log("[TrapPlacer] Placement on cooldown");
             return;
         }
 
@@ -310,36 +325,63 @@ public class TrapPlacer : NetworkBehaviour
             return;
         }
 
+        // Mark placement in progress
+        isPlacementInProgress = true;
+
         // Calculate spawn position with height offset
         Vector3 spawnPosition = placementPosition + Vector3.up * spawnHeightOffset;
 
-        // Hide preview cube immediately after placing
+        // Hide preview cube immediately
         if (previewCube != null)
         {
             previewCube.SetActive(false);
         }
 
-        // Use callback version to get spawned object reference
-        ItemManager.Instance.RequestSpawnItem(itemId, spawnPosition, placementRotation, (spawnedObject) =>
-        {
-            if (spawnedObject != null)
-            {
-                TrapBase trap = spawnedObject.GetComponent<TrapBase>();
-                if (trap != null)
-                {
-                    trap.Deploy(spawnPosition, placementRotation, gameObject);
-                }
-            }
-        });
+        Debug.Log($"[TrapPlacer] Requesting to place item ID {itemId} at {spawnPosition}");
 
-        inventory.PopItemServerRpc(OwnerClientId);
+        // Request spawn with callback
+        ItemManager.Instance.RequestSpawnItem(itemId, spawnPosition, placementRotation, OnItemSpawned);
 
         lastPlacementTime = Time.time;
+    }
 
-        if (inventory.GetItemCount() == 0)
+    /// <summary>
+    /// Callback when item spawn completes (success or failure)
+    /// </summary>
+    private void OnItemSpawned(NetworkObject spawnedObject)
+    {
+        if (spawnedObject != null)
         {
-            ExitPlacementMode();
+            Debug.Log($"[TrapPlacer] ✅ Item spawned successfully: {spawnedObject.NetworkObjectId}");
+
+            // Get the item ID before we remove it from inventory
+            int placedItemId = inventory.PeekFrontItem();
+
+            // Remove from inventory
+            inventory.PopItemServerRpc(OwnerClientId);
+
+            // If it has a trap component, deploy it
+            TrapBase trap = spawnedObject.GetComponent<TrapBase>();
+            if (trap != null)
+            {
+                trap.Deploy(spawnedObject.transform.position, spawnedObject.transform.rotation, gameObject);
+                Debug.Log($"[TrapPlacer] Deployed trap at {spawnedObject.transform.position}");
+            }
+
+            // Check if we should exit placement mode (no more items)
+            if (inventory.GetItemCount() == 0)
+            {
+                ExitPlacementMode();
+            }
         }
+        else
+        {
+            Debug.LogError("[TrapPlacer] ❌ Item spawn failed!");
+            // Don't remove from inventory if spawn failed
+        }
+
+        // Reset placement in progress flag
+        isPlacementInProgress = false;
     }
 
     public void SetPlacementEnabled(bool enabled)
@@ -382,4 +424,16 @@ public class TrapPlacer : NetworkBehaviour
             Destroy(previewCube);
         }
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Test Force Exit Placement Mode")]
+    private void TestForceExit()
+    {
+        if (placementModeActive)
+        {
+            ExitPlacementMode();
+        }
+        isPlacementInProgress = false;
+    }
+#endif
 }

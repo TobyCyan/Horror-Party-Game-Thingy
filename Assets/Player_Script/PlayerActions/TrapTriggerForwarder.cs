@@ -7,11 +7,19 @@ public class TrapTriggerForwarder : MonoBehaviour
     private void Awake()
     {
         parentTrap = GetComponentInParent<BlindTrap>();
+
+        if (parentTrap == null)
+        {
+            Debug.LogError("[TrapTriggerForwarder] No BlindTrap found in parent!");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        parentTrap?.HandleTriggerEnter(other);
-        Debug.Log("Forwarded");
+        if (parentTrap != null)
+        {
+            parentTrap.HandleTriggerEnter(other);
+            Debug.Log($"[TrapTriggerForwarder] Forwarded trigger from {other.name}");
+        }
     }
 }

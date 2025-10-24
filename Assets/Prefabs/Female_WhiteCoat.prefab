@@ -422,6 +422,9 @@ PrefabInstance:
       addedObject: {fileID: 6049440526295323631}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 6030850509846992678}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 2282382335596024}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
@@ -429,9 +432,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 442255908432445603}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6030850509846992678}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8975237447979178017}
@@ -468,6 +468,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 564054361041756309}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1649739449299599426}
     - targetCorrespondingSourceObject: {fileID: -4267678088381660852, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1197703584625609843}
@@ -519,6 +522,31 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &6030850509846992678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 624138134
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &2282382335596024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,6 +559,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e30cb9cf957743e4baf87057168650eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   baseMovementSpeed: 6
   movementSpeed: 6
   jumpForce: 5.5
@@ -553,8 +582,13 @@ MonoBehaviour:
   airAcceleration: 15
   groundDrag: 2
   airDrag: 0.2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  localBarrierLayer:
+    serializedVersion: 2
+    m_Bits: 256
   blindEffect: {fileID: 5760005982654788094}
-  ownerCamera: {fileID: 0}
   moveInput: {x: 0, y: 0}
 --- !u!136 &449398581575738235
 CapsuleCollider:
@@ -599,31 +633,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   debugDrawRay: 1
   logEveryFrame: 0
---- !u!114 &6030850509846992678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1193960862351714291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 624138134
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!114 &8975237447979178017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -790,7 +799,7 @@ MonoBehaviour:
   playerCam: {fileID: 7850040235040859059}
   meshRoot: {fileID: 1267403997805736599}
   clientId: 0
-  defaultLayerName: Default
+  defaultLayerName: Player
   float0: 0
 --- !u!114 &3436618833130660647
 MonoBehaviour:
@@ -820,8 +829,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   meshRoot: {fileID: 1267403997805736599}
-  silhouetteLayerName: Silhouette
-  baselineLayerName: Player
+  silhouetteLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  baselineLayer:
+    serializedVersion: 2
+    m_Bits: 64
   defaultDuration: 2
 --- !u!114 &1378514592512889471
 MonoBehaviour:
@@ -854,10 +867,11 @@ MonoBehaviour:
   pickupKey: 113
   pickupLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 17408
   isPickupEnabled: 1
   pickupPromptUI: {fileID: 0}
   promptOffset: 1.5
+  pickupCooldown: 0.2
 --- !u!114 &6800106002403848690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1008,6 +1022,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1649739449299599426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e4250040687a84ebaecb949803ae30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  defaultDuration: 5
 --- !u!4 &1267403997805736599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8230858294829078475, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
@@ -1112,7 +1140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2811072526439101499, guid: 23b4d0c121fe6ce458394d845bf9b1ec, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2811072526439101499, guid: 23b4d0c121fe6ce458394d845bf9b1ec, type: 3}
       propertyPath: m_IsActive
