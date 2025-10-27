@@ -42,7 +42,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (markManager != null && hotPotatoTimer != null)
         {
-            markManager.OnMarkPassed += (_) => hotPotatoTimer.StartTimer(hotPotatoDuration);
+            markManager.PostEliminationCoolDownTimer.OnTimeUp += () =>hotPotatoTimer.StartTimer(hotPotatoDuration);
         }
 
         if (PlayerManager.Instance != null)
@@ -75,7 +75,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (markManager != null && hotPotatoTimer != null)
         {
-            markManager.OnMarkPassed -= (_) => hotPotatoTimer.StartTimer(hotPotatoDuration);
+            markManager.PostEliminationCoolDownTimer.OnTimeUp -= () => hotPotatoTimer.StartTimer(hotPotatoDuration);
         }
 
         if (PlayerManager.Instance != null)
