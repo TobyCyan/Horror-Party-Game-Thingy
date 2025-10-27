@@ -23760,6 +23760,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1061595657}
   - component: {fileID: 1061595658}
+  - component: {fileID: 1061595659}
   m_Layer: 5
   m_Name: Trap
   m_TagString: Untagged
@@ -23797,6 +23798,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061595656}
   m_CullTransparentMesh: 1
+--- !u!114 &1061595659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061595656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 421d9c91ea8beca49b0da8e5053e2bef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillType: 1
+  playerControlsAssigner: {fileID: 1037705728}
 --- !u!1001 &1061847300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50784,12 +50799,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1680400204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 421d9c91ea8beca49b0da8e5053e2bef, type: 3}
+  m_Script: {fileID: 11500000, guid: 5cf236d84f002a14198f9ce937a6ee9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillCooldownUi: {fileID: 1680400202}
   skillType: 0
   playerControlsAssigner: {fileID: 1037705728}
+  skillCooldownUi: {fileID: 1680400202}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

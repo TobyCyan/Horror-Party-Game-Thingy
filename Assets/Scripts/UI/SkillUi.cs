@@ -9,34 +9,24 @@ public class SkillUi : MonoBehaviour
     }
 
     private GameObject self;
-    [SerializeField] private SkillCooldownUi skillCooldownUi;
     [SerializeField] private SkillType skillType;
     [SerializeField] private HPPlayerControlsAssigner playerControlsAssigner;
     private HPSkillInputManager skillInputManager;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         playerControlsAssigner.OnControlsAssigned += BindControlsToUi;
         self = gameObject;
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         skillInputManager = PlayerManager.Instance.localPlayer.GetComponent<HPSkillInputManager>();
-
-        if (skillCooldownUi == null)
-        {
-            Debug.LogError("SkillCooldownUi is not assigned in the inspector.");
-            return;
-        }
-
-        ShowSkillUi(false);
     }
 
-    private void ShowSkillUi(bool show)
+    protected virtual void ShowSkillUi(bool show)
     {
         self.SetActive(show);
-        skillCooldownUi.gameObject.SetActive(show);
     }
 
     private void BindControlsToUi(HPSkillInputManager inputManager)
