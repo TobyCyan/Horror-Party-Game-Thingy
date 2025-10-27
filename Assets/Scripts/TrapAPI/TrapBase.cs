@@ -244,7 +244,7 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
             // TrapScoreManager integration - award score to trap owner (backward compatible)
             try
             {
-                if (TrapScoreManager.Instance != null)
+                if (TrapScoreManager.Instance != null && placement == TrapPlacementKind.Manual)
                 {
                     TrapScoreManager.Instance.AwardTrapScore(ownerClientId.Value);
                     TrapScoreManager.Instance.UpdateDebugScores();

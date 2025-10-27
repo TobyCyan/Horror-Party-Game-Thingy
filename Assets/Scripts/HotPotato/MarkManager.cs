@@ -152,6 +152,7 @@ public class MarkManager : NetworkBehaviour
         }
 
         PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
+        Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
     public void PassMarkToPlayer(ulong id)

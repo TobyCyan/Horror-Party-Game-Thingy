@@ -23088,7 +23088,7 @@ PrefabInstance:
       objectReference: {fileID: 1037705726}
     - target: {fileID: 4763654069973844931, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
       propertyPath: hotPotatoDuration
-      value: 700
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5344255828373437579, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
       propertyPath: m_Name
