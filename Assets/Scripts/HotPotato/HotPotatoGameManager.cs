@@ -38,7 +38,11 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (hotPotatoTimer != null)
         {
             hotPotatoTimer.OnTimeUp += HotPotatoTimer_OnTimeUp;
-            hotPotatoTimer.StartTimer(hotPotatoDuration);
+        }
+
+        if (markManager != null && hotPotatoTimer != null)
+        {
+            markManager.OnMarkPassed += (_) => hotPotatoTimer.StartTimer(hotPotatoDuration);
         }
 
         if (PlayerManager.Instance != null)
@@ -67,6 +71,11 @@ public class HotPotatoGameManager : NetworkBehaviour
         {
             hotPotatoTimer.OnTimeUp -= HotPotatoTimer_OnTimeUp;
             hotPotatoTimer.StopTimer();
+        }
+
+        if (markManager != null && hotPotatoTimer != null)
+        {
+            markManager.OnMarkPassed -= (_) => hotPotatoTimer.StartTimer(hotPotatoDuration);
         }
 
         if (PlayerManager.Instance != null)
@@ -105,7 +114,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         {
             markManager.EliminateMarkedPlayer();
         }
-        hotPotatoTimer.StartTimer(hotPotatoDuration);
+        // hotPotatoTimer.StartTimer(hotPotatoDuration);
     }
 
     private void Update()
@@ -117,13 +126,13 @@ public class HotPotatoGameManager : NetworkBehaviour
             timer.Value = hotPotatoTimer.CurrentTime;
         }
         // For testing purposes
-        if (Input.GetKeyDown(KeyCode.K))
+        /*if (Input.GetKeyDown(KeyCode.K))
         {
             if (markManager != null)
             {
                 markManager.EliminateMarkedPlayer();
             }
-        }
+        }*/
     }
 
     private void HandleMarkedPlayerEliminated()
