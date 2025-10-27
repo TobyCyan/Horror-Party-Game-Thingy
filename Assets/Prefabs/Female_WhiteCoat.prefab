@@ -917,6 +917,7 @@ MonoBehaviour:
   previewCubeAlpha: 0.15
   previewCubeSize: 0.4
   previewCubeVerticalOffset: -0.2
+  previewCubeShader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!81 &6001783732383976955
 AudioListener:
   m_ObjectHideFlags: 0
