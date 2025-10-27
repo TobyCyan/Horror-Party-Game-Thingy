@@ -27,6 +27,7 @@ public class TrapPlacer : NetworkBehaviour
     [SerializeField] private float previewCubeAlpha = 0.15f;
     [SerializeField] private float previewCubeSize = 0.4f;
     [SerializeField] private float previewCubeVerticalOffset = -0.2f;
+    [SerializeField] private Shader previewCubeShader;
 
     private LocalCrosshairUI crosshairUI;
 
@@ -102,7 +103,7 @@ public class TrapPlacer : NetworkBehaviour
 
         // Make material transparent
         var renderer = previewCube.GetComponent<Renderer>();
-        Material mat = new Material(Shader.Find("Standard"));
+        Material mat = new(previewCubeShader);
         mat.SetFloat("_Mode", 3); // Transparent mode
         mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
         mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
