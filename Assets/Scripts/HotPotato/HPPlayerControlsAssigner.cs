@@ -8,19 +8,13 @@ public class HPPlayerControlsAssigner : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         PlayerManager.OnLocalPlayerSet += AssignControlsToPlayer;
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerRemoved += RemoveControlsFromPlayer;
-        }
+        PlayerManager.OnPlayerRemoved += RemoveControlsFromPlayer;
     }
 
     public override void OnNetworkDespawn()
     {
         PlayerManager.OnLocalPlayerSet -= AssignControlsToPlayer;
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerRemoved -= RemoveControlsFromPlayer;
-        }
+        PlayerManager.OnPlayerRemoved -= RemoveControlsFromPlayer;
     }
 
     private void AssignControlsToPlayer(Player player)

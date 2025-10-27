@@ -13,6 +13,7 @@ public class MarkManager : NetworkBehaviour
 
     public event Action<ulong> OnMarkPassed;
     public event Action OnMarkedPlayerEliminated;
+    public event Action OnGameStarted;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
     public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
@@ -56,12 +57,11 @@ public class MarkManager : NetworkBehaviour
         currentMarkedPlayer.EliminatePlayer();
     }
 
-    public async void StartHPGame()
+    public void StartHPGame()
     {
-        await Task.Delay(1000);
-
         AssignRandomPlayerWithMark();
         AddHpComponentClientRpc();
+        OnGameStarted?.Invoke();
     }
 
     public void StopHPGame()

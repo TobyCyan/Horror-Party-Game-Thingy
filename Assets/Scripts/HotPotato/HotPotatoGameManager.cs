@@ -17,13 +17,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
     void Awake()
     {
-        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         Instance = this;
-    }
-
-    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
-    {
-        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
     }
 
     public override void OnNetworkSpawn()
@@ -33,7 +27,11 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
+            markManager.OnGameStarted += StartHPTimer;
+            PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
         }
+        
+        PlayerManager.OnLastPlayerStanding += EndGame;
 
         if (hotPotatoTimer != null)
         {
@@ -42,21 +40,15 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (markManager != null && hotPotatoTimer != null)
         {
-            markManager.PostEliminationCoolDownTimer.OnTimeUp += () =>hotPotatoTimer.StartTimer(hotPotatoDuration);
+            markManager.PostEliminationCoolDownTimer.OnTimeUp += StartHPTimer;
         }
 
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnLastPlayerStanding += EndGame;
-        }
 
         if (markManager == null)
         {
             Debug.LogError("MarkManager reference is missing in HotPotatoGameManager.");
             return;
         }
-
-        markManager.StartHPGame();
     }
 
     public override void OnNetworkDespawn()
@@ -64,6 +56,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
+            markManager.OnGameStarted -= StartHPTimer;
             markManager.StopHPGame();
         }
 
@@ -75,13 +68,10 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (markManager != null && hotPotatoTimer != null)
         {
-            markManager.PostEliminationCoolDownTimer.OnTimeUp -= () => hotPotatoTimer.StartTimer(hotPotatoDuration);
+            markManager.PostEliminationCoolDownTimer.OnTimeUp -= StartHPTimer;
         }
 
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnLastPlayerStanding -= EndGame;
-        }
+        PlayerManager.OnLastPlayerStanding -= EndGame;
     }
 
     private async void EndGame()
@@ -139,6 +129,11 @@ public class HotPotatoGameManager : NetworkBehaviour
     {
         Debug.Log("Marked player eliminated. Handling elimination logic.");
         // TODO: Notify players by ui, update scores, etc.
+    }
+
+    private void StartHPTimer()
+    {
+        hotPotatoTimer.StartTimer(hotPotatoDuration);
     }
 
     private void OnValidate()
