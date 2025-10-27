@@ -1,13 +1,11 @@
-using System;
 using TMPro;
 using UnityEngine;
 
 public class TimerUi : MonoBehaviour
 {
-    private Timer timer;
     [SerializeField] private TextMeshProUGUI timerText;
 
-    private void Awake()
+    private void Start()
     {
         HotPotatoGameManager.Instance.timer.OnValueChanged += UpdateTimerText;
     }
