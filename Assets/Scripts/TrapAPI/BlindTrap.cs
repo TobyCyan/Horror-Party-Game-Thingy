@@ -1,11 +1,12 @@
+﻿// BlindTrap.cs - Updated to use player's BlindEffect
 using UnityEngine;
 using Unity.Netcode;
 
-[RequireComponent(typeof(BlindEffect))]
 public class BlindTrap : TrapBase
 {
     [Header("Who can trigger")]
     [SerializeField] private LayerMask playerMask;
+    [SerializeField] private float blindDuration = 5f;
     [SerializeField] private float silhouetteDuration = 5f;
 
     [Header("Visuals")]
@@ -13,113 +14,177 @@ public class BlindTrap : TrapBase
     [SerializeField] private Color armedColor = Color.red;
     [SerializeField] private Color disarmedColor = Color.gray;
 
-    private BlindEffect blindEffect;
     private Material trapMaterial;
 
-    // Network variable to sync color state
-    private NetworkVariable<bool> isArmedVisual = new NetworkVariable<bool>(false,
-        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
-        blindEffect = GetComponent<BlindEffect>();
+        base.Awake();
 
         if (trapRenderer != null)
         {
             trapMaterial = trapRenderer.material;
-            UpdateVisualColor();
         }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
 
         // Subscribe to lifecycle events
         OnArmed += HandleArmed;
         OnDisarmed += HandleDisarmed;
 
-        // Subscribe to network variable changes
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsClient)
-        {
-            isArmedVisual.OnValueChanged += OnArmedVisualChanged;
-        }
+        // Initial color update
+        UpdateVisualColor();
+
+        Debug.Log($"[BlindTrap] Start complete");
     }
 
     private void OnDestroy()
     {
         OnArmed -= HandleArmed;
         OnDisarmed -= HandleDisarmed;
-
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsClient)
-        {
-            isArmedVisual.OnValueChanged -= OnArmedVisualChanged;
-        }
     }
 
-    private void OnArmedVisualChanged(bool previous, bool current)
+    private void HandleArmed(ITrap trap)
     {
         UpdateVisualColor();
+        Debug.Log($"[BlindTrap] HandleArmed - Updating color to RED");
+    }
+
+    private void HandleDisarmed(ITrap trap)
+    {
+        UpdateVisualColor();
+        Debug.Log($"[BlindTrap] HandleDisarmed - Updating color to GRAY");
     }
 
     private void UpdateVisualColor()
     {
         if (trapMaterial != null)
         {
-            trapMaterial.color = isArmedVisual.Value ? armedColor : disarmedColor;
+            Color targetColor = IsArmed ? armedColor : disarmedColor;
+            trapMaterial.color = targetColor;
+            Debug.Log($"[BlindTrap] Color updated to {(IsArmed ? "RED (armed)" : "GRAY (disarmed)")}");
         }
-    }
-
-    private void HandleArmed(ITrap trap)
-    {
-        // Update network variable on server
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-        {
-            isArmedVisual.Value = true;
-        }
-        Debug.Log("BlindTrap: armed, color changed to red");
-    }
-
-    private void HandleDisarmed(ITrap trap)
-    {
-        // Update network variable on server
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-        {
-            isArmedVisual.Value = false;
-        }
-        Debug.Log("BlindTrap: disarmed, color changed to gray");
     }
 
     public void HandleTriggerEnter(Collider other)
     {
-        Debug.Log($"BlindTrap: HandleTriggerEnter by {other.gameObject.name}");
-        if (!CanTrigger()) return;
-        if ((playerMask.value & (1 << other.gameObject.layer)) == 0) return;
+        bool isSpawnedCheck = NetworkObject != null && NetworkObject.IsSpawned;
 
-        Debug.Log($"BlindTrap: triggered by {other.gameObject.name}");
+        Debug.Log($"[BlindTrap] HandleTriggerEnter - IsSpawned: {isSpawnedCheck}, CanTrigger: {CanTrigger()}");
+
+        if (!isSpawnedCheck)
+        {
+            Debug.LogWarning("[BlindTrap] Not spawned yet");
+            return;
+        }
+
+        if (!CanTrigger())
+        {
+            Debug.Log($"[BlindTrap] Cannot trigger - IsDeployed: {IsDeployed}, IsArmed: {IsArmed}");
+            return;
+        }
+
+        if ((playerMask.value & (1 << other.gameObject.layer)) == 0)
+        {
+            Debug.Log($"[BlindTrap] Wrong layer: {other.gameObject.layer}");
+            return;
+        }
+
+        var player = other.GetComponentInParent<Player>();
+        if (player == null)
+        {
+            Debug.LogWarning($"[BlindTrap] No Player component on {other.gameObject.name}");
+            return;
+        }
+
+        Debug.Log($"[BlindTrap] Valid trigger by player {player.OwnerClientId}");
+        RequestTriggerServerRpc(player.NetworkObjectId, other.ClosestPoint(transform.position));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestTriggerServerRpc(ulong playerNetworkId, Vector3 hitPoint)
+    {
+        bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
+
+        Debug.Log($"[BlindTrap - SERVER RPC] Received request for player {playerNetworkId}, IsServer: {isServer}");
+
+        if (!isServer)
+        {
+            Debug.LogError("[BlindTrap - SERVER RPC] Not on server!");
+            return;
+        }
+
+        if (!CanTrigger())
+        {
+            Debug.LogWarning($"[BlindTrap - SERVER RPC] Cannot trigger");
+            return;
+        }
+
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkId, out NetworkObject playerNetObj))
+        {
+            Debug.LogError($"[BlindTrap - SERVER RPC] Player {playerNetworkId} not found!");
+            return;
+        }
+
+        Player player = playerNetObj.GetComponent<Player>();
+        if (player == null)
+        {
+            Debug.LogError($"[BlindTrap - SERVER RPC] No Player component!");
+            return;
+        }
+
         var ctx = new TrapTriggerContext
         {
             source = TrapTriggerSource.Player,
-            instigator = other.gameObject,
-            hitPoint = other.ClosestPoint(transform.position),
+            instigator = player.gameObject,
+            hitPoint = hitPoint,
             hitNormal = Vector3.up
         };
 
+        Debug.Log($"[BlindTrap - SERVER RPC] ✅ Triggering for player {player.OwnerClientId}");
         Trigger(ctx);
     }
 
     protected override void OnTriggerCore(TrapTriggerContext ctx)
     {
-        var player = ctx.instigator.GetComponentInParent<Player>();
-        if (player == null) return;
+        bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
+        Debug.Log($"[BlindTrap] OnTriggerCore - IsServer: {isServer}");
 
-        // blindEffect.Apply(player); // Local?
-        Debug.Log($"BlindTrap: blinded {ctx.instigator.name}");
+        if (!isServer)
+        {
+            Debug.LogError("[BlindTrap] OnTriggerCore called on client!");
+            return;
+        }
 
+        var player = ctx.instigator.GetComponent<Player>();
+        if (player == null)
+        {
+            Debug.LogError("[BlindTrap] No Player in context!");
+            return;
+        }
+
+        Debug.Log($"[BlindTrap - SERVER] Got player {player.OwnerClientId}, checking for BlindEffect...");
+
+        // Get BlindEffect from the PLAYER
+        BlindEffect blindEffect = player.GetComponent<BlindEffect>();
+        if (blindEffect != null)
+        {
+            Debug.Log($"[BlindTrap - SERVER] BlindEffect found, calling Apply({blindDuration})");
+            blindEffect.Apply(blindDuration);
+            Debug.Log($"[BlindTrap - SERVER] ✅ Blind effect applied");
+        }
+        else
+        {
+            Debug.LogError($"[BlindTrap - SERVER] ❌ No BlindEffect component on player! Did you add it to the player prefab?");
+        }
+
+        // Apply silhouette
         if (player.TryGetComponent(out PlayerSilhouette silhouette))
         {
             silhouette.ShowForSecondsRpc(silhouetteDuration);
-        }
-
-        if (OneShot)
-        {
-            Disarm();
+            Debug.Log($"[BlindTrap - SERVER] ✅ Silhouette applied");
         }
     }
 
@@ -127,12 +192,8 @@ public class BlindTrap : TrapBase
     {
         base.Deploy(pos, rot, ownerGO);
 
-        // Set initial visual state on server
-        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
-        {
-            isArmedVisual.Value = true;
-        }
-
-        Debug.Log("BlindTrap: deployed and armed visually");
+        // Update color after deployment
+        UpdateVisualColor();
+        Debug.Log($"[BlindTrap] Deploy complete - IsArmed: {IsArmed}");
     }
 }

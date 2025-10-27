@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
-using System;
+using Random = UnityEngine.Random;
 
 public class MarkManager : NetworkBehaviour
 {
@@ -97,7 +99,45 @@ public class MarkManager : NetworkBehaviour
     private void AssignNextPlayerWithMark()
     {
         // TODO: Should assign next player by least sabotage scores.
-        AssignRandomPlayerWithMark();
+        if (!IsServer) return;
+
+        // Find the player with the highest trap score
+        ulong nextMarkClientId = 0;
+        int lowestScore = int.MaxValue;
+        List<ulong> tiedClientIds = new();
+
+        foreach (var score in TrapScoreManager.Instance.GetAllPlayerScores())
+        {
+            if (score.trapScore < lowestScore)
+            {
+                lowestScore = score.trapScore;
+                tiedClientIds.Clear();
+                tiedClientIds.Add(score.clientId);
+            }
+            else if (score.trapScore == lowestScore)
+            {
+                tiedClientIds.Add(score.clientId);
+            }
+        }
+
+        if (tiedClientIds.Count > 0)
+        {
+            int randomIndex = Random.Range(0, tiedClientIds.Count);
+            nextMarkClientId = tiedClientIds[randomIndex];
+        }
+
+        // Assign the mark to the next player
+        Player nextPlayer = PlayerManager.Instance.FindPlayerByClientId(nextMarkClientId);
+        currentMarkedPlayer = nextPlayer;
+
+        if (currentMarkedPlayer == null)
+        {
+            Debug.LogWarning("Unable to find players to assign the mark to.");
+            return;
+        }
+
+        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
+        Debug.Log($"Assigned mark to next player {currentMarkedPlayer} with id {currentMarkedPlayer.Id}");
     }
 
     public void AssignRandomPlayerWithMark()
@@ -112,6 +152,7 @@ public class MarkManager : NetworkBehaviour
         }
 
         PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
+        Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
     public void PassMarkToPlayer(ulong id)
