@@ -3,6 +3,7 @@ using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Collections;
+using System.Threading.Tasks;
 
 public class MazeGameManager : NetworkBehaviour
 {
@@ -10,6 +11,13 @@ public class MazeGameManager : NetworkBehaviour
 
     private NetworkVariable<PhaseID> currPhaseId = new(
        PhaseID.Default,
+       NetworkVariableReadPermission.Everyone,
+       NetworkVariableWritePermission.Server
+    );
+
+
+    private NetworkVariable<int> currRound = new(
+       3,
        NetworkVariableReadPermission.Everyone,
        NetworkVariableWritePermission.Server
     );
@@ -98,9 +106,53 @@ public class MazeGameManager : NetworkBehaviour
         currPhase.Enter();
     }
 
+    public void StartNextRound()
+    {
+        if (IsServer) currRound.Value--;
+        if (currRound.Value <= 0)
+        {
+            EndGame();
+
+        } else
+        {
+            Player p = PlayerManager.Instance.localPlayer;
+            p.transform.position = new Vector3(
+                Random.Range(-0.5f, 0.5f),
+                0f,
+                Random.Range(-0.5f, 0.5f)
+            ); // placeholder... by right sould ahve some spawn points
+   
+
+        }
+
+
+    }
+
+    private async void EndGame()
+    {
+        Debug.Log("Maze game ended.");
+        GetComponent<NetworkObject>().Despawn();
+
+        if (IsServer)
+        {
+            int playerCount = PlayerManager.Instance.players.Count;
+            // Despawn everyone
+            for (int i = 0; i < playerCount; i++)
+            {
+                if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
+                    SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+            }
+            await Task.Delay(1000);
+
+            await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
+            await SceneLifetimeManager.Instance.ReturnToLobby();
+        }
+    }
+
     private void Update()
     {
-        if (currPhase == null) return;
+        
+        if (currPhase == null || currRound.Value <= 0) return;
 
         currPhase.UpdatePhase();
 
