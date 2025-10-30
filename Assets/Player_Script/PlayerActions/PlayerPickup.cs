@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Netcode;
+using System;
 
 /// <summary>
 /// Handles player pickup interactions with NetworkPickupItem objects
@@ -28,6 +29,7 @@ public class PlayerPickup : NetworkBehaviour
     private float lastPickupAttemptTime = 0f;
 
     public bool IsPickupEnabled { get => isPickupEnabled; set => isPickupEnabled = value; }
+    public event Action OnTrapPickUp;
 
     // =========================================================
     // === INITIALIZATION ======================================
@@ -295,6 +297,7 @@ public class PlayerPickup : NetworkBehaviour
 
         // Show success feedback
         ShowPickupSuccessFeedback(itemName);
+        OnTrapPickUp?.Invoke();
     }
 
     [ClientRpc]

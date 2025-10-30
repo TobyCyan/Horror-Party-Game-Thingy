@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 /// <summary>
@@ -40,6 +41,8 @@ public class TrapPlacer : NetworkBehaviour
     private float lastPlacementTime;
     private GameObject previewCube;
     private bool isPlacementInProgress = false; // Prevent multiple simultaneous placements
+
+    public event Action OnTrapPlaced;
 
     private void Start()
     {
@@ -344,6 +347,8 @@ public class TrapPlacer : NetworkBehaviour
         ItemManager.Instance.RequestSpawnItem(itemId, spawnPosition, placementRotation, OnItemSpawned);
 
         lastPlacementTime = Time.time;
+
+        OnTrapPlaced?.Invoke();
     }
 
     /// <summary>
