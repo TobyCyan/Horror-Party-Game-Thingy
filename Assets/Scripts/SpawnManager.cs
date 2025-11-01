@@ -38,7 +38,7 @@ public class SpawnManager : NetworkBehaviour
     }
     
     [Rpc(SendTo.Server)]
-    private void SpawnPlayersServerRpc(RpcParams ctx = default)
+    public void SpawnPlayersServerRpc(RpcParams ctx = default)
     {
         // Don't spawn if exist already
         if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;

@@ -125,7 +125,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   trapPrefabs:
-  - {fileID: 8083099324181897937, guid: b7d58541aa7098546aaaeb32629d2e94, type: 3}
+  - {fileID: 1796949305745986835, guid: a43243fa85ab5674f9ca69e522a0e471, type: 3}
 --- !u!114 &7285890303983753463
 MonoBehaviour:
   m_ObjectHideFlags: 0

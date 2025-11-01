@@ -55,7 +55,7 @@ public class TrapPhase : MazeGamePhase
 
     public TrapPhase()
     {
-        TimeLimit = 10f;
+        TimeLimit = 5f;
         cost = 20;
     }
 
@@ -145,7 +145,7 @@ public class ScorePhase : MazeGamePhase
     bool isFinal; // transition to some teardown phase for ending the minigame maybe
     
     public ScorePhase() {
-        TimeLimit = 5f;
+        TimeLimit = 2f;
     }
 
     public override void Enter()
@@ -162,6 +162,7 @@ public class ScorePhase : MazeGamePhase
     public override void Exit()
     {
         base.Exit();
+        MazeGameManager.Instance.StartNextRound();
         // close score ui
         // respawn everyone at spawn point
         // reset player states (health etc) if needed
