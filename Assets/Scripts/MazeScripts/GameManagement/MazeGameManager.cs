@@ -78,13 +78,6 @@ public class MazeGameManager : NetworkBehaviour
         }
     }
 
-    // SERVER-ONLY: call this to change the phase
-    public void ServerChangePhase(PhaseID next)
-    {
-        if (!IsServer) return; 
-        currPhaseId.Value = next;
-    }
-
     // id change -> actual phase change
     private void ChangePhase(PhaseID prev, PhaseID next)
     {
@@ -115,18 +108,26 @@ public class MazeGameManager : NetworkBehaviour
 
         } else
         {
-            Player p = PlayerManager.Instance.localPlayer;
-            p.transform.position = new Vector3(
-                Random.Range(-0.5f, 0.5f),
-                0f,
-                Random.Range(-0.5f, 0.5f)
-            ); // placeholder... by right sould ahve some spawn points
-   
+
+            // Despawn if not dead, and respawn
+            if (IsServer)
+            {
+                int playerCount = PlayerManager.Instance.players.Count;
+                // Despawn everyone
+                for (int i = 0; i < playerCount; i++)
+                {
+                    if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
+                        SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+                }
+            }
+
+            // run on all client..?
+            SpawnManager.Instance.SpawnPlayersServerRpc();
 
         }
-
-
     }
+
+
 
     private async void EndGame()
     {
