@@ -20,11 +20,6 @@ public abstract class MazeGamePhase
 
     public virtual void UpdatePhase() { }
 
-    public virtual void ChangePhase(PhaseID next)
-    {
-        MazeGameManager.Instance.ServerChangePhase(next);
-    }
-
     public abstract PhaseID GetNextPhase();
 }
 
@@ -55,7 +50,7 @@ public class TrapPhase : MazeGamePhase
 
     public TrapPhase()
     {
-        TimeLimit = 10f;
+        TimeLimit = 5f;
         cost = 20;
     }
 
@@ -68,21 +63,30 @@ public class TrapPhase : MazeGamePhase
     public override void Enter()
     {
         base.Enter();
+        // hackety hack hack
+        if (PlayerManager.Instance.localPlayer == null)
+            PlayerManager.OnLocalPlayerSet += OnLocalPlayerReady;
+        else
+            SetupLocalPlayer();
+    }
 
 
+    private void OnLocalPlayerReady(Player p)
+    {
+        PlayerManager.OnLocalPlayerSet -= OnLocalPlayerReady;
+        SetupLocalPlayer();
+    }
+
+    private void SetupLocalPlayer()
+    {
         MazeCameraManager.Instance.SetToTopDownView();
         UIManager.Instance.SwitchUIView<TrapsPhaseView>();
 
         MazeTrapPlacer.Instance.EnablePlacing(true, cost);
 
-        player = PlayerManager.Instance.localPlayer; // handle for local
-        movement = player.gameObject.GetComponent<PlayerMovement>();
+        player = PlayerManager.Instance.localPlayer;
+        movement = player.GetComponent<PlayerMovement>();
         movement.enabled = false;
-
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-
-
 
     }
 
@@ -99,6 +103,19 @@ public class TrapPhase : MazeGamePhase
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    public override void UpdatePhase()
+    {
+        base.UpdatePhase();
+
+        // death by firing squad, out of order with PlayerCam.cs otherwise
+        if (!Cursor.visible)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
     }
 
     public override PhaseID GetNextPhase()
@@ -145,7 +162,7 @@ public class ScorePhase : MazeGamePhase
     bool isFinal; // transition to some teardown phase for ending the minigame maybe
     
     public ScorePhase() {
-        TimeLimit = 5f;
+        TimeLimit = 2f;
     }
 
     public override void Enter()
@@ -162,9 +179,8 @@ public class ScorePhase : MazeGamePhase
     public override void Exit()
     {
         base.Exit();
+        MazeGameManager.Instance.StartNextRound();
         // close score ui
-        // respawn everyone at spawn point
-        // reset player states (health etc) if needed
     }
 
     public override PhaseID GetNextPhase()
