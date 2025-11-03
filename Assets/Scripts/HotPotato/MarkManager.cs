@@ -76,7 +76,7 @@ public class MarkManager : NetworkBehaviour
     private void HandleMarkedPlayerEliminated()
     {
         currentMarkedPlayer = null;
-
+        Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
         // Start cooldown timer before assigning the new marked player
         postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
     }
@@ -126,16 +126,15 @@ public class MarkManager : NetworkBehaviour
 
         // Assign the mark to the next player
         Player nextPlayer = PlayerManager.Instance.FindPlayerByClientId(nextMarkClientId);
-        currentMarkedPlayer = nextPlayer;
 
-        if (currentMarkedPlayer == null)
+        if (nextPlayer == null)
         {
             Debug.LogWarning("Unable to find players to assign the mark to.");
             return;
         }
 
-        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
-        Debug.Log($"Assigned mark to next player {currentMarkedPlayer} with id {currentMarkedPlayer.Id}");
+        PassMarkToPlayerServerRpc(nextPlayer.Id);
+        Debug.Log($"Assigned mark to next player {nextPlayer} with id {nextPlayer.Id}");
     }
 
     public void AssignRandomPlayerWithMark()
@@ -194,7 +193,9 @@ public class MarkManager : NetworkBehaviour
             Debug.Log($"Modified movement speed for new marked player {player}");
         }
 
-        player.SetMeshRootLayerRpc(auraLayer);
+        currentMarkedPlayer = player;
+        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
+        currentMarkedPlayer.SetMeshRootLayerRpc(auraLayer);
         lastMarkPassTime = Time.time;
         UpdateMarkedPlayerAllRpc(id);
     }
@@ -210,7 +211,6 @@ public class MarkManager : NetworkBehaviour
         }
 
         currentMarkedPlayer = player;
-        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
         Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
         OnMarkPassed?.Invoke(id);
     }
