@@ -35,14 +35,12 @@ public class MarkManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        OnMarkPassed += UpdateMarkedPlayerAllRpc;
         OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp += AssignNextPlayerWithMark;
     }
 
     public override void OnNetworkDespawn()
     {
-        OnMarkPassed -= UpdateMarkedPlayerAllRpc;
         OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp -= AssignNextPlayerWithMark;
     }
@@ -143,15 +141,14 @@ public class MarkManager : NetworkBehaviour
     public void AssignRandomPlayerWithMark()
     {
         Player randomPlayer = PlayerManager.Instance.GetRandomAlivePlayer();
-        currentMarkedPlayer = randomPlayer;
 
-        if (currentMarkedPlayer == null)
+        if (randomPlayer == null)
         {
             Debug.LogWarning("No alive players to assign the mark to.");
             return;
         }
 
-        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
+        PassMarkToPlayerServerRpc(randomPlayer.Id);
         Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
@@ -190,8 +187,8 @@ public class MarkManager : NetworkBehaviour
         }
 
         Debug.Log($"Passing mark to player {player} with id {id}");
-        
-        if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
+
+        if (player.TryGetComponent(out PlayerMovement pm))
         {
             pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
             Debug.Log($"Modified movement speed for new marked player {player}");
@@ -199,22 +196,23 @@ public class MarkManager : NetworkBehaviour
 
         player.SetMeshRootLayerRpc(auraLayer);
         lastMarkPassTime = Time.time;
-        UpdateMarkUiClientRpc(id);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void UpdateMarkUiClientRpc(ulong id)
-    {
-        OnMarkPassed?.Invoke(id);
+        UpdateMarkedPlayerAllRpc(id);
     }
 
     [Rpc(SendTo.Everyone)]
     private void UpdateMarkedPlayerAllRpc(ulong id)
     {
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
+        if (player == null)
+        {
+            Debug.LogWarning($"[UpdateMarkedPlayerAllRpc] Could not find player with id {id}");
+            return;
+        }
+
         currentMarkedPlayer = player;
         currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
         Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
+        OnMarkPassed?.Invoke(id);
     }
 
     private void InvokeOnMarkedPlayerEliminated()
