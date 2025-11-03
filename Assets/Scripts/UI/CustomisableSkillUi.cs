@@ -34,12 +34,12 @@ public class CustomisableSkillUi : SkillUi
 
     private void BindLocalPlayer(Player player)
     {
-        if (!player.TryGetComponent<PlayerPickup>(out var pickup))
+        if (player.TryGetComponent<PlayerPickup>(out var pickup))
         {
             pickup.OnTrapPickUp += SetUi;
         }
 
-        if (!player.TryGetComponent<TrapPlacer>(out var trapPlacer))
+        if (player.TryGetComponent<TrapPlacer>(out var trapPlacer))
         {
             trapPlacer.OnTrapPlaced += ClearUi;
         }
@@ -77,6 +77,12 @@ public class CustomisableSkillUi : SkillUi
 
     public void SetSkillIcon(Sprite sprite)
     {
+        if (sprite == null)
+        {
+            skillIcon.color = Color.clear;
+            return;
+        }
+        skillIcon.color = Color.white;
         skillIcon.sprite = sprite;
     }
 }
