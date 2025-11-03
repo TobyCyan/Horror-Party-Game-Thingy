@@ -28,6 +28,9 @@ public class SkillUi : MonoBehaviour
         {
             Debug.LogWarning("SkillUi: playerControlsAssigner is not assigned on " + name);
         }
+
+        PlayerManager.OnLocalPlayerSet += BindPlayerToUi;
+        PlayerManager.OnPlayerRemoved += UnbindPlayerFromUi;
     }
 
     protected virtual void Start()
@@ -69,6 +72,35 @@ public class SkillUi : MonoBehaviour
         DetermineShowUi(skillInputManager.CanUseHunterSkill);
     }
 
+    private void BindPlayerToUi(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in BindPlayerToUi.");
+            return;
+        }
+
+        player.OnPlayerEliminated += () =>
+        {
+            // Hide UI on elimination
+            ShowSkillUi(false);
+        };
+    }
+
+    private void UnbindPlayerFromUi(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in UnbindPlayerFromUi.");
+            return;
+        }
+        player.OnPlayerEliminated -= () =>
+        {
+            // Hide UI on elimination
+            ShowSkillUi(false);
+        };
+    }
+
     private void OnDestroy()
     {
         if (skillInputManager != null)
@@ -80,6 +112,9 @@ public class SkillUi : MonoBehaviour
         {
             playerControlsAssigner.OnControlsAssigned -= BindControlsToUi;
         }
+
+        PlayerManager.OnLocalPlayerSet -= BindPlayerToUi;
+        PlayerManager.OnPlayerRemoved -= UnbindPlayerFromUi;
     }
 
     private void DetermineShowUi(bool isHunter)

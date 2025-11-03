@@ -58,7 +58,6 @@ public class MarkManager : NetworkBehaviour
     public void StartHPGame()
     {
         AssignRandomPlayerWithMark();
-        AddHpComponentClientRpc();
         OnGameStarted?.Invoke();
     }
 
@@ -79,19 +78,6 @@ public class MarkManager : NetworkBehaviour
         Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
         // Start cooldown timer before assigning the new marked player
         postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void AddHpComponentClientRpc()
-    {
-        if (PlayerManager.Instance == null || PlayerManager.Instance.localPlayer == null)
-        {
-            Debug.Log("PlayerManager or localPlayer is null, cannot add HPPassingLogic component.");
-            return;
-        }
-
-        Debug.Log($"Adding hp component to {PlayerManager.Instance.localPlayer} with {PlayerManager.Instance.localPlayer.Id}");
-        PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
 
     private void AssignNextPlayerWithMark()
