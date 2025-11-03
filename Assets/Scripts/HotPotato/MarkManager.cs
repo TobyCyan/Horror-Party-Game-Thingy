@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class MarkManager : NetworkBehaviour
 {
     public static MarkManager Instance;
-    public Player currentMarkedPlayer;
+    public static Player currentMarkedPlayer;
 
     public event Action<ulong> OnMarkPassed;
     public event Action OnMarkedPlayerEliminated;
