@@ -54,7 +54,7 @@ public class MazeCameraManager : MonoBehaviour
 
         }
 
-        topDownCam.Priority = 30;
+        topDownCam.Priority = 30; // 30 > 20 to get around localplayer race condition
         localPlayerCam.Priority = 10;
     }
 

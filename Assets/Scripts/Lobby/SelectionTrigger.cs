@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -11,7 +12,8 @@ public class SelectorTrigger : NetworkBehaviour
     }
 
     private int triggerCount = 0;
-    [SerializeField] private string selectedSceneName = "HospitalMapScene";
+    [SerializeField] private string[] sceneList = { "HospitalMapScene", "TestMazeScene" };
+    [SerializeField] private int selectedIndex = 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -51,8 +53,8 @@ public class SelectorTrigger : NetworkBehaviour
         await Task.Delay(500); // Wait just incase;
         
         await SceneLifetimeManager.Instance.LeaveLobby();
-        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { selectedSceneName });
-        SceneLifetimeManager.Instance.SetActiveScene(selectedSceneName);
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { sceneList[selectedIndex] });
+        SceneLifetimeManager.Instance.SetActiveScene(sceneList[selectedIndex]);
     }
     
     [Rpc(SendTo.NotServer)]

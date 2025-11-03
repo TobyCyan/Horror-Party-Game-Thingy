@@ -9073,7 +9073,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  selectedSceneName: TestMazeScene
+  sceneList:
+  - HospitalMapScene
+  - TestMazeScene
+  selectedIndex: 1
 --- !u!4 &1583149671 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6500741688045897191, guid: 2ed4016978ecac749aa229654c86d752, type: 3}
