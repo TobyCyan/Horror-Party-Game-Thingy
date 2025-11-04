@@ -18251,7 +18251,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -500, y: 150}
+  m_AnchoredPosition: {x: -516, y: 150}
   m_SizeDelta: {x: 1000, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &818485583
@@ -23760,7 +23760,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1061595657}
   - component: {fileID: 1061595658}
-  - component: {fileID: 1061595659}
+  - component: {fileID: 1061595660}
   m_Layer: 5
   m_Name: Trap
   m_TagString: Untagged
@@ -23798,7 +23798,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061595656}
   m_CullTransparentMesh: 1
---- !u!114 &1061595659
+--- !u!114 &1061595660
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -23807,11 +23807,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1061595656}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 421d9c91ea8beca49b0da8e5053e2bef, type: 3}
+  m_Script: {fileID: 11500000, guid: 928d7608fe1e2154ebf6222cfec99a02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skillType: 1
   playerControlsAssigner: {fileID: 1037705728}
+  keyBindText: {fileID: 2131290697}
+  defaultKeyBind: 113
+  skillIcon: {fileID: 1907017321}
+  defaultIcon: {fileID: 21300000, guid: 0707f8807719a85489232143db8267ff, type: 3}
 --- !u!1001 &1061847300
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25400,6 +25404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9902d7281e026348b8dd34d9c2b921b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markManager: {fileID: 1037705726}
 --- !u!114 &1118930913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -40089,6 +40094,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5743727283211112169, guid: b28e5272cb0e3104c8c0e65e9d292022, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 8311525877939866373, guid: b28e5272cb0e3104c8c0e65e9d292022, type: 3}
       propertyPath: m_Name
       value: Hunter Sight Skill
@@ -50287,8 +50296,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 9}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: 0, y: 7.5}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2131290697
 MonoBehaviour:

@@ -6,7 +6,7 @@ public class SkillRegistry : MonoBehaviour
 {
     public static SkillRegistry Instance { get; private set; }
     private readonly Dictionary<string, PlayerSkill> skillsMap = new();
-    public Action<string> OnSkillRegistered;
+    public static Action<string> OnSkillRegistered;
 
     private void Awake()
     {

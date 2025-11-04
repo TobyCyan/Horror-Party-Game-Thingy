@@ -9,27 +9,21 @@ public class SkillCooldownUi : MonoBehaviour
     [SerializeField] private string skillName;
     private float skillCooldown;
 
-    private void Start()
+    private void Awake()
     {
-        if (SkillRegistry.Instance == null)
-        {
-            Debug.LogError("SkillRegistry instance not found in the scene.");
-            return;
-        }
-
-        SkillRegistry.Instance.OnSkillRegistered += OnSkillRegistered;
+        SkillRegistry.OnSkillRegistered += OnSkillRegistered;
         UpdateUi(0);
     }
 
     private void OnDestroy()
     {
-        if (SkillRegistry.Instance != null)
-        {
-            SkillRegistry.Instance.OnSkillRegistered += OnSkillRegistered;
-            SkillRegistry.Instance.UnsubscribeSkillCooldownTimer(skillName,
-                (cooldown) => UpdateUi(cooldown),
-                () => ShowCooldown(false));
-        }
+        SkillRegistry.OnSkillRegistered += OnSkillRegistered;
+
+        if (SkillRegistry.Instance == null) return;
+        SkillRegistry.Instance.UnsubscribeSkillCooldownTimer(skillName,
+            (cooldown) => UpdateUi(cooldown),
+            () => ShowCooldown(false));
+        
     }
 
     private void OnSkillRegistered(string registeredSkillName)

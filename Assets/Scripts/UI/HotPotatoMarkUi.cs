@@ -2,21 +2,18 @@ using UnityEngine;
 
 public class HotPotatoMarkUi : MonoBehaviour
 {
-    private MarkManager markManager;
-    private ulong playerId;
+    [SerializeField] private MarkManager markManager;
 
-    private void Start()
+    private void Awake()
     {
-        markManager = MarkManager.Instance;
         if (markManager == null)
         {
             Debug.LogWarning("MarkManager not found in HotPotatoUi.");
+            return;
         }
-        else
-        {
-            markManager.OnMarkPassed += CheckPlayerId;
-            markManager.OnMarkedPlayerEliminated += Hide;
-        }
+        
+        markManager.OnMarkPassed += CheckPlayerId;
+        markManager.OnMarkedPlayerEliminated += Hide;
     }
 
     private void OnDestroy()
@@ -30,7 +27,15 @@ public class HotPotatoMarkUi : MonoBehaviour
 
     private void CheckPlayerId(ulong id)
     {
-        if (MarkManager.Instance.currentMarkedPlayer.Id == PlayerManager.Instance.localPlayer.Id)
+        if (MarkManager.currentMarkedPlayer == null || PlayerManager.Instance.localPlayer == null)
+        {
+            Debug.LogWarning($"CurrentMarkedPlayer: {MarkManager.currentMarkedPlayer}, " +
+                $"localPlayer: {PlayerManager.Instance.localPlayer} in HotPotatoMarkUi.");
+            Hide();
+            return;
+        }
+
+        if (MarkManager.currentMarkedPlayer.Id == PlayerManager.Instance.localPlayer.Id)
         {
             Reveal();
         }

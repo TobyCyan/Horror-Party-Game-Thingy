@@ -5,7 +5,7 @@ public class HPPlayerControlsAssigner : NetworkBehaviour
 {
     public Action<HPSkillInputManager> OnControlsAssigned;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
         PlayerManager.OnLocalPlayerSet += AssignControlsToPlayer;
         PlayerManager.OnPlayerRemoved += RemoveControlsFromPlayer;

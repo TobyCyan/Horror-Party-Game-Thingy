@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class MarkManager : NetworkBehaviour
 {
     public static MarkManager Instance;
-    public Player currentMarkedPlayer;
+    public static Player currentMarkedPlayer;
 
     public event Action<ulong> OnMarkPassed;
     public event Action OnMarkedPlayerEliminated;
@@ -35,14 +35,12 @@ public class MarkManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        OnMarkPassed += UpdateMarkedPlayerAllRpc;
         OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp += AssignNextPlayerWithMark;
     }
 
     public override void OnNetworkDespawn()
     {
-        OnMarkPassed -= UpdateMarkedPlayerAllRpc;
         OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp -= AssignNextPlayerWithMark;
     }
@@ -60,7 +58,6 @@ public class MarkManager : NetworkBehaviour
     public void StartHPGame()
     {
         AssignRandomPlayerWithMark();
-        AddHpComponentClientRpc();
         OnGameStarted?.Invoke();
     }
 
@@ -78,22 +75,9 @@ public class MarkManager : NetworkBehaviour
     private void HandleMarkedPlayerEliminated()
     {
         currentMarkedPlayer = null;
-
+        Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
         // Start cooldown timer before assigning the new marked player
         postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void AddHpComponentClientRpc()
-    {
-        if (PlayerManager.Instance == null || PlayerManager.Instance.localPlayer == null)
-        {
-            Debug.Log("PlayerManager or localPlayer is null, cannot add HPPassingLogic component.");
-            return;
-        }
-
-        Debug.Log($"Adding hp component to {PlayerManager.Instance.localPlayer} with {PlayerManager.Instance.localPlayer.Id}");
-        PlayerManager.Instance.localPlayer.AddComponent<HPPassingLogic>();
     }
 
     private void AssignNextPlayerWithMark()
@@ -128,30 +112,28 @@ public class MarkManager : NetworkBehaviour
 
         // Assign the mark to the next player
         Player nextPlayer = PlayerManager.Instance.FindPlayerByClientId(nextMarkClientId);
-        currentMarkedPlayer = nextPlayer;
 
-        if (currentMarkedPlayer == null)
+        if (nextPlayer == null)
         {
             Debug.LogWarning("Unable to find players to assign the mark to.");
             return;
         }
 
-        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
-        Debug.Log($"Assigned mark to next player {currentMarkedPlayer} with id {currentMarkedPlayer.Id}");
+        PassMarkToPlayerServerRpc(nextPlayer.Id);
+        Debug.Log($"Assigned mark to next player {nextPlayer} with id {nextPlayer.Id}");
     }
 
     public void AssignRandomPlayerWithMark()
     {
         Player randomPlayer = PlayerManager.Instance.GetRandomAlivePlayer();
-        currentMarkedPlayer = randomPlayer;
 
-        if (currentMarkedPlayer == null)
+        if (randomPlayer == null)
         {
             Debug.LogWarning("No alive players to assign the mark to.");
             return;
         }
 
-        PassMarkToPlayerServerRpc(currentMarkedPlayer.Id);
+        PassMarkToPlayerServerRpc(randomPlayer.Id);
         Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
@@ -190,31 +172,33 @@ public class MarkManager : NetworkBehaviour
         }
 
         Debug.Log($"Passing mark to player {player} with id {id}");
-        
-        if (currentMarkedPlayer.TryGetComponent(out PlayerMovement pm))
+
+        if (player.TryGetComponent(out PlayerMovement pm))
         {
             pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
             Debug.Log($"Modified movement speed for new marked player {player}");
         }
 
-        player.SetMeshRootLayerRpc(auraLayer);
+        currentMarkedPlayer = player;
+        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
+        currentMarkedPlayer.SetMeshRootLayerRpc(auraLayer);
         lastMarkPassTime = Time.time;
-        UpdateMarkUiClientRpc(id);
-    }
-
-    [Rpc(SendTo.Everyone)]
-    private void UpdateMarkUiClientRpc(ulong id)
-    {
-        OnMarkPassed?.Invoke(id);
+        UpdateMarkedPlayerAllRpc(id);
     }
 
     [Rpc(SendTo.Everyone)]
     private void UpdateMarkedPlayerAllRpc(ulong id)
     {
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
+        if (player == null)
+        {
+            Debug.LogWarning($"[UpdateMarkedPlayerAllRpc] Could not find player with id {id}");
+            return;
+        }
+
         currentMarkedPlayer = player;
-        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
         Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
+        OnMarkPassed?.Invoke(id);
     }
 
     private void InvokeOnMarkedPlayerEliminated()

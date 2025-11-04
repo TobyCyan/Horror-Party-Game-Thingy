@@ -18,6 +18,7 @@ public class HotPotatoGameManager : NetworkBehaviour
     void Awake()
     {
         Instance = this;
+        PlayerManager.OnLocalPlayerSet += PassHpComponentToPlayer;
     }
 
     public override void OnNetworkSpawn()
@@ -30,7 +31,7 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.OnGameStarted += StartHPTimer;
             PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
         }
-        
+
         PlayerManager.OnLastPlayerStanding += EndGame;
 
         if (hotPotatoTimer != null)
@@ -71,6 +72,7 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.PostEliminationCoolDownTimer.OnTimeUp -= StartHPTimer;
         }
 
+        PlayerManager.OnLocalPlayerSet -= PassHpComponentToPlayer;
         PlayerManager.OnLastPlayerStanding -= EndGame;
     }
 
@@ -105,6 +107,20 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.EliminateMarkedPlayer();
         }
         // hotPotatoTimer.StartTimer(hotPotatoDuration);
+    }
+
+    private void PassHpComponentToPlayer(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Cannot pass Hot Potato component to a null local player.");
+            return;
+        }
+        if (!player.TryGetComponent<HPPassingLogic>(out var _))
+        {
+            Debug.Log($"Adding HPPassingLogic component to player {player}.");
+            player.gameObject.AddComponent<HPPassingLogic>();
+        }
     }
 
     private void Update()
