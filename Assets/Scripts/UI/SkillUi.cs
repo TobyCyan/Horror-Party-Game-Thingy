@@ -9,34 +9,46 @@ public class SkillUi : MonoBehaviour
     }
 
     private GameObject self;
-    [SerializeField] private SkillCooldownUi skillCooldownUi;
     [SerializeField] private SkillType skillType;
     [SerializeField] private HPPlayerControlsAssigner playerControlsAssigner;
     private HPSkillInputManager skillInputManager;
 
-    private void Awake()
+    protected virtual void Awake()
     {
-        playerControlsAssigner.OnControlsAssigned += BindControlsToUi;
         self = gameObject;
-    }
 
-    private void Start()
-    {
-        skillInputManager = PlayerManager.Instance.localPlayer.GetComponent<HPSkillInputManager>();
+        // Hide UI by default until role is determined
+        self.SetActive(false);
 
-        if (skillCooldownUi == null)
+        if (playerControlsAssigner != null)
         {
-            Debug.LogError("SkillCooldownUi is not assigned in the inspector.");
-            return;
+            playerControlsAssigner.OnControlsAssigned += BindControlsToUi;
+        }
+        else
+        {
+            Debug.LogWarning("SkillUi: playerControlsAssigner is not assigned on " + name);
         }
 
-        ShowSkillUi(false);
+        PlayerManager.OnLocalPlayerSet += BindPlayerToUi;
+        PlayerManager.OnPlayerRemoved += UnbindPlayerFromUi;
     }
 
-    private void ShowSkillUi(bool show)
+    protected virtual void Start()
+    {
+        // Try to grab any existing input manager on the local player (covers cases where the input
+        // manager was added before this UI initialized).
+        if (PlayerManager.Instance != null && PlayerManager.Instance.localPlayer != null)
+        {
+            if (PlayerManager.Instance.localPlayer.TryGetComponent<HPSkillInputManager>(out var existing))
+            {
+                BindControlsToUi(existing);
+            }
+        }
+    }
+
+    protected virtual void ShowSkillUi(bool show)
     {
         self.SetActive(show);
-        skillCooldownUi.gameObject.SetActive(show);
     }
 
     private void BindControlsToUi(HPSkillInputManager inputManager)
@@ -47,8 +59,46 @@ public class SkillUi : MonoBehaviour
             return;
         }
 
+        // Avoid double-subscribe if we re-bind
+        if (skillInputManager != null)
+        {
+            skillInputManager.OnHunterRoleSet -= DetermineShowUi;
+        }
+
         skillInputManager = inputManager;
         skillInputManager.OnHunterRoleSet += DetermineShowUi;
+
+        // Immediately set UI to current role
+        DetermineShowUi(skillInputManager.CanUseHunterSkill);
+    }
+
+    private void BindPlayerToUi(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in BindPlayerToUi.");
+            return;
+        }
+
+        player.OnPlayerEliminated += () =>
+        {
+            // Hide UI on elimination
+            ShowSkillUi(false);
+        };
+    }
+
+    private void UnbindPlayerFromUi(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in UnbindPlayerFromUi.");
+            return;
+        }
+        player.OnPlayerEliminated -= () =>
+        {
+            // Hide UI on elimination
+            ShowSkillUi(false);
+        };
     }
 
     private void OnDestroy()
@@ -62,6 +112,9 @@ public class SkillUi : MonoBehaviour
         {
             playerControlsAssigner.OnControlsAssigned -= BindControlsToUi;
         }
+
+        PlayerManager.OnLocalPlayerSet -= BindPlayerToUi;
+        PlayerManager.OnPlayerRemoved -= UnbindPlayerFromUi;
     }
 
     private void DetermineShowUi(bool isHunter)

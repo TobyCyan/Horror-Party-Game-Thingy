@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class PlayerManager : NetworkBehaviour
@@ -8,27 +10,28 @@ public class PlayerManager : NetworkBehaviour
     public static PlayerManager Instance;
 
     public List<Player> players = new();
-    public event Action<Player> OnPlayerAdded;
-    public event Action<Player> OnPlayerRemoved;
+    public static event Action<Player> OnPlayerAdded;
+    public static event Action<Player> OnPlayerRemoved;
     public Player localPlayer;
     private readonly List<Player> alivePlayers = new();
     public List<Player> AlivePlayers => alivePlayers;
-    public event Action OnAllPlayersEliminated;
-    public event Action OnLastPlayerStanding;
+    public static event Action OnAllPlayersEliminated;
+    public static event Action OnLastPlayerStanding;
     public static event Action<Player> OnLocalPlayerSet;
+    public static event Action OnAllPlayersLoaded;
+    private int expectedPlayers = 100;
 
     private void Awake()
     {
-        if (!Instance)
-        {
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        
-        DontDestroyOnLoad(gameObject);
+        Instance = this;
+        NetworkManager.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        if (IsServer)
+            expectedPlayers = clientsCompleted.Count;
     }
 
     public override void OnNetworkSpawn()
@@ -51,6 +54,10 @@ public class PlayerManager : NetworkBehaviour
         player.OnPlayerEliminated += () => EliminatePlayer(player);
 
         OnPlayerAdded?.Invoke(player);
+        if (players.Count == expectedPlayers)
+        {
+            OnAllPlayersLoaded?.Invoke();
+        }
     }
     
     public void RemovePlayer(Player player)

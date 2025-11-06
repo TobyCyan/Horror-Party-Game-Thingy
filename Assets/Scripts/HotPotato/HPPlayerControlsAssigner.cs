@@ -5,22 +5,16 @@ public class HPPlayerControlsAssigner : NetworkBehaviour
 {
     public Action<HPSkillInputManager> OnControlsAssigned;
 
-    public override void OnNetworkSpawn()
+    private void Awake()
     {
         PlayerManager.OnLocalPlayerSet += AssignControlsToPlayer;
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerRemoved += RemoveControlsFromPlayer;
-        }
+        PlayerManager.OnPlayerRemoved += RemoveControlsFromPlayer;
     }
 
     public override void OnNetworkDespawn()
     {
         PlayerManager.OnLocalPlayerSet -= AssignControlsToPlayer;
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerRemoved -= RemoveControlsFromPlayer;
-        }
+        PlayerManager.OnPlayerRemoved -= RemoveControlsFromPlayer;
     }
 
     private void AssignControlsToPlayer(Player player)

@@ -51,10 +51,10 @@ public class MazeCameraManager : MonoBehaviour
         {
             if (localPlayerCam == null) Debug.LogWarning("SetToTopDownView: localPlayerCam is null!");
             if (topDownCam == null) Debug.LogWarning("SetToTopDownView: topDownCam is null!");
-            return;
+
         }
 
-        topDownCam.Priority = 20;
+        topDownCam.Priority = 30; // 30 > 20 to get around localplayer race condition
         localPlayerCam.Priority = 10;
     }
 

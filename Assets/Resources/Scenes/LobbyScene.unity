@@ -1655,6 +1655,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 470138, guid: dc8f3955c063af240afd23143f496335, type: 3}
   m_PrefabInstance: {fileID: 486413920}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &489838591 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5168803285546609793, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &489838592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489838591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3142734454
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!1 &503105982 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7402949919902015276, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &503105983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 503105982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 722969161
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &543733921
 GameObject:
   m_ObjectHideFlags: 0
@@ -2112,13 +2172,121 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9091624613049946917, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 659534962}
+    - targetCorrespondingSourceObject: {fileID: 2400128250711575450, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 659534964}
+    - targetCorrespondingSourceObject: {fileID: 7402949919902015276, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 503105983}
+    - targetCorrespondingSourceObject: {fileID: 9039470140406037454, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1562221229}
+    - targetCorrespondingSourceObject: {fileID: 5168803285546609793, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 489838592}
+    - targetCorrespondingSourceObject: {fileID: 8836999148047072406, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 665074662}
   m_SourcePrefab: {fileID: 100100000, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
 --- !u!4 &659534960 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4622666231039266037, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
   m_PrefabInstance: {fileID: 659534959}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &659534961 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9091624613049946917, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &659534962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659534961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 841747230
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!1 &659534963 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2400128250711575450, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &659534964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 659534963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2156463157
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!1 &665074661 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8836999148047072406, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &665074662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665074661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 3690759636
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1001 &712127912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8867,6 +9035,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1562221228 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9039470140406037454, guid: 2bc9dde746073fb428da7cc436fb8ab8, type: 3}
+  m_PrefabInstance: {fileID: 659534959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1562221229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562221228}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1124207050
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1001 &1562997800
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9073,7 +9271,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  selectedSceneName: HospitalMapScene
+  sceneList:
+  - HospitalMapScene
+  - TestMazeScene
+  selectedIndex: 1
 --- !u!4 &1583149671 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6500741688045897191, guid: 2ed4016978ecac749aa229654c86d752, type: 3}

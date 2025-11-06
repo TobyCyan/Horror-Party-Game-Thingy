@@ -9,7 +9,7 @@ public class HPPassingLogic : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         // Only marked person should try to pass
-        if (MarkManager.Instance.currentMarkedPlayer?.Id != PlayerManager.Instance.localPlayer?.Id) return;
+        if (MarkManager.currentMarkedPlayer?.Id != PlayerManager.Instance.localPlayer?.Id) return;
         
         if (!CanPass()) return;
 

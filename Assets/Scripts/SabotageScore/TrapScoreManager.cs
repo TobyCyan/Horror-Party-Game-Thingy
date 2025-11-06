@@ -33,22 +33,16 @@ public class TrapScoreManager : NetworkBehaviour
         base.OnNetworkSpawn();
 
         // Subscribe to player join/leave events if you have them
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerAdded += OnPlayerJoined;
-            PlayerManager.Instance.OnPlayerRemoved += OnPlayerLeft;
-        }
+        PlayerManager.OnPlayerAdded += OnPlayerJoined;
+        PlayerManager.OnPlayerRemoved += OnPlayerLeft;
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
 
-        if (PlayerManager.Instance != null)
-        {
-            PlayerManager.Instance.OnPlayerAdded -= OnPlayerJoined;
-            PlayerManager.Instance.OnPlayerRemoved -= OnPlayerLeft;
-        }
+        PlayerManager.OnPlayerAdded -= OnPlayerJoined;
+        PlayerManager.OnPlayerRemoved -= OnPlayerLeft;
     }
 
     /// <summary>

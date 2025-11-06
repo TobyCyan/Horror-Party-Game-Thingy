@@ -103,6 +103,7 @@ public class PlayerCam : NetworkBehaviour
 
     public void TogglePlayerCam(bool toggle)
     {
+        playerCam.enabled = true;
         playerCam.Priority= toggle ? 10 : 0;
         TogglePlayerBody(toggle);
     }
