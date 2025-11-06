@@ -15,6 +15,13 @@ public class TimerUi : MonoBehaviour
         timerText.text = Mathf.Max(0, newvalue).ToString("0.00");
     }
 
+
+    private void OnDestroy()
+    {
+        HotPotatoGameManager.Instance.timer.OnValueChanged -= UpdateTimerText;
+    }
+
+
     // private void Start()
     // {
     //     timer = FindAnyObjectByType<Timer>();

@@ -94,6 +94,7 @@ public class SkillUi : MonoBehaviour
             Debug.LogWarning("Player is null in UnbindPlayerFromUi.");
             return;
         }
+        // dont think subbing/unsubbing from lambdas work but changing this breaks something else
         player.OnPlayerEliminated -= () =>
         {
             // Hide UI on elimination

@@ -17,7 +17,7 @@ public class SkillCooldownUi : MonoBehaviour
 
     private void OnDestroy()
     {
-        SkillRegistry.OnSkillRegistered += OnSkillRegistered;
+        SkillRegistry.OnSkillRegistered -= OnSkillRegistered;
 
         if (SkillRegistry.Instance == null) return;
         SkillRegistry.Instance.UnsubscribeSkillCooldownTimer(skillName,

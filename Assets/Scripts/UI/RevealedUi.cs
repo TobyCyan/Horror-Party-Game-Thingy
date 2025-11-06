@@ -12,6 +12,7 @@ public class RevealedUi : MonoBehaviour
 
     private void OnDestroy()
     {
+        PlayerManager.OnLocalPlayerSet -= SetAndBindPlayerSilhouette;
         if (playerSilhouette != null)
         {
             playerSilhouette.OnSilhouetteShown -= Reveal;
