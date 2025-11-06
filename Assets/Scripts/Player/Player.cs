@@ -91,10 +91,6 @@ public class Player : NetworkBehaviour
 
         // TODO: Add logic to hide player and go into spectator mode
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
-        
-        // Update Scoreboard
-        if (ScoreUiManager.Instance)
-            ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
     }
 
     [Rpc(SendTo.Everyone)]
