@@ -38574,6 +38574,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Blind Trap
       objectReference: {fileID: 0}
+    - target: {fileID: 4129227032400866806, guid: a43243fa85ab5674f9ca69e522a0e471, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5955525809402555714, guid: a43243fa85ab5674f9ca69e522a0e471, type: 3}
       propertyPath: itemID
       value: 1

@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-[CreateAssetMenu(fileName = "FootstepAudioSamples", menuName = "ScriptableObjects/FootstepAudioSamples")]
-public class FootstepAudioSamples : ScriptableObject, IEnumerable<AudioClip>
+[CreateAssetMenu(fileName = "AudioSamples", menuName = "ScriptableObjects/AudioSamples")]
+public class AudioSamples : ScriptableObject, IEnumerable<AudioClip>
 {
     [SerializeField]
     private AudioClip[] _clips;

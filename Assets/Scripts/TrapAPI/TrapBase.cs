@@ -17,6 +17,10 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     protected GameObject owner;
     protected float lastTriggerTime = -999f;
 
+    [Header("SFX")]
+    [SerializeField] private AudioPlayer triggeredSfxPlayer;
+    [SerializeField] private AudioPlayer deployedSfxPlayer;
+
     // Public properties (ITrap interface)
     public TrapPlacementKind Placement => placement;
     public bool IsDeployed => netIsDeployed.Value;
@@ -119,6 +123,11 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         }
 
         gameObject.SetActive(true);
+
+        if (deployedSfxPlayer != null)
+        {
+            deployedSfxPlayer.PlaySfx();
+        }
 
         // Check if we're server
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
@@ -237,6 +246,15 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         // Call derived class implementation
         OnTriggerCore(ctx);
+
+        Debug.Log($"[TrapBase] Trap triggered by {ctx.instigator?.name ?? "unknown"}");
+        if (triggeredSfxPlayer != null)
+        {
+            triggeredSfxPlayer.PlaySfx();
+        } else
+        {
+            Debug.LogWarning($"[TrapBase] {name} No triggered SFX player assigned.");
+        }
 
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
         if (isServer)

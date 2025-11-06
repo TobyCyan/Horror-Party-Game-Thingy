@@ -1,7 +1,4 @@
-using System;
 using UnityEngine;
-using System.Collections.Generic;
-using Vector2 = System.Numerics.Vector2;
 
 namespace com.mansion.Entities.Audio
 {
@@ -10,7 +7,7 @@ namespace com.mansion.Entities.Audio
     {
 
         [SerializeField]
-        private FootstepAudioSamples _defaultAudioSamples;
+        private AudioSamples _defaultAudioSamples;
         [SerializeField]
         private AudioSource _audioSource;
         [SerializeField]
