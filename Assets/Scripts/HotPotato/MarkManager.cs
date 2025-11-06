@@ -169,11 +169,11 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
-        if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
-        {
-            Debug.LogWarning("Mark passing is on cooldown.");
-            return;
-        }
+        // if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
+        // {
+        //     Debug.LogWarning("Mark passing is on cooldown.");
+        //     return;
+        // }
 
         if (currentMarkedPlayer)
         {
