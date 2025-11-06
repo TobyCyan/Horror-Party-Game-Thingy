@@ -29,7 +29,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
             markManager.OnGameStarted += StartHPTimer;
-            PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
+            PlayerManager.OnAllPlayersLoaded += StartHPGame;
         }
 
         PlayerManager.OnLastPlayerStanding += EndGame;
@@ -50,6 +50,13 @@ public class HotPotatoGameManager : NetworkBehaviour
             Debug.LogError("MarkManager reference is missing in HotPotatoGameManager.");
             return;
         }
+    }
+
+    // why is start hp game being called on entering lkkobby?
+    private void StartHPGame()
+    {
+        PlayerManager.OnAllPlayersLoaded -= StartHPGame;
+        markManager.StartHPGame();
     }
 
     public override void OnNetworkDespawn()
