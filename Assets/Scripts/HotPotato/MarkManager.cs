@@ -69,13 +69,19 @@ public class MarkManager : NetworkBehaviour
             currentMarkedPlayer = null;
         }
 
-        postEliminationCoolDownTimer.StopTimer();
+        // postEliminationCoolDownTimer.StopTimer();
     }
 
     private void HandleMarkedPlayerEliminated()
     {
         currentMarkedPlayer = null;
         Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
+
+        if (PlayerManager.Instance.AlivePlayers.Count <= 1)
+        {
+            StopHPGame();
+            return;
+        }
         // Start cooldown timer before assigning the new marked player
         postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
     }
@@ -119,6 +125,12 @@ public class MarkManager : NetworkBehaviour
             return;
         }
 
+        if (PlayerManager.Instance.AlivePlayers.Count <= 1)
+        {
+            StopHPGame();
+            return;
+        }
+        
         PassMarkToPlayerServerRpc(nextPlayer.Id);
         Debug.Log($"Assigned mark to next player {nextPlayer} with id {nextPlayer.Id}");
     }
@@ -133,12 +145,24 @@ public class MarkManager : NetworkBehaviour
             return;
         }
 
+        if (PlayerManager.Instance.AlivePlayers.Count <= 1)
+        {
+            StopHPGame();
+            return;
+        }
+        
         PassMarkToPlayerServerRpc(randomPlayer.Id);
         Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
     public void PassMarkToPlayer(ulong id)
     {
+        if (PlayerManager.Instance.AlivePlayers.Count <= 1)
+        {
+            StopHPGame();
+            return;
+        }
+        
         PassMarkToPlayerServerRpc(id);
     }
 

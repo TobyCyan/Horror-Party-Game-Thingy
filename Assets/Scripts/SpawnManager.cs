@@ -58,7 +58,9 @@ public class SpawnManager : NetworkBehaviour
         // Destroy current player
         Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId}");
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-
-        player.GetComponent<NetworkObject>().Despawn(); // Despawn Calls Camera Switch
+        if (player)
+        {
+            player.GetComponent<NetworkObject>().Despawn();
+        } // Despawn Calls Camera Switch
     }
 }
