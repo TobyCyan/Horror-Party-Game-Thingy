@@ -174,43 +174,12 @@ public class MarkManager : NetworkBehaviour
     [Rpc(SendTo.Server)]
     private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
     {
-        // if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
-        // {
-        //     Debug.LogWarning("Mark passing is on cooldown.");
-        //     return;
-        // }
-
-        if (currentMarkedPlayer)
+        if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
         {
-            // Unsubscribe from previous marked player's elimination event
-            currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
-            if (currentMarkedPlayer.TryGetComponent(out PlayerMovement prevPm))
-            {
-                prevPm.ResetMovementSpeed();
-                Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
-            }
-            currentMarkedPlayer.ResetLayerRpc();
-        }
-
-        Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-
-        if (player == null)
-        {
-            Debug.LogWarning($"Player with id {id} not found.");
+            Debug.LogWarning("Mark passing is on cooldown.");
             return;
         }
 
-        Debug.Log($"Passing mark to player {player} with id {id}");
-
-        if (player.TryGetComponent(out PlayerMovement pm))
-        {
-            pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
-            Debug.Log($"Modified movement speed for new marked player {player}");
-        }
-
-        currentMarkedPlayer = player;
-        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
-        currentMarkedPlayer.SetMeshRootLayerRpc(auraLayer);
         lastMarkPassTime = Time.time;
         UpdateMarkedPlayerAllRpc(id);
     }
@@ -225,8 +194,31 @@ public class MarkManager : NetworkBehaviour
             return;
         }
 
+        Debug.Log($"Passing mark to player {player} with id {id}");
+
+        if (player.TryGetComponent(out PlayerMovement pm))
+        {
+            pm.SetMovementSpeedByModifier(markedPlayerSpeedModifier);
+            Debug.Log($"Modified movement speed for new marked player {player}");
+        }
+
+        if (currentMarkedPlayer)
+        {
+            // Unsubscribe from previous marked player's elimination event
+            currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
+            if (currentMarkedPlayer.TryGetComponent(out PlayerMovement prevPm))
+            {
+                prevPm.ResetMovementSpeed();
+                Debug.Log($"Resetting movement speed for previous marked player {currentMarkedPlayer}");
+            }
+            currentMarkedPlayer.ResetLayerRpc();
+        }
+
         audioBroadcaster.PlaySfxLocally(markReceivedSfxSettings, id);
         currentMarkedPlayer = player;
+        currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
+        currentMarkedPlayer.SetMeshRootLayerRpc(auraLayer);
+
         Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
         OnMarkPassed?.Invoke(id);
     }
@@ -234,6 +226,11 @@ public class MarkManager : NetworkBehaviour
     private void InvokeOnMarkedPlayerEliminated()
     {
         OnMarkedPlayerEliminated?.Invoke();
+    }
+
+    public static bool IsPlayerMarked(ulong clientId)
+    {
+        return currentMarkedPlayer != null && currentMarkedPlayer.clientId == clientId;
     }
 
     private void Update()

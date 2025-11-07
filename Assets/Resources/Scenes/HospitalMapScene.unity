@@ -22886,6 +22886,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: audioBroadcaster
+      value: 
+      objectReference: {fileID: 2032072824}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
       propertyPath: markPassedSfxSettings.mode
       value: 2
       objectReference: {fileID: 0}
