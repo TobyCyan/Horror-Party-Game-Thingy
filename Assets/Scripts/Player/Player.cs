@@ -88,11 +88,23 @@ public class Player : NetworkBehaviour
 
     public void EliminatePlayer()
     {
+        if (!IsServer)
+        {
+            RequestEliminateServerRpc();
+            return;
+        }
+
         Debug.Log($"Player {Id} eliminated.");
         OnPlayerEliminated?.Invoke();
 
         // TODO: Add logic to hide player and go into spectator mode
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestEliminateServerRpc()
+    {
+        EliminatePlayer();
     }
 
     [Rpc(SendTo.Everyone)]

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -151,8 +152,8 @@ public class MarkManager : NetworkBehaviour
             return;
         }
         
-        PassMarkToPlayerServerRpc(nextPlayer.Id);
-        Debug.Log($"Assigned mark to next player {nextPlayer} with id {nextPlayer.Id}");
+        PassMarkToPlayerServerRpc(nextPlayer.clientId);
+        Debug.Log($"Assigned mark to next player {nextPlayer} with id {nextPlayer.clientId}");
     }
 
     public void AssignRandomPlayerWithMark()
@@ -188,7 +189,7 @@ public class MarkManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    private void PassMarkToPlayerServerRpc(ulong id, RpcParams rpcParams = default)
+    private void PassMarkToPlayerServerRpc(ulong id)
     {
         if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
         {
@@ -204,9 +205,10 @@ public class MarkManager : NetworkBehaviour
     private void UpdateMarkedPlayerAllRpc(ulong clientId)
     {
         Player player = PlayerManager.Instance.FindPlayerByClientId(clientId);
-        if (player == null)
+
+        if (player == currentMarkedPlayer)
         {
-            Debug.LogWarning($"[UpdateMarkedPlayerAllRpc] Could not find player with id {clientId}");
+            Debug.Log("[UpdateMarkedPlayerClientRpc] Marked player already current, skipping update.");
             return;
         }
 
