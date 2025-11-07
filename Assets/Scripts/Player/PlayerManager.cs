@@ -51,7 +51,7 @@ public class PlayerManager : NetworkBehaviour
         
         players.Add(player);
         alivePlayers.Add(player);
-        player.OnPlayerEliminated += () => EliminatePlayer(player);
+        player.OnPlayerEliminated += HandleOnPlayerEliminated;
 
         OnPlayerAdded?.Invoke(player);
         if (players.Count == expectedPlayers)
@@ -66,9 +66,14 @@ public class PlayerManager : NetworkBehaviour
         
         players.Remove(player);
         alivePlayers.Remove(player);
-        player.OnPlayerEliminated -= () => EliminatePlayer(player);
+        player.OnPlayerEliminated -= HandleOnPlayerEliminated;
 
         OnPlayerRemoved?.Invoke(player);
+    }
+
+    private void HandleOnPlayerEliminated()
+    {
+        EliminatePlayer(localPlayer);
     }
 
     /// <summary>

@@ -27,7 +27,14 @@ public class JumpScare : MonoBehaviour
         foreach (var effect in effects)
         {
             AfterJumpScarePlayer += effect.Apply;
-            Debug.Log($"Effect {effect.name} subscribed");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var effect in effects)
+        {
+            AfterJumpScarePlayer -= effect.Apply;
         }
     }
 

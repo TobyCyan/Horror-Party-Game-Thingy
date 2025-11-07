@@ -86,11 +86,12 @@ public class SkillUi : MonoBehaviour
             return;
         }
 
-        player.OnPlayerEliminated += () =>
-        {
-            // Hide UI on elimination
-            ShowSkillUi(false);
-        };
+        player.OnPlayerEliminated += HandleOnPlayerEliminated;
+    }
+
+    private void HandleOnPlayerEliminated()
+    {
+        ShowSkillUi(false);
     }
 
     private void UnbindPlayerFromUi(Player player)
@@ -101,11 +102,7 @@ public class SkillUi : MonoBehaviour
             return;
         }
 
-        player.OnPlayerEliminated -= () =>
-        {
-            // Hide UI on elimination
-            ShowSkillUi(false);
-        };
+        player.OnPlayerEliminated -= HandleOnPlayerEliminated;
     }
 
     private void OnDestroy()
