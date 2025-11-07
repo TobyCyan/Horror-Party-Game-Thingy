@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class AudioPlayer : MonoBehaviour
@@ -9,15 +10,16 @@ public class AudioPlayer : MonoBehaviour
         Random
     }
 
-    [SerializeField] private AudioSamples audioSamples;
+    private AudioSamples audioSamples;
+    private int playIndex = 0;
     [SerializeField] private AudioSource src;
-    [SerializeField] private PlaybackMode playbackMode = PlaybackMode.OneShot;
-    [Header("Non-Random Playback Settings")]
-    [SerializeField] private int playIndex = 0;
 
-
-    public void PlaySfx()
+    public void PlaySfx(in AudioSettings settings)
     {
+        audioSamples = settings.samples;
+        playIndex = settings.index;
+        PlaybackMode playbackMode = settings.mode;
+
         if (audioSamples == null || audioSamples.Count == 0)
         {
             Debug.LogWarning("No audio samples assigned to AudioPlayer.");
@@ -62,5 +64,25 @@ public class AudioPlayer : MonoBehaviour
     private bool IsIndexValid(int index)
     {
         return index >= 0 && index < audioSamples.Count;
+    }
+}
+
+[Serializable]
+public readonly struct AudioSettings
+{
+    public readonly AudioSamples samples;
+    public readonly AudioPlayer.PlaybackMode mode;
+    public readonly int index;
+
+    public AudioSettings(AudioSamples samples, AudioPlayer.PlaybackMode mode, int index = 0)
+    {
+        this.samples = samples;
+        this.mode = mode;
+        this.index = index;
+    }
+
+    public bool IsNullOrEmpty()
+    {
+        return samples == null || samples.Count == 0;
     }
 }

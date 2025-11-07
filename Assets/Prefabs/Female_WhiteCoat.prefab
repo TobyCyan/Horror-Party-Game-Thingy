@@ -418,6 +418,9 @@ PrefabInstance:
       insertIndex: 1
       addedObject: {fileID: 5685600467318926939}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 7274729730545846205}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6049440526295323631}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6934b8394f672794caaffd8dca6ff34a, type: 3}
@@ -495,6 +498,19 @@ MonoBehaviour:
   _defaultAudioSamples: {fileID: 11400000, guid: 9255e06721600b74684cc9d47736a0a9, type: 2}
   _audioSource: {fileID: 564054361041756309}
   _speedModifier: 1
+--- !u!114 &7274729730545846205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193960862351714291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f30537e1c518054e98097948d1b41ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  src: {fileID: 564054361041756309}
 --- !u!54 &6049440526295323631
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -798,6 +814,7 @@ MonoBehaviour:
   playerMovement: {fileID: 2282382335596024}
   playerCam: {fileID: 7850040235040859059}
   meshRoot: {fileID: 1267403997805736599}
+  audioPlayer: {fileID: 0}
   clientId: 0
   defaultLayerName: Player
   float0: 0

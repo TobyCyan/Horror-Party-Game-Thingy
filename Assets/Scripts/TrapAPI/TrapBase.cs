@@ -18,8 +18,8 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     protected float lastTriggerTime = -999f;
 
     [Header("SFX")]
-    [SerializeField] private AudioPlayer triggeredSfxPlayer;
-    [SerializeField] private AudioPlayer deployedSfxPlayer;
+    [SerializeField] private AudioSettings deployedSfxSettings;
+    [SerializeField] private AudioSettings triggeredSfxSettings;
 
     // Public properties (ITrap interface)
     public TrapPlacementKind Placement => placement;
@@ -114,19 +114,20 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         transform.SetPositionAndRotation(pos, rot);
         owner = ownerGO;
+        Player playerComponent = null;
 
         // Extract owner client ID
         ulong ownerClientIdValue = 0;
-        if (owner != null && owner.TryGetComponent<Player>(out var playerComponent))
+        if (owner != null && owner.TryGetComponent(out playerComponent))
         {
             ownerClientIdValue = playerComponent.OwnerClientId;
         }
 
         gameObject.SetActive(true);
 
-        if (deployedSfxPlayer != null)
+        if (playerComponent != null && !deployedSfxSettings.IsNullOrEmpty())
         {
-            deployedSfxPlayer.PlaySfx();
+            playerComponent.PlayLocalAudio(deployedSfxSettings);
         }
 
         // Check if we're server
@@ -248,12 +249,12 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         OnTriggerCore(ctx);
 
         Debug.Log($"[TrapBase] Trap triggered by {ctx.instigator?.name ?? "unknown"}");
-        if (triggeredSfxPlayer != null)
+        if (!triggeredSfxSettings.IsNullOrEmpty())
         {
-            triggeredSfxPlayer.PlaySfx();
-        } else
-        {
-            Debug.LogWarning($"[TrapBase] {name} No triggered SFX player assigned.");
+            if (ctx.instigator.TryGetComponent<Player>(out var playerComponent))
+            {
+                playerComponent.PlayLocalAudio(triggeredSfxSettings);
+            }
         }
 
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
