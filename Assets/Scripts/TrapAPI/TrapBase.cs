@@ -17,6 +17,10 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     protected GameObject owner;
     protected float lastTriggerTime = -999f;
 
+    [Header("SFX")]
+    [SerializeField] private AudioSettings deployedSfxSettings;
+    [SerializeField] private AudioSettings triggeredSfxSettings;
+
     // Public properties (ITrap interface)
     public TrapPlacementKind Placement => placement;
     public bool IsDeployed => netIsDeployed.Value;
@@ -110,15 +114,21 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         transform.SetPositionAndRotation(pos, rot);
         owner = ownerGO;
+        Player playerComponent = null;
 
         // Extract owner client ID
         ulong ownerClientIdValue = 0;
-        if (owner != null && owner.TryGetComponent<Player>(out var playerComponent))
+        if (owner != null && owner.TryGetComponent(out playerComponent))
         {
             ownerClientIdValue = playerComponent.OwnerClientId;
         }
 
         gameObject.SetActive(true);
+
+        if (playerComponent != null && !deployedSfxSettings.IsNullOrEmpty())
+        {
+            playerComponent.PlayLocalAudio(deployedSfxSettings);
+        }
 
         // Check if we're server
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
@@ -237,6 +247,15 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         // Call derived class implementation
         OnTriggerCore(ctx);
+
+        Debug.Log($"[TrapBase] Trap triggered by {ctx.instigator?.name ?? "unknown"}");
+        if (!triggeredSfxSettings.IsNullOrEmpty())
+        {
+            if (ctx.instigator.TryGetComponent<Player>(out var playerComponent))
+            {
+                playerComponent.PlayLocalAudio(triggeredSfxSettings);
+            }
+        }
 
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
         if (isServer)

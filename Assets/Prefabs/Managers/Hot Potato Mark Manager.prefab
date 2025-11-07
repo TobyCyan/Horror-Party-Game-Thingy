@@ -73,10 +73,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  markSymbol: {fileID: 1749243385822768267}
-  currentMarkedPlayer: {fileID: 0}
+  markPassedSfxSettings:
+    requestorName: Mark Manager
+    samples: {fileID: 11400000, guid: 8863a83300098c441bfd0eff97c04b77, type: 2}
+    mode: 2
+    index: 0
+  markReceivedSfxSettings:
+    requestorName: Mark Manager
+    samples: {fileID: 11400000, guid: 87f263ae027387d46bf1245ebd20588a, type: 2}
+    mode: 2
+    index: 0
   postEliminationCoolDownTimer: {fileID: 8786216099207743283}
-  markPassingCoolDownDuration: 4
+  postEliminateMarkPassingCooldown: 4
+  playerToPlayerMarkPassingCooldown: 2
+  markedPlayerSpeedModifier: 1.25
+  auraLayerName: Aura
 --- !u!114 &8786216099207743283
 MonoBehaviour:
   m_ObjectHideFlags: 0

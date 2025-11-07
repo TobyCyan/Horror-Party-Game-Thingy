@@ -13,6 +13,7 @@ public class Player : NetworkBehaviour
     [SerializeField] protected PlayerMovement playerMovement;
     [SerializeField] protected PlayerCam playerCam;
     [SerializeField] protected Transform meshRoot;
+    [SerializeField] private AudioPlayer audioPlayer;
     public Transform MeshRoot => meshRoot;
 
     public PlayerCam PlayerCam => playerCam;
@@ -64,6 +65,7 @@ public class Player : NetworkBehaviour
         playerMovement.enabled = enable;
         playerCam.enabled = enable;
         audioListener.enabled = enable;
+        audioPlayer.enabled = enable;
     }
 
     public void LockPlayerInPlace()
@@ -107,6 +109,38 @@ public class Player : NetworkBehaviour
         {
             meshRoot.gameObject.layer = layer;
         }
+    }
+
+    public void PlayLocalAudio(AudioSettings settings)
+    {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+
+        if (audioPlayer == null)
+        {
+            Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
+            return;
+        }
+
+        audioPlayer.PlaySfx(settings);
+    }
+
+    public void PlayGlobalAudio(AudioSettings settings, Vector3 position)
+    {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+        if (audioPlayer == null)
+        {
+            Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
+            return;
+        }
+        audioPlayer.PlayGlobal(settings, position);
     }
 
     // // Give Last touch player authority to move it
