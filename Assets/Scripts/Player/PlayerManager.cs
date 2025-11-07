@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -19,7 +21,10 @@ public class PlayerManager : NetworkBehaviour
     public static event Action OnLastPlayerStanding;
     public static event Action<Player> OnLocalPlayerSet;
     public static event Action OnAllPlayersLoaded;
+
+    // For tracking expected players after scene load
     private int expectedPlayers = 100;
+    private readonly HashSet<ulong> readyClients = new();
 
     private void Awake()
     {
@@ -51,13 +56,11 @@ public class PlayerManager : NetworkBehaviour
         
         players.Add(player);
         alivePlayers.Add(player);
+        Debug.Log($"[PlayerManager] Client {player.clientId} added at frame {Time.frameCount}");
+
         player.OnPlayerEliminated += HandleOnPlayerEliminated;
 
         OnPlayerAdded?.Invoke(player);
-        if (players.Count == expectedPlayers)
-        {
-            OnAllPlayersLoaded?.Invoke();
-        }
     }
     
     public void RemovePlayer(Player player)
@@ -114,6 +117,21 @@ public class PlayerManager : NetworkBehaviour
 
         int randomIndex = Random.Range(0, alivePlayers.Count);
         return alivePlayers[randomIndex];
+    }
+
+    public void NotifyPlayerReady(ulong clientId)
+    {
+        if (readyClients.Contains(clientId))
+            return;
+
+        readyClients.Add(clientId);
+        Debug.Log($"[PlayerManager] Client {clientId} is ready ({readyClients.Count}/{expectedPlayers})");
+
+        if (readyClients.Count >= expectedPlayers)
+        {
+            Debug.Log("[PlayerManager] All players reported ready!");
+            OnAllPlayersLoaded?.Invoke();
+        }
     }
 
     public Player FindPlayerByNetId(ulong id)

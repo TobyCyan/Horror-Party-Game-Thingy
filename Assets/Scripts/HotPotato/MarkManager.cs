@@ -189,7 +189,7 @@ public class MarkManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    private void PassMarkToPlayerServerRpc(ulong id)
+    private void PassMarkToPlayerServerRpc(ulong clientId)
     {
         if (Time.time - lastMarkPassTime < playerToPlayerMarkPassingCooldown)
         {
@@ -198,17 +198,18 @@ public class MarkManager : NetworkBehaviour
         }
 
         lastMarkPassTime = Time.time;
-        UpdateMarkedPlayerAllRpc(id);
+        UpdateMarkedPlayerAllRpc(clientId);
     }
 
     [Rpc(SendTo.Everyone)]
     private void UpdateMarkedPlayerAllRpc(ulong clientId)
     {
+        Debug.Log($"[MarkManager] RPC for client {clientId} received at frame {Time.frameCount}");
         Player player = PlayerManager.Instance.FindPlayerByClientId(clientId);
 
-        if (player == currentMarkedPlayer)
+        if (player == null)
         {
-            Debug.Log("[UpdateMarkedPlayerClientRpc] Marked player already current, skipping update.");
+            Debug.LogWarning($"Player with clientId {clientId} not found.");
             return;
         }
 

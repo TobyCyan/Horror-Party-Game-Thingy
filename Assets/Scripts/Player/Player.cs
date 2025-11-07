@@ -49,7 +49,12 @@ public class Player : NetworkBehaviour
 
         clientId = OwnerClientId;
         PlayerManager.Instance.AddPlayer(this);
-        ScoreUiManager.Instance?.PlayerJoined(clientId); 
+        ScoreUiManager.Instance?.PlayerJoined(clientId);
+
+        // Notify PlayerManager that this player is ready
+        // Important for syncing game start only when all players are ready
+        if (IsOwner)
+            NotifyPlayerManagerServerRpc(clientId);
     }
     
     public override void OnNetworkDespawn()
@@ -57,6 +62,12 @@ public class Player : NetworkBehaviour
         base.OnNetworkDespawn();
         PlayerManager.Instance.RemovePlayer(this);
         ScoreUiManager.Instance?.PlayerLeft(clientId);
+    }
+
+    [Rpc(SendTo.Server)]
+    private void NotifyPlayerManagerServerRpc(ulong clientId)
+    {
+        PlayerManager.Instance.NotifyPlayerReady(clientId);
     }
 
     public void EnablePlayer(bool enable)
@@ -88,23 +99,11 @@ public class Player : NetworkBehaviour
 
     public void EliminatePlayer()
     {
-        if (!IsServer)
-        {
-            RequestEliminateServerRpc();
-            return;
-        }
-
         Debug.Log($"Player {Id} eliminated.");
         OnPlayerEliminated?.Invoke();
 
         // TODO: Add logic to hide player and go into spectator mode
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void RequestEliminateServerRpc()
-    {
-        EliminatePlayer();
     }
 
     [Rpc(SendTo.Everyone)]
