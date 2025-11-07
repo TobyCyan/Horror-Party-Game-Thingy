@@ -68,11 +68,11 @@ public class AudioPlayer : MonoBehaviour
 }
 
 [Serializable]
-public readonly struct AudioSettings
+public struct AudioSettings
 {
-    public readonly AudioSamples samples;
-    public readonly AudioPlayer.PlaybackMode mode;
-    public readonly int index;
+    public AudioSamples samples;
+    public AudioPlayer.PlaybackMode mode;
+    public int index;
 
     public AudioSettings(AudioSamples samples, AudioPlayer.PlaybackMode mode, int index = 0)
     {
@@ -81,7 +81,7 @@ public readonly struct AudioSettings
         this.index = index;
     }
 
-    public bool IsNullOrEmpty()
+    public readonly bool IsNullOrEmpty()
     {
         return samples == null || samples.Count == 0;
     }
