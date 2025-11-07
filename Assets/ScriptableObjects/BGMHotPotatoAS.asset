@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7b59eac2febe4d4aa485a4d9757bc60, type: 3}
-  m_Name: FootstepAudioSamples
+  m_Name: BGMHotPotatoAS
   m_EditorClassIdentifier: 
   _clips:
-  - {fileID: 8300000, guid: ec5f7466d7ea16c49aeb3171248d9e38, type: 3}
+  - {fileID: 8300000, guid: ab3d43dc7b613814bab9cc791fae1502, type: 3}

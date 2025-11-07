@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b59eac2febe4d4aa485a4d9757bc60, type: 3}
+  m_Name: HPPassAS
+  m_EditorClassIdentifier: 
+  _clips:
+  - {fileID: 8300000, guid: bfcdb188df12b5a4ca928eb756d8a5e3, type: 3}
+  - {fileID: 8300000, guid: 064239c355656d3449946e0e8cbcf971, type: 3}
+  - {fileID: 8300000, guid: daff9e68cda0f67489290d69cb95c008, type: 3}

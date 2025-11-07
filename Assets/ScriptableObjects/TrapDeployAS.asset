@@ -10,8 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7b59eac2febe4d4aa485a4d9757bc60, type: 3}
-  m_Name: BlindTrapAudioSamples
+  m_Name: TrapDeployAS
   m_EditorClassIdentifier: 
   _clips:
-  - {fileID: 8300000, guid: 3a72d3a96469d5e41b1666cfdf7f52fd, type: 3}
-  - {fileID: 8300000, guid: 6eae898ecdd55994db7759ea9e1a91f5, type: 3}
+  - {fileID: 8300000, guid: 50c52b889db05f54c82f4ef05d9cc7b7, type: 3}
