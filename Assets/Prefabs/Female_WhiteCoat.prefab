@@ -888,6 +888,10 @@ MonoBehaviour:
   pickupLayer:
     serializedVersion: 2
     m_Bits: 17408
+  pickupSfxSettings:
+    samples: {fileID: 11400000, guid: 6e6f39057d600ae45aadb8dc34e32c9c, type: 2}
+    mode: 2
+    index: 0
   isPickupEnabled: 1
   pickupPromptUI: {fileID: 0}
   promptOffset: 1.5
