@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Unity.Netcode;
 
-public class AutoTrapActivator : MonoBehaviour
+public class AutoTrapActivator : NetworkBehaviour
 {
     private List<ITrap> autoTraps = new();
     private TrapTriggerContext ctx;
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        autoTraps = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+        if (!IsServer) return;
+        base.OnNetworkSpawn();
+        autoTraps = FindObjectsByType<NetworkBehaviour>(FindObjectsSortMode.None)
             .OfType<ITrap>()
             .Where(trap => trap.Placement == TrapPlacementKind.Auto)
             .ToList();
@@ -28,6 +31,7 @@ public class AutoTrapActivator : MonoBehaviour
 
     void Update()
     {
+        if (!IsServer) return;
         foreach (var trap in autoTraps)
         {
             trap.Trigger(ctx);

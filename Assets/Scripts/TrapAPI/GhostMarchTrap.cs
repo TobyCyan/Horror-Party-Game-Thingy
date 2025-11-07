@@ -10,19 +10,20 @@ public class GhostMarchTrap : TrapBase
     [SerializeField] private JumpScare jumpScareModel;
     private bool isJumpScaring = false;
 
-    private new void Start()
+    public override void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
         jumpScareModel.OnJumpScareStart += JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp += CleanUpHandler;
         jumpScareModel.AfterJumpScarePlayer += AfterJumpScarePlayerHandler;
         jumpScareModel.gameObject.SetActive(false);
 
         OnArmed += PlaceAtStart;
-        base.Start();
     }
 
-    private void OnDestroy()
+    public override void OnNetworkDespawn()
     {
+        base.OnNetworkDespawn();
         jumpScareModel.OnJumpScareStart -= JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp -= CleanUpHandler;
         jumpScareModel.AfterJumpScarePlayer -= AfterJumpScarePlayerHandler;
@@ -44,15 +45,6 @@ public class GhostMarchTrap : TrapBase
 
     private void AfterJumpScarePlayerHandler(Player player)
     {
-        EliminatePlayer(player);
-    }
-
-    private void EliminatePlayer(Player player)
-    {
-        if (!player.IsOwner)
-        {
-            return;
-        }
         player.EliminatePlayer();
     }
 
@@ -67,7 +59,7 @@ public class GhostMarchTrap : TrapBase
 
     private IEnumerator MarchThenRearm()
     {
-        if (!marchObject)
+        if (!IsServer || !marchObject)
         {
             yield break;
         }
@@ -92,10 +84,9 @@ public class GhostMarchTrap : TrapBase
 
     protected override void OnTriggerCore(TrapTriggerContext ctx)
     {
-        if (!marchObject)
-        {
-            return;
-        }
+        if (!IsServer) return;
+
+        if (!marchObject) return;
 
         // Disarm so marching won't trigger repeatedly
         Disarm();

@@ -13,7 +13,7 @@ public class HotPotatoGameManager : NetworkBehaviour
     [SerializeField] private float hotPotatoDuration = 30.0f;
     [SerializeField] private Timer hotPotatoTimer;
     public NetworkVariable<float> timer = new();
-    private bool isGameActive = true;
+    private readonly NetworkVariable<bool> isGameActive = new(false);
 
     void Awake()
     {
@@ -30,6 +30,7 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
             markManager.OnGameStarted += StartHPTimer;
             PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
+            markManager.OnGameStarted += MarkManager_OnGameStarted;
         }
 
         PlayerManager.OnLastPlayerStanding += EndGame;
@@ -52,6 +53,11 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
+    private void MarkManager_OnGameStarted()
+    {
+        isGameActive.Value = true;
+    }
+
     public override void OnNetworkDespawn()
     {
         if (markManager != null)
@@ -59,6 +65,8 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
             markManager.OnGameStarted -= StartHPTimer;
             markManager.StopHPGame();
+            PlayerManager.OnAllPlayersLoaded -= markManager.StartHPGame;
+            markManager.OnGameStarted -= MarkManager_OnGameStarted;
         }
 
         if (hotPotatoTimer != null)
@@ -76,11 +84,12 @@ public class HotPotatoGameManager : NetworkBehaviour
         PlayerManager.OnLastPlayerStanding -= EndGame;
     }
 
-    private async void EndGame()
+    public async void EndGame()
     {
-        isGameActive = false;
+        isGameActive.Value = false;
         Debug.Log("Hot Potato game ended.");
         GetComponent<NetworkObject>().Despawn();
+        markManager.StopHPGame();
 
         if (IsServer)
         {
@@ -125,7 +134,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!isGameActive) return;
+        if (!isGameActive.Value) return;
 
         if (IsServer)
         {

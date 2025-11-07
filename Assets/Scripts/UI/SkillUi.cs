@@ -74,6 +74,12 @@ public class SkillUi : MonoBehaviour
 
     private void BindPlayerToUi(Player player)
     {
+        if (!player.IsOwner)
+        {
+            Debug.LogWarning("Attempted to bind non-local player to SkillUi.");
+            return;
+        }
+
         if (player == null)
         {
             Debug.LogWarning("Player is null in BindPlayerToUi.");
@@ -94,6 +100,7 @@ public class SkillUi : MonoBehaviour
             Debug.LogWarning("Player is null in UnbindPlayerFromUi.");
             return;
         }
+
         player.OnPlayerEliminated -= () =>
         {
             // Hide UI on elimination
