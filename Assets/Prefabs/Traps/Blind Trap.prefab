@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1747355632
+  GlobalObjectIdHash: 326540520
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -249,10 +249,12 @@ MonoBehaviour:
   ownerClientId:
     m_InternalValue: 0
   deployedSfxSettings:
+    requestorName: Blind Trap
     samples: {fileID: 11400000, guid: 30bc4c42d7f5969419dbee6e03bab821, type: 2}
     mode: 2
     index: 0
   triggeredSfxSettings:
+    requestorName: Blind Trap
     samples: {fileID: 11400000, guid: 0a416536b7f51034d96da6573c25acd9, type: 2}
     mode: 2
     index: 0

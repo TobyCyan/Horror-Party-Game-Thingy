@@ -22885,6 +22885,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markPassedSfxSettings.mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markReceivedSfxSettings.mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markPassedSfxSettings.samples
+      value: 
+      objectReference: {fileID: 11400000, guid: 8863a83300098c441bfd0eff97c04b77, type: 2}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markReceivedSfxSettings.samples
+      value: 
+      objectReference: {fileID: 11400000, guid: 87f263ae027387d46bf1245ebd20588a, type: 2}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markPassedSfxSettings.requestorName
+      value: Mark Manager
+      objectReference: {fileID: 0}
+    - target: {fileID: 482949763851231654, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
+      propertyPath: markReceivedSfxSettings.requestorName
+      value: Mark Manager
+      objectReference: {fileID: 0}
     - target: {fileID: 3914691048294122145, guid: 4000e43cd046e7240bb821dc1f2300ef, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 1630361479
@@ -47058,6 +47082,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 493860, guid: a73967be39a7cc74ca310e8a9d9de82d, type: 3}
   m_PrefabInstance: {fileID: 2026212738}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2032072823
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2032072825}
+  - component: {fileID: 2032072824}
+  m_Layer: 0
+  m_Name: AudioBroadcaster
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2032072824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032072823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04357c0e92fbc574ea234d2eccdf1c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2032072825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032072823}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.99075, y: 2.701, z: 4.36535}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2032300219
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50319,6 +50387,7 @@ SceneRoots:
   - {fileID: 881066988}
   - {fileID: 419523914}
   - {fileID: 1923509356}
+  - {fileID: 2032072825}
   - {fileID: 1083587377}
   - {fileID: 1037705724}
   - {fileID: 636820766}

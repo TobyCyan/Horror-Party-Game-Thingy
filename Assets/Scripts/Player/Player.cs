@@ -113,6 +113,12 @@ public class Player : NetworkBehaviour
 
     public void PlayLocalAudio(AudioSettings settings)
     {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+
         if (audioPlayer == null)
         {
             Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
@@ -120,6 +126,21 @@ public class Player : NetworkBehaviour
         }
 
         audioPlayer.PlaySfx(settings);
+    }
+
+    public void PlayGlobalAudio(AudioSettings settings, Vector3 position)
+    {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+        if (audioPlayer == null)
+        {
+            Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
+            return;
+        }
+        audioPlayer.PlayGlobal(settings, position);
     }
 
     // // Give Last touch player authority to move it

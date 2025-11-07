@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class HPPassingLogic : MonoBehaviour
@@ -9,14 +10,15 @@ public class HPPassingLogic : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         // Only marked person should try to pass
-        if (MarkManager.currentMarkedPlayer?.Id != PlayerManager.Instance.localPlayer?.Id) return;
+        ulong localClientId = NetworkManager.Singleton.LocalClientId;
+        if (MarkManager.currentMarkedPlayer?.Id != localClientId) return;
         
         if (!CanPass()) return;
 
         if (other.gameObject.TryGetComponent(out Player player))
         {
             lastPassTime = Time.time;
-            MarkManager.Instance.PassMarkToPlayer(player.Id);
+            MarkManager.Instance.PassMarkToPlayer(localClientId, player.Id);
         }
     }
 

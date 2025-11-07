@@ -26,12 +26,47 @@ public class AudioPlayer : MonoBehaviour
             return;
         }
 
+        AudioClip clip = GetClip(playbackMode);
+        if (clip == null)
+        {
+            Debug.LogWarning("No valid audio clip found for playback.");
+            return;
+        }
+
         switch (playbackMode)
+        {
+            case PlaybackMode.OneShot:
+                src.PlayOneShot(clip);
+                break;
+            case PlaybackMode.Loop:
+                src.clip = clip;
+                src.loop = true;
+                src.Play();
+                break;
+            case PlaybackMode.Random:
+                src.PlayOneShot(clip);
+                break;
+            default:
+                Debug.LogWarning("Unsupported playback mode.");
+                break;
+        }
+        Debug.Log($"[AudioPlayer] PlaySfx - Mode: {playbackMode}, Index: {playIndex}");
+    }
+
+    public void PlayGlobal(AudioSettings settings, Vector3 position)
+    {
+        AudioClip clip = GetClip(settings.mode);
+        AudioSource.PlayClipAtPoint(clip, position, src.volume);
+    }
+
+    private AudioClip GetClip(PlaybackMode mode)
+    {
+        switch (mode)
         {
             case PlaybackMode.OneShot:
                 if (IsIndexValid(playIndex))
                 {
-                    src.PlayOneShot(audioSamples[playIndex]);
+                    return audioSamples[playIndex];
                 }
                 else
                 {
@@ -41,9 +76,7 @@ public class AudioPlayer : MonoBehaviour
             case PlaybackMode.Loop:
                 if (IsIndexValid(playIndex))
                 {
-                    src.clip = audioSamples[playIndex];
-                    src.loop = true;
-                    src.Play();
+                    return audioSamples[playIndex];
                 }
                 else
                 {
@@ -52,13 +85,12 @@ public class AudioPlayer : MonoBehaviour
                 break;
             case PlaybackMode.Random:
                 AudioClip clip = audioSamples.PickRandom();
-                src.PlayOneShot(clip);
-                break;
+                return clip;
             default:
                 Debug.LogWarning("Unsupported playback mode.");
                 break;
         }
-        Debug.Log($"[AudioPlayer] PlaySfx - Mode: {playbackMode}, Index: {playIndex}");
+        return null;
     }
 
     private bool IsIndexValid(int index)
@@ -70,12 +102,14 @@ public class AudioPlayer : MonoBehaviour
 [Serializable]
 public struct AudioSettings
 {
+    public string requestorName;
     public AudioSamples samples;
     public AudioPlayer.PlaybackMode mode;
     public int index;
 
-    public AudioSettings(AudioSamples samples, AudioPlayer.PlaybackMode mode, int index = 0)
+    public AudioSettings(string requestorName, AudioSamples samples, AudioPlayer.PlaybackMode mode, int index = 0)
     {
+        this.requestorName = requestorName;
         this.samples = samples;
         this.mode = mode;
         this.index = index;

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Netcode;
 
 
 [CreateAssetMenu(fileName = "AudioSamples", menuName = "ScriptableObjects/AudioSamples")]

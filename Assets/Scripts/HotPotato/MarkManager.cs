@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,9 +9,15 @@ public class MarkManager : NetworkBehaviour
     public static MarkManager Instance;
     public static Player currentMarkedPlayer;
 
+    // Events
     public event Action<ulong> OnMarkPassed;
     public event Action OnMarkedPlayerEliminated;
     public event Action OnGameStarted;
+
+    [SerializeField] private AudioBroadcaster audioBroadcaster;
+    // SFX settings
+    [SerializeField] private AudioSettings markPassedSfxSettings;
+    [SerializeField] private AudioSettings markReceivedSfxSettings;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
     public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
@@ -155,15 +159,16 @@ public class MarkManager : NetworkBehaviour
         Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
     }
 
-    public void PassMarkToPlayer(ulong id)
+    public void PassMarkToPlayer(ulong from, ulong to)
     {
         if (PlayerManager.Instance.AlivePlayers.Count <= 1)
         {
             StopHPGame();
             return;
         }
-        
-        PassMarkToPlayerServerRpc(id);
+
+        audioBroadcaster.PlaySfxLocally(markPassedSfxSettings, from);
+        PassMarkToPlayerServerRpc(to);
     }
 
     [Rpc(SendTo.Server)]
@@ -220,6 +225,7 @@ public class MarkManager : NetworkBehaviour
             return;
         }
 
+        audioBroadcaster.PlaySfxLocally(markReceivedSfxSettings, id);
         currentMarkedPlayer = player;
         Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
         OnMarkPassed?.Invoke(id);
