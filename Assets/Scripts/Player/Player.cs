@@ -89,7 +89,7 @@ public class Player : NetworkBehaviour
     public void EliminatePlayer()
     {
         Debug.Log($"Player {Id} eliminated.");
-        OnPlayerEliminated?.Invoke();
+        OnPlayerEliminated?.Invoke(); // ...this only runs on the client that died?
 
         // TODO: Add logic to hide player and go into spectator mode
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);

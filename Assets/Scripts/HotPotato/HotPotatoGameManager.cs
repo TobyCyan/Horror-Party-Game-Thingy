@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,10 +53,17 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
-    // why is start hp game being called on entering lkkobby?
     private void StartHPGame()
     {
         PlayerManager.OnAllPlayersLoaded -= StartHPGame;
+        StartCoroutine(StartHPGameDelayed());
+    }
+
+    // band aid fix, clients are not adding themselves nor setting local player sometimes before server calls this.
+    // dealing with multiple possible race conditions would be too much of a hassle at this stage so whatever
+    private IEnumerator StartHPGameDelayed() 
+    {
+        yield return new WaitForSeconds(1f);
         markManager.StartHPGame();
     }
 

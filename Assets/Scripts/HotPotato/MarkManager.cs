@@ -87,13 +87,16 @@ public class MarkManager : NetworkBehaviour
             return;
         }
         // Start cooldown timer before assigning the new marked player
-        postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
+        postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown); 
     }
 
     private void AssignNextPlayerWithMark()
     {
-        // TODO: Should assign next player by least sabotage scores.
-        if (!IsServer) return;
+        // TODO: Should assign next player by least trap scores.
+        
+        
+        // not sure why checking for this, commented this out as an experiment and it seems to work
+        // if (!IsServer) return;
 
         // Find the player with the highest trap score
         ulong nextMarkClientId = 0;
