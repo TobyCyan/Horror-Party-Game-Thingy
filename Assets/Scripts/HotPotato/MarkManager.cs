@@ -40,12 +40,14 @@ public class MarkManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (!IsServer) return;
         OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp += AssignNextPlayerWithMark;
     }
 
     public override void OnNetworkDespawn()
     {
+        if (!IsServer) return;
         OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
         postEliminationCoolDownTimer.OnTimeUp -= AssignNextPlayerWithMark;
     }
@@ -68,7 +70,6 @@ public class MarkManager : NetworkBehaviour
 
     public void StopHPGame()
     {
-        if (!IsServer) return;
         if (currentMarkedPlayer != null)
         {
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
@@ -80,8 +81,6 @@ public class MarkManager : NetworkBehaviour
 
     private void HandleMarkedPlayerEliminated()
     {
-        audioBroadcaster.PlaySfxLocalToAll(markedPlayerEliminatedSfxSettings);
-
         if (!IsServer) return;
         ResetMarkedPlayerRpc();
         Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
@@ -104,6 +103,7 @@ public class MarkManager : NetworkBehaviour
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
             currentMarkedPlayer = null;
         }
+        audioBroadcaster.PlaySfxLocalToAll(markedPlayerEliminatedSfxSettings);
     }
 
     private void AssignNextPlayerWithMark()

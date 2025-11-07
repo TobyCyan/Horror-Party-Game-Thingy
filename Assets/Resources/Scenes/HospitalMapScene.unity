@@ -24733,6 +24733,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Auto Trap Activator
       objectReference: {fileID: 0}
+    - target: {fileID: 4204872604422677259, guid: 26eb210e59fe8dd42baa03402eda34a5, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1140835282
+      objectReference: {fileID: 0}
+    - target: {fileID: 4204872604422677259, guid: 26eb210e59fe8dd42baa03402eda34a5, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 1480535346
+      objectReference: {fileID: 0}
     - target: {fileID: 5299012550559501832, guid: 26eb210e59fe8dd42baa03402eda34a5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.1772
