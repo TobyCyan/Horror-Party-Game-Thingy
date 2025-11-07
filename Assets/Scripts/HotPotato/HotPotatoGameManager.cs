@@ -76,7 +76,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         PlayerManager.OnLastPlayerStanding -= EndGame;
     }
 
-    private async void EndGame()
+    public async void EndGame()
     {
         isGameActive = false;
         Debug.Log("Hot Potato game ended.");
@@ -84,6 +84,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
         if (IsServer)
         {
+            markManager.StopHPGame();
             int playerCount = PlayerManager.Instance.players.Count;
             // Despawn everyone
             for (int i = 0; i < playerCount; i++)

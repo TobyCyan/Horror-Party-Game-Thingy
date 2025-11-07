@@ -15,7 +15,7 @@ public class HPPassingLogic : MonoBehaviour
         
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            MarkManager.Instance.PassMarkToPlayer(localClientId, player.Id);
+            MarkManager.Instance.PassMarkToPlayer(localClientId, player.clientId);
         }
     }
 }

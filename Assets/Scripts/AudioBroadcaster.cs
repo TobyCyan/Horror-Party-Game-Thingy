@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class AudioBroadcaster : MonoBehaviour
 {
-    public void PlaySfxLocally(AudioSettings settings, ulong targetId)
+    public void PlaySfxLocal(AudioSettings settings, ulong targetId)
     {
         if (settings.IsNullOrEmpty())
         {
@@ -11,11 +11,26 @@ public class AudioBroadcaster : MonoBehaviour
             return;
         }
 
-        if (NetworkManager.Singleton.LocalClientId == targetId)
+        if (NetworkManager.Singleton.LocalClientId != targetId)
         {
-            Player localPlayer = PlayerManager.Instance.localPlayer;
-            localPlayer.PlayLocalAudio(settings);
+            Debug.LogWarning($"PlaySfxLocal called with targetId {targetId} that does not match local client ID {NetworkManager.Singleton.LocalClientId}.");
+            return;
         }
+
+        Player localPlayer = PlayerManager.Instance.localPlayer;
+        localPlayer.PlayLocalAudio(settings);
+    }
+
+    public void PlaySfxLocalToAll(AudioSettings settings)
+    {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"PlaySfxToAll called with null or empty AudioSettings from {settings.requestorName}.");
+            return;
+        }
+
+        Player localPlayer = PlayerManager.Instance.localPlayer;
+        localPlayer.PlayLocalAudio(settings);
     }
 
     public void PlaySfxGlobal(AudioSettings settings, Vector3 position)

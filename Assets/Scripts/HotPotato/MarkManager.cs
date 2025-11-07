@@ -18,6 +18,7 @@ public class MarkManager : NetworkBehaviour
     // SFX settings
     [SerializeField] private AudioSettings markPassedSfxSettings;
     [SerializeField] private AudioSettings markReceivedSfxSettings;
+    [SerializeField] private AudioSettings markedPlayerEliminatedSfxSettings;
 
     [SerializeField] private Timer postEliminationCoolDownTimer;
     public Timer PostEliminationCoolDownTimer => postEliminationCoolDownTimer;
@@ -67,6 +68,7 @@ public class MarkManager : NetworkBehaviour
 
     public void StopHPGame()
     {
+        if (!IsServer) return;
         if (currentMarkedPlayer != null)
         {
             currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
@@ -78,16 +80,30 @@ public class MarkManager : NetworkBehaviour
 
     private void HandleMarkedPlayerEliminated()
     {
-        currentMarkedPlayer = null;
+        audioBroadcaster.PlaySfxLocalToAll(markedPlayerEliminatedSfxSettings);
+
+        if (!IsServer) return;
+        ResetMarkedPlayerRpc();
         Debug.Log("Marked player eliminated. Preparing to assign new marked player after cooldown.");
 
         if (PlayerManager.Instance.AlivePlayers.Count <= 1)
         {
-            StopHPGame();
+            HotPotatoGameManager.Instance.EndGame();
             return;
         }
+
         // Start cooldown timer before assigning the new marked player
         postEliminationCoolDownTimer.StartTimer(postEliminateMarkPassingCooldown);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ResetMarkedPlayerRpc()
+    {
+        if (currentMarkedPlayer != null)
+        {
+            currentMarkedPlayer.OnPlayerEliminated -= InvokeOnMarkedPlayerEliminated;
+            currentMarkedPlayer = null;
+        }
     }
 
     private void AssignNextPlayerWithMark()
@@ -151,24 +167,24 @@ public class MarkManager : NetworkBehaviour
 
         if (PlayerManager.Instance.AlivePlayers.Count <= 1)
         {
-            StopHPGame();
+            HotPotatoGameManager.Instance.EndGame();
             return;
         }
         
-        PassMarkToPlayerServerRpc(randomPlayer.Id);
-        Debug.Log("Assigned mark to random player " + currentMarkedPlayer + " with id " + currentMarkedPlayer.Id);
+        PassMarkToPlayerServerRpc(randomPlayer.clientId);
+        Debug.Log("Assigned mark to random player " + randomPlayer + " with id " + randomPlayer.clientId);
     }
 
-    public void PassMarkToPlayer(ulong from, ulong to)
+    public void PassMarkToPlayer(ulong fromClientId, ulong toClientId)
     {
         if (PlayerManager.Instance.AlivePlayers.Count <= 1)
         {
-            StopHPGame();
+            HotPotatoGameManager.Instance.EndGame();
             return;
         }
 
-        audioBroadcaster.PlaySfxLocally(markPassedSfxSettings, from);
-        PassMarkToPlayerServerRpc(to);
+        audioBroadcaster.PlaySfxLocal(markPassedSfxSettings, fromClientId);
+        PassMarkToPlayerServerRpc(toClientId);
     }
 
     [Rpc(SendTo.Server)]
@@ -185,16 +201,16 @@ public class MarkManager : NetworkBehaviour
     }
 
     [Rpc(SendTo.Everyone)]
-    private void UpdateMarkedPlayerAllRpc(ulong id)
+    private void UpdateMarkedPlayerAllRpc(ulong clientId)
     {
-        Player player = PlayerManager.Instance.FindPlayerByNetId(id);
+        Player player = PlayerManager.Instance.FindPlayerByClientId(clientId);
         if (player == null)
         {
-            Debug.LogWarning($"[UpdateMarkedPlayerAllRpc] Could not find player with id {id}");
+            Debug.LogWarning($"[UpdateMarkedPlayerAllRpc] Could not find player with id {clientId}");
             return;
         }
 
-        Debug.Log($"Passing mark to player {player} with id {id}");
+        Debug.Log($"Passing mark to player {player} with id {clientId}");
 
         if (player.TryGetComponent(out PlayerMovement pm))
         {
@@ -214,13 +230,13 @@ public class MarkManager : NetworkBehaviour
             currentMarkedPlayer.ResetLayerRpc();
         }
 
-        audioBroadcaster.PlaySfxLocally(markReceivedSfxSettings, id);
+        audioBroadcaster.PlaySfxLocal(markReceivedSfxSettings, clientId);
         currentMarkedPlayer = player;
         currentMarkedPlayer.OnPlayerEliminated += InvokeOnMarkedPlayerEliminated;
         currentMarkedPlayer.SetMeshRootLayerRpc(auraLayer);
 
-        Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {id}");
-        OnMarkPassed?.Invoke(id);
+        Debug.Log($"Updated marked player to {currentMarkedPlayer} with id {clientId}");
+        OnMarkPassed?.Invoke(clientId);
     }
 
     private void InvokeOnMarkedPlayerEliminated()
