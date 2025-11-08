@@ -103,11 +103,11 @@ public class Player : NetworkBehaviour
     public void EliminatePlayerServerRpc(RpcParams rpcParams = default)
     {
         // Verify that the caller owns this NetworkObject
-        if (rpcParams.Receive.SenderClientId != OwnerClientId)
-        {
-            Debug.LogWarning($"[{name}] Unauthorized eliminate request from {rpcParams.Receive.SenderClientId} ignored.");
-            return;
-        }
+        //if (rpcParams.Receive.SenderClientId != OwnerClientId)
+        //{
+        //    Debug.LogWarning($"[{name}] Unauthorized eliminate request from {rpcParams.Receive.SenderClientId} ignored.");
+        //    return;
+        //}
 
         if (isEliminated.Value)
         {
