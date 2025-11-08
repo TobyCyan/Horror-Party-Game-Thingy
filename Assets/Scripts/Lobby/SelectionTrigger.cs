@@ -48,9 +48,10 @@ public class SelectorTrigger : NetworkBehaviour
         // Despawn everyone
         for (int i = 0; i < playerCount; i++)
         {
-            SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
+            SpawnManager.Instance.DespawnPlayerServerRpc((ulong) i);
+            
         }
-
+        
         Debug.Log($"Changing scene cuz {playerCount}, {PlayerManager.Instance.players.Count}");
             
         await Task.Delay(500); // Wait just incase;

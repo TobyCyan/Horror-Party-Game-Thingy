@@ -1072,6 +1072,34 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoiningSession.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1382358257}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToLobby
+      objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SessionStartButton, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 839312392013046812, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 852916538144098332, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 4091335703
@@ -1911,6 +1939,34 @@ PrefabInstance:
     - target: {fileID: 6380822185644874321, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1382358257}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: JoinGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SessionStartButton, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6410012511537390268, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
+      propertyPath: JoinedSession.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6459695470166064078, guid: 8277b0d0f5a992546b5718347eab6f88, type: 3}
       propertyPath: m_AnchorMax.y
