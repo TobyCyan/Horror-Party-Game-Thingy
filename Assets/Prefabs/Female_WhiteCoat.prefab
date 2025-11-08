@@ -856,6 +856,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   defaultDuration: 2
+  revealedSfxSettings:
+    requestorName: Player Silhouette
+    samples: {fileID: 11400000, guid: cd85a364026c1f54c8883a9a3565177f, type: 2}
+    mode: 2
+    index: 0
 --- !u!114 &1378514592512889471
 MonoBehaviour:
   m_ObjectHideFlags: 0

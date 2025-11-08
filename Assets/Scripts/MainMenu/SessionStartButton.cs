@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 
 public class SessionStartButton : NetworkBehaviour
@@ -17,6 +18,16 @@ public class SessionStartButton : NetworkBehaviour
         await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { SceneLifetimeManager.LobbyScene });
     }
 
+    public async void GoToLobby(ISession session)
+    {
+        SceneLifetimeManager.Instance.activeSession = session;
+        await SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("NewMainMenu");
+        await SceneLifetimeManager.Instance.LoadSceneNetworked(new string[] { SceneLifetimeManager.LobbyScene });
+    }
+    public void JoinGame()
+    {
+        SceneLifetimeManager.Instance.clientSceneLoader.UnloadSceneAsync("NewMainMenu");
+    }
     [Rpc(SendTo.NotServer)]
     public void UnloadMainMenuNotServerRPC()
     {

@@ -294,6 +294,17 @@ public class NetworkPickupItem : NetworkBehaviour
         }
     }
 
+    public void HighlightItem(bool shouldHighlight)
+    {
+        if (visualObject == null) return;
+        LayerMask highLightLayer = shouldHighlight ? LayerMask.NameToLayer("Outline") : LayerMask.NameToLayer("Default");
+        visualObject.layer = highLightLayer;
+        foreach (Transform child in visualObject.transform)
+        {
+            child.gameObject.layer = highLightLayer;
+        }
+    }
+
     // =========================================================
     // === VALIDATION ==========================================
     // =========================================================

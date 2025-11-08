@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class SkillUi : MonoBehaviour
@@ -18,7 +19,7 @@ public class SkillUi : MonoBehaviour
         self = gameObject;
 
         // Hide UI by default until role is determined
-        self.SetActive(false);
+        ShowSkillUi(false);
 
         if (playerControlsAssigner != null)
         {
@@ -74,23 +75,25 @@ public class SkillUi : MonoBehaviour
 
     private void BindPlayerToUi(Player player)
     {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in BindPlayerToUi.");
+            return;
+        }
+       
         if (!player.IsOwner)
         {
             Debug.LogWarning("Attempted to bind non-local player to SkillUi.");
             return;
         }
 
-        if (player == null)
-        {
-            Debug.LogWarning("Player is null in BindPlayerToUi.");
-            return;
-        }
+        player.OnPlayerEliminated += HandleOnPlayerEliminated;
+        PlayerManager.OnLocalPlayerSet -= BindPlayerToUi; // prevent any more rebinding, at least second play can die now 
+    }
 
-        player.OnPlayerEliminated += () =>
-        {
-            // Hide UI on elimination
-            ShowSkillUi(false);
-        };
+    private void HandleOnPlayerEliminated()
+    {
+        ShowSkillUi(false);
     }
 
     private void UnbindPlayerFromUi(Player player)
@@ -101,11 +104,13 @@ public class SkillUi : MonoBehaviour
             return;
         }
 
-        player.OnPlayerEliminated -= () =>
+        if (player.clientId != NetworkManager.Singleton.LocalClientId)
         {
-            // Hide UI on elimination
-            ShowSkillUi(false);
-        };
+            Debug.Log("UnbindPlayerFromUi called for non-local player; ignoring.");
+            return;
+        }
+
+        player.OnPlayerEliminated -= HandleOnPlayerEliminated;
     }
 
     private void OnDestroy()

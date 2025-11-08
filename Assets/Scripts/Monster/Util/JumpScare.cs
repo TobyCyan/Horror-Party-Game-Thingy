@@ -1,35 +1,26 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class JumpScare : MonoBehaviour
 {
     [SerializeField] private AudioClip jumpScareSfx;
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
-    [SerializeField] private List<EffectBase> effects;
+    // [SerializeField] private List<EffectBase> effects; // Problematic, manually apply effects for now.
     [SerializeField] private bool shouldResumeCameraMovementAfter = true;
     private AudioSource audioSource;
     private Vector3 referencePosition;
-    private Transform jumpScareTarget;
-    private Player jumpScarePlayer;
+    private readonly Vector3 defaultPosition = new(0, -10000, 0);
 
     public event Action OnJumpScareStart;
     // Apply any effect after jumpscaring (e.g. stun, death etc.)
+    private Player jumpScarePlayer;
     public event Action<Player> AfterJumpScarePlayer;
     public event Action OnJumpScareCleanUp;
 
     // The animation name used as state and trigger.
     private static readonly string AN_JUMPSCARE = "JumpScare";
-
-    private void Awake()
-    {
-        foreach (var effect in effects)
-        {
-            AfterJumpScarePlayer += effect.Apply;
-            Debug.Log($"Effect {effect.name} subscribed");
-        }
-    }
 
     private void OnValidate()
     {
@@ -48,29 +39,18 @@ public class JumpScare : MonoBehaviour
 #endif
     }
 
-    public void TriggerJumpScare(Player player)
-    {
-        // Assumes animator is on this game object.
-        Animator animator = GetComponent<Animator>();
-        if (!animator)
-        {
-            return;
-        }
-        TriggerJumpScare(animator, player);
-    }
-
     public void TriggerJumpScare(Animator animator, Player player)
     {
         OnJumpScareStart?.Invoke();
 
-        player.LockPlayerInPlace();
         jumpScarePlayer = player;
-        jumpScareTarget = player.PlayerCam.transform;
-        
-        JumpToTarget(jumpScareTarget);
+        player.LockPlayerInPlace();
+
+        Transform targetTransform = player.PlayerCam.transform;
+        JumpToTarget(targetTransform);
 
         // Force monster to look at target.
-        FaceTarget(jumpScareTarget);
+        FaceTarget(targetTransform);
 
         // Minus offset to get accurate reference position for adjusting offset
 #if UNITY_EDITOR
@@ -82,6 +62,23 @@ public class JumpScare : MonoBehaviour
         animator.Play(AN_JUMPSCARE, 0, 0.0f);
 
         PlayJumpScareAudio();
+    }
+
+    public void TriggerJumpScare(Player player)
+    {
+        // Assumes animator is on this game object.
+        Animator animator = GetComponent<Animator>();
+        if (!animator)
+        {
+            return;
+        }
+        
+        TriggerJumpScare(animator, player);
+    }
+
+    public void ResetPosition()
+    {
+        transform.position = defaultPosition;
     }
 
     private void JumpToTarget(Transform target)
@@ -114,9 +111,9 @@ public class JumpScare : MonoBehaviour
     /// </summary>
     public void OnJumpScareEnd()
     {
+        OnJumpScareCleanUp?.Invoke();
         Debug.Log($"{name} Jumpscare ended");
         AfterJumpScarePlayer?.Invoke(jumpScarePlayer);
-        OnJumpScareCleanUp?.Invoke();
 
         if (shouldResumeCameraMovementAfter && jumpScarePlayer)
         {

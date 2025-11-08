@@ -15,9 +15,10 @@ public class MonsterAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_markManager != null && MarkManager.currentMarkedPlayer != null)
+        Player markedPlayer = _markManager.GetMarkedPlayer();
+        if (_markManager != null && markedPlayer != null)
         {
-            _agent.SetDestination(MarkManager.currentMarkedPlayer.transform.position);
+            _agent.SetDestination(markedPlayer.transform.position);
         }
     }
 }

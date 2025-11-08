@@ -11,10 +11,8 @@ public class BlindTrap : TrapBase
 
     [Header("Visuals")]
     [SerializeField] private Renderer trapRenderer;
-    [SerializeField] private Color armedColor = Color.red;
-    [SerializeField] private Color disarmedColor = Color.gray;
-
-    private Material trapMaterial;
+    [SerializeField] private Material armedMaterial;
+    [SerializeField] private Material disarmedMaterial;
 
     protected override void Awake()
     {
@@ -22,7 +20,7 @@ public class BlindTrap : TrapBase
 
         if (trapRenderer != null)
         {
-            trapMaterial = trapRenderer.material;
+            trapRenderer.material = disarmedMaterial;
         }
     }
 
@@ -60,15 +58,15 @@ public class BlindTrap : TrapBase
 
     private void UpdateVisualColor()
     {
-        if (trapMaterial != null)
+        if (trapRenderer != null)
         {
-            Color targetColor = IsArmed ? armedColor : disarmedColor;
-            trapMaterial.color = targetColor;
+            Material targetMaterial = IsArmed ? armedMaterial : disarmedMaterial;
+            trapRenderer.material = targetMaterial;
             Debug.Log($"[BlindTrap] Color updated to {(IsArmed ? "RED (armed)" : "GRAY (disarmed)")}");
         }
     }
 
-    public void HandleTriggerEnter(Collider other)
+    public override void HandleTriggerEnter(Collider other)
     {
         bool isSpawnedCheck = NetworkObject != null && NetworkObject.IsSpawned;
 

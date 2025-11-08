@@ -291,4 +291,5 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
     // Abstract method - must be implemented by derived classes
     protected abstract void OnTriggerCore(TrapTriggerContext ctx);
+    public abstract void HandleTriggerEnter(Collider other);
 }
