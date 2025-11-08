@@ -339,6 +339,7 @@ public class PlayerMovement : NetworkBehaviour
         anim.SetBool("IsWalking", false);
         anim.SetFloat("MoveX", 0f);
         anim.SetFloat("MoveZ", 0f);
+        this.enabled = false;
     }
 
     public void ResetMovementSpeed()

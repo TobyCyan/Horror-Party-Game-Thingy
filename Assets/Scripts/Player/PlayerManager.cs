@@ -65,6 +65,11 @@ public class PlayerManager : NetworkBehaviour
         // Invoke event first to allow cleanup before removal
         OnPlayerRemoved?.Invoke(player);
         players.Remove(player);
+
+        if (players.Count == 1)
+        {
+            OnLastPlayerStanding?.Invoke();
+        }
     }
 
     public List<Player> GetAlivePlayers()
