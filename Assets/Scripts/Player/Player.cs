@@ -163,6 +163,12 @@ public class Player : NetworkBehaviour
 
     public void PlayLocalAudio(AudioSettings settings)
     {
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            Debug.LogWarning($"Attempted to play local audio on non-local player {name}.");
+            return;
+        }
+
         if (settings.IsNullOrEmpty())
         {
             Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
