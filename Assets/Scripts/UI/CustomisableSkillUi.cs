@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class CustomisableSkillUi : SkillUi
 {
@@ -34,6 +35,18 @@ public class CustomisableSkillUi : SkillUi
 
     private void BindLocalPlayer(Player player)
     {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in CustomisableSkillUi.");
+            return;
+        }
+
+        if (NetworkManager.Singleton.LocalClientId != player.clientId)
+        {
+            Debug.LogWarning("Attempted to bind non-local player to CustomisableSkillUi.");
+            return;
+        }
+
         if (player.TryGetComponent<PlayerPickup>(out var pickup))
         {
             pickup.OnTrapPickUp += SetUi;
@@ -47,6 +60,18 @@ public class CustomisableSkillUi : SkillUi
 
     private void UnbindLocalPlayer(Player player)
     {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in CustomisableSkillUi.");
+            return;
+        }
+
+        if (NetworkManager.Singleton.LocalClientId != player.clientId)
+        {
+            Debug.LogWarning("Attempted to bind non-local player to CustomisableSkillUi.");
+            return;
+        }
+
         if (!player.TryGetComponent<PlayerPickup>(out var pickup))
         {
             pickup.OnTrapPickUp -= SetUi;

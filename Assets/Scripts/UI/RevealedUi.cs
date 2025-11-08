@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class RevealedUi : MonoBehaviour
@@ -30,8 +31,20 @@ public class RevealedUi : MonoBehaviour
         playerSilhouette.OnSilhouetteHidden += Hide;
     }
 
-    private void UnbindPlayerSilhouette(Player _)
+    private void UnbindPlayerSilhouette(Player player)
     {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in UnbindPlayerSilhouette.");
+            return;
+        }
+
+        if (player.clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            Debug.Log("UnbindPlayerSilhouette called for non-local player; ignoring.");
+            return;
+        }
+
         if (playerSilhouette != null)
         {
             playerSilhouette.OnSilhouetteShown -= Reveal;

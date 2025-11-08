@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class SkillUi : MonoBehaviour
@@ -99,6 +100,12 @@ public class SkillUi : MonoBehaviour
         if (player == null)
         {
             Debug.LogWarning("Player is null in UnbindPlayerFromUi.");
+            return;
+        }
+
+        if (player.clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            Debug.Log("UnbindPlayerFromUi called for non-local player; ignoring.");
             return;
         }
 

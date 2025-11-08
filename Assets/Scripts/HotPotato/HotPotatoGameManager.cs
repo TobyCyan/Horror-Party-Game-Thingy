@@ -50,7 +50,6 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.PostEliminationCoolDownTimer.OnTimeUp += StartHPTimer;
         }
 
-
         if (markManager == null)
         {
             Debug.LogError("MarkManager reference is missing in HotPotatoGameManager.");
