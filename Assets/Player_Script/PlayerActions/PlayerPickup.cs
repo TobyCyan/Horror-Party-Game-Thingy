@@ -125,6 +125,10 @@ public class PlayerPickup : NetworkBehaviour
         }
 
         nearestItem = closest;
+        foreach (var item in allItems)
+        {
+            item.HighlightItem(item == nearestItem);
+        }
     }
 
     // =========================================================
