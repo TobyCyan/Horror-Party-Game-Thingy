@@ -88,12 +88,11 @@ public class GhostMarchTrap : TrapBase
         StartCoroutine(MarchThenRearm());
     }
 
-    private void AfterJumpScareHandler(ulong playerClientId)
+    private void AfterJumpScareHandler(Player player)
     {
-        Player player = PlayerManager.Instance.FindPlayerByClientId(playerClientId);
         if (player == null)
         {
-            Debug.LogWarning($"[GhostMarchTrap] AfterJumpScareHandler: Player with ClientId {playerClientId} not found.");
+            Debug.LogWarning($"[GhostMarchTrap] AfterJumpScareHandler: Player is null.");
             return;
         }
 
@@ -133,6 +132,6 @@ public class GhostMarchTrap : TrapBase
         }
 
         isJumpScaring = true;
-        jumpScareModel.TriggerJumpScareRpc(player.clientId);
+        jumpScareModel.TriggerJumpScare(player);
     }
 }

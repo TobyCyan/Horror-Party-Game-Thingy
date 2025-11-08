@@ -18,7 +18,7 @@ public class SkillUi : MonoBehaviour
         self = gameObject;
 
         // Hide UI by default until role is determined
-        self.SetActive(false);
+        ShowSkillUi(false);
 
         if (playerControlsAssigner != null)
         {
@@ -74,15 +74,15 @@ public class SkillUi : MonoBehaviour
 
     private void BindPlayerToUi(Player player)
     {
-        if (!player.IsOwner)
-        {
-            Debug.LogWarning("Attempted to bind non-local player to SkillUi.");
-            return;
-        }
-
         if (player == null)
         {
             Debug.LogWarning("Player is null in BindPlayerToUi.");
+            return;
+        }
+
+        if (!player.IsOwner)
+        {
+            Debug.LogWarning("Attempted to bind non-local player to SkillUi.");
             return;
         }
 

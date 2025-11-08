@@ -110,7 +110,7 @@ public class Monster : MonoBehaviour
             return;
         }
 
-        jumpScare.TriggerJumpScareRpc(targetPlayer.clientId);
+        jumpScare.TriggerJumpScare(targetPlayer);
     }
 
     public void SpotPlayer()

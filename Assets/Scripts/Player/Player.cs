@@ -51,7 +51,6 @@ public class Player : NetworkBehaviour
         }
 
         clientId = OwnerClientId;
-        isEliminated.Value = false;
         PlayerManager.Instance.AddPlayer(this);
         ScoreUiManager.Instance?.PlayerJoined(clientId);
 
@@ -117,9 +116,9 @@ public class Player : NetworkBehaviour
             return;
         }
 
+        OnPlayerEliminated?.Invoke();
         isEliminated.Value = true;
         NotifyPlayerEliminatedClientRpc(clientId);
-        OnPlayerEliminated?.Invoke();
         StartCoroutine(DelayedDespawn());
     }
 
@@ -131,6 +130,8 @@ public class Player : NetworkBehaviour
         {
             Debug.Log($"[Client] {eliminatedClientId} with local client Id {NetworkManager.Singleton.LocalClientId} You were eliminated.");
             // UIManager.Instance.ShowEliminatedScreen();
+            // Called on local player side too
+            OnPlayerEliminated?.Invoke();
         }
         else
         {
