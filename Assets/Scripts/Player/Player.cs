@@ -21,6 +21,8 @@ public class Player : NetworkBehaviour
     public ulong Id => NetworkObjectId;
     public ulong clientId;
     
+    private readonly NetworkVariable<bool> isEliminated = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public bool IsEliminated => isEliminated.Value;
     public event Action OnPlayerEliminated;
 
     [SerializeField] private string defaultLayerName = "Default";
@@ -49,6 +51,7 @@ public class Player : NetworkBehaviour
         }
 
         clientId = OwnerClientId;
+        isEliminated.Value = false;
         PlayerManager.Instance.AddPlayer(this);
         ScoreUiManager.Instance?.PlayerJoined(clientId);
 
@@ -99,19 +102,24 @@ public class Player : NetworkBehaviour
     }
 
     [Rpc(SendTo.Server)]
-    public void EliminatePlayerServerRpc()
+    public void EliminatePlayerServerRpc(RpcParams rpcParams = default)
     {
-        if (!IsOwner && !IsServer)
+        // Verify that the caller owns this NetworkObject
+        if (rpcParams.Receive.SenderClientId != OwnerClientId)
         {
-            Debug.LogWarning($"[{name}] Unauthorized eliminate request ignored.");
+            Debug.LogWarning($"[{name}] Unauthorized eliminate request from {rpcParams.Receive.SenderClientId} ignored.");
             return;
         }
 
-        // SERVER executes elimination, but first tells everyone (for UI)
+        if (isEliminated.Value)
+        {
+            Debug.LogWarning($"[{name}] Player already eliminated. Duplicate eliminate request ignored.");
+            return;
+        }
+
+        isEliminated.Value = true;
         NotifyPlayerEliminatedClientRpc(clientId);
-
-        OnPlayerEliminated?.Invoke(); // server events (MarkManager, scoring, etc.)
-
+        OnPlayerEliminated?.Invoke();
         StartCoroutine(DelayedDespawn());
     }
 
@@ -119,9 +127,9 @@ public class Player : NetworkBehaviour
     private void NotifyPlayerEliminatedClientRpc(ulong eliminatedClientId)
     {
         // Local feedback only
-        if (clientId == eliminatedClientId)
+        if (NetworkManager.Singleton.LocalClientId == eliminatedClientId)
         {
-            Debug.Log($"[Client] You were eliminated.");
+            Debug.Log($"[Client] {eliminatedClientId} with local client Id {NetworkManager.Singleton.LocalClientId} You were eliminated.");
             // UIManager.Instance.ShowEliminatedScreen();
         }
         else
@@ -134,10 +142,7 @@ public class Player : NetworkBehaviour
     private IEnumerator DelayedDespawn()
     {
         yield return null;
-        if (IsServer)
-        {
-            SpawnManager.Instance.DespawnPlayerServerRpc(Id);
-        }
+        SpawnManager.Instance.DespawnPlayerServerRpc(Id);
     }
 
     [Rpc(SendTo.Everyone)]

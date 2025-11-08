@@ -1,42 +1,26 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class JumpScare : MonoBehaviour
+public class JumpScare : NetworkBehaviour
 {
     [SerializeField] private AudioClip jumpScareSfx;
     [Header("Additional Offset")]
     [SerializeField] private Vector3 offset;
-    [SerializeField] private List<EffectBase> effects;
+    // [SerializeField] private List<EffectBase> effects; // Problematic, manually apply effects for now.
     [SerializeField] private bool shouldResumeCameraMovementAfter = true;
     private AudioSource audioSource;
     private Vector3 referencePosition;
-    private Transform jumpScareTarget;
-    private Player jumpScarePlayer;
+    private readonly Vector3 defaultPosition = new(0, -10000, 0);
+    private readonly NetworkVariable<ulong> jumpScarePlayerClientId = new();
 
     public event Action OnJumpScareStart;
     // Apply any effect after jumpscaring (e.g. stun, death etc.)
-    public event Action<Player> AfterJumpScarePlayer;
+    public event Action<ulong> AfterJumpScarePlayer;
     public event Action OnJumpScareCleanUp;
 
     // The animation name used as state and trigger.
     private static readonly string AN_JUMPSCARE = "JumpScare";
-
-    private void Awake()
-    {
-        foreach (var effect in effects)
-        {
-            AfterJumpScarePlayer += effect.Apply;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        foreach (var effect in effects)
-        {
-            AfterJumpScarePlayer -= effect.Apply;
-        }
-    }
 
     private void OnValidate()
     {
@@ -55,7 +39,8 @@ public class JumpScare : MonoBehaviour
 #endif
     }
 
-    public void TriggerJumpScare(Player player)
+    [Rpc(SendTo.Everyone)]
+    public void TriggerJumpScareRpc(ulong playerClientId)
     {
         // Assumes animator is on this game object.
         Animator animator = GetComponent<Animator>();
@@ -63,21 +48,23 @@ public class JumpScare : MonoBehaviour
         {
             return;
         }
-        TriggerJumpScare(animator, player);
-    }
-
-    public void TriggerJumpScare(Animator animator, Player player)
-    {
         OnJumpScareStart?.Invoke();
-
+        Player player = PlayerManager.Instance.FindPlayerByClientId(playerClientId);
+        if (player == null)
+        {
+            Debug.LogWarning($"JumpScare: Player with ClientId {playerClientId} not found.");
+            return;
+        }
         player.LockPlayerInPlace();
-        jumpScarePlayer = player;
-        jumpScareTarget = player.PlayerCam.transform;
+
+        if (IsServer)
+            jumpScarePlayerClientId.Value = playerClientId;
         
-        JumpToTarget(jumpScareTarget);
+        Transform targetTransform = player.PlayerCam.transform;
+        JumpToTarget(targetTransform);
 
         // Force monster to look at target.
-        FaceTarget(jumpScareTarget);
+        FaceTarget(targetTransform);
 
         // Minus offset to get accurate reference position for adjusting offset
 #if UNITY_EDITOR
@@ -89,6 +76,11 @@ public class JumpScare : MonoBehaviour
         animator.Play(AN_JUMPSCARE, 0, 0.0f);
 
         PlayJumpScareAudio();
+    }
+
+    public void ResetPosition()
+    {
+        transform.position = defaultPosition;
     }
 
     private void JumpToTarget(Transform target)
@@ -121,10 +113,13 @@ public class JumpScare : MonoBehaviour
     /// </summary>
     public void OnJumpScareEnd()
     {
-        Debug.Log($"{name} Jumpscare ended");
-        AfterJumpScarePlayer?.Invoke(jumpScarePlayer);
         OnJumpScareCleanUp?.Invoke();
+        if (NetworkManager.Singleton.LocalClientId != jumpScarePlayerClientId.Value)
+            return;
+        Debug.Log($"{name} Jumpscare ended");
+        AfterJumpScarePlayer?.Invoke(jumpScarePlayerClientId.Value);
 
+        Player jumpScarePlayer = PlayerManager.Instance.FindPlayerByClientId(jumpScarePlayerClientId.Value);
         if (shouldResumeCameraMovementAfter && jumpScarePlayer)
         {
             jumpScarePlayer.EnablePlayer(true);

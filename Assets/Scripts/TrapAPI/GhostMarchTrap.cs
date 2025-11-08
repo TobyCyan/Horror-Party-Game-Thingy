@@ -12,22 +12,22 @@ public class GhostMarchTrap : TrapBase
 
     public override void OnNetworkSpawn()
     {
-        base.OnNetworkSpawn();
+        jumpScareModel.AfterJumpScarePlayer += AfterJumpScareHandler;
+        jumpScareModel.ResetPosition();
         jumpScareModel.OnJumpScareStart += JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp += CleanUpHandler;
-        jumpScareModel.AfterJumpScarePlayer += AfterJumpScarePlayerHandler;
-        jumpScareModel.gameObject.SetActive(false);
 
         OnArmed += PlaceAtStart;
+        base.OnNetworkSpawn();
     }
 
     public override void OnNetworkDespawn()
     {
-        base.OnNetworkDespawn();
+        jumpScareModel.AfterJumpScarePlayer -= AfterJumpScareHandler;
         jumpScareModel.OnJumpScareStart -= JumpScareStartHandler;
         jumpScareModel.OnJumpScareCleanUp -= CleanUpHandler;
-        jumpScareModel.AfterJumpScarePlayer -= AfterJumpScarePlayerHandler;
         OnArmed -= PlaceAtStart;
+        base.OnNetworkDespawn();
     }
 
     private void OnValidate()
@@ -41,11 +41,6 @@ public class GhostMarchTrap : TrapBase
         {
             Debug.LogWarning($"Jumpscare model is null on {name}!");
         }
-    }
-
-    private void AfterJumpScarePlayerHandler(Player player)
-    {
-        player.EliminatePlayer();
     }
 
     private void PlaceAtStart(ITrap _)
@@ -93,6 +88,22 @@ public class GhostMarchTrap : TrapBase
         StartCoroutine(MarchThenRearm());
     }
 
+    private void AfterJumpScareHandler(ulong playerClientId)
+    {
+        Player player = PlayerManager.Instance.FindPlayerByClientId(playerClientId);
+        if (player == null)
+        {
+            Debug.LogWarning($"[GhostMarchTrap] AfterJumpScareHandler: Player with ClientId {playerClientId} not found.");
+            return;
+        }
+
+        if (player.IsOwner)
+        {
+            Debug.Log("[GhostMarchTrap] Eliminating local player after jumpscare.");
+            player.EliminatePlayerServerRpc();
+        }
+    }
+
     private void JumpScareStartHandler()
     {
         // Disarm so jumpscare won't trigger repeatedly
@@ -102,7 +113,7 @@ public class GhostMarchTrap : TrapBase
 
     private void CleanUpHandler()
     {
-        jumpScareModel.gameObject.SetActive(false);
+        jumpScareModel.ResetPosition();
         isJumpScaring = false;
         // Re-arm upon finishing jumpscare.
         Arm();
@@ -122,7 +133,6 @@ public class GhostMarchTrap : TrapBase
         }
 
         isJumpScaring = true;
-        jumpScareModel.gameObject.SetActive(true);
-        jumpScareModel.TriggerJumpScare(player);
+        jumpScareModel.TriggerJumpScareRpc(player.clientId);
     }
 }

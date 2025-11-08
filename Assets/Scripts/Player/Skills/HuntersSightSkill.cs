@@ -36,7 +36,7 @@ public class HuntersSightSkill : PlayerSkill
         ulong hunterId = GetComponent<Player>().Id;
 
         // Highlight all players except the hunter
-        List<Player> players = PlayerManager.Instance.AlivePlayers
+        List<Player> players = PlayerManager.Instance.GetAlivePlayers()
             .Where(p => p.Id != hunterId).ToList();
 
         foreach (var player in players)

@@ -141,7 +141,7 @@ public class MarkManager : NetworkBehaviour
     {
         yield return null; // Wait one frame
 
-        int aliveCount = PlayerManager.Instance.AlivePlayers.Count;
+        int aliveCount = PlayerManager.Instance.GetAlivePlayers().Count;
         Debug.Log($"[MarkManager] Alive players after elimination: {aliveCount}");
 
         if (aliveCount <= 1)
@@ -195,7 +195,7 @@ public class MarkManager : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        int aliveCount = PlayerManager.Instance.AlivePlayers.Count;
+        int aliveCount = PlayerManager.Instance.GetAlivePlayers().Count;
         Debug.Log($"[MarkManager] Assigning next mark. Alive players: {aliveCount}");
 
         if (aliveCount <= 1)
@@ -214,7 +214,7 @@ public class MarkManager : NetworkBehaviour
         {
             // Only consider alive players
             Player player = PlayerManager.Instance.FindPlayerByClientId(score.clientId);
-            if (player == null || !PlayerManager.Instance.IsPlayerAlive(player))
+            if (player == null || player.IsEliminated)
                 continue;
 
             if (score.trapScore < lowestScore)
@@ -267,7 +267,7 @@ public class MarkManager : NetworkBehaviour
             return;
         }
 
-        int aliveCount = PlayerManager.Instance.AlivePlayers.Count;
+        int aliveCount = PlayerManager.Instance.GetAlivePlayers().Count;
         if (aliveCount <= 1)
         {
             Debug.Log("[MarkManager] Only 1 player - cannot start game.");
@@ -303,7 +303,7 @@ public class MarkManager : NetworkBehaviour
         }
 
         // Verify player is alive
-        if (!PlayerManager.Instance.IsPlayerAlive(markedPlayer))
+        if (markedPlayer.IsEliminated)
         {
             Debug.LogWarning($"[MarkManager] Cannot mark eliminated player {clientId}.");
             return;

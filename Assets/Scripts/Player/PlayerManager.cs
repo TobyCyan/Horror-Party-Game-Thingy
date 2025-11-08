@@ -15,8 +15,6 @@ public class PlayerManager : NetworkBehaviour
     public static event Action<Player> OnPlayerAdded;
     public static event Action<Player> OnPlayerRemoved;
     public Player localPlayer;
-    private readonly List<Player> alivePlayers = new();
-    public List<Player> AlivePlayers => alivePlayers;
     public static event Action OnAllPlayersEliminated;
     public static event Action OnLastPlayerStanding;
     public static event Action<Player> OnLocalPlayerSet;
@@ -55,10 +53,7 @@ public class PlayerManager : NetworkBehaviour
         }
         
         players.Add(player);
-        alivePlayers.Add(player);
         Debug.Log($"[PlayerManager] Client {player.clientId} added at frame {Time.frameCount}");
-
-        player.OnPlayerEliminated += HandleOnPlayerEliminated;
 
         OnPlayerAdded?.Invoke(player);
     }
@@ -70,46 +65,16 @@ public class PlayerManager : NetworkBehaviour
         // Invoke event first to allow cleanup before removal
         OnPlayerRemoved?.Invoke(player);
         players.Remove(player);
-        alivePlayers.Remove(player);
-        player.OnPlayerEliminated -= HandleOnPlayerEliminated;
     }
 
-    private void HandleOnPlayerEliminated()
+    public List<Player> GetAlivePlayers()
     {
-        EliminatePlayer(localPlayer);
-    }
-
-    /// <summary>
-    /// Eliminates a player from the alive players list.
-    /// </summary>
-    /// <param name="player"></param>
-    public void EliminatePlayer(Player player)
-    {
-        if (!players.Contains(player)) return;
-        
-        if (alivePlayers.Contains(player))
-        {
-            alivePlayers.Remove(player);
-        }
-
-        if (alivePlayers.Count <= 1)
-        {
-            OnLastPlayerStanding?.Invoke();
-        }
-
-        if (alivePlayers.Count == 0)
-        {
-            OnAllPlayersEliminated?.Invoke();
-        }
-    }
-
-    public bool IsPlayerAlive(Player player)
-    {
-        return alivePlayers.Contains(player);
+        return players.Where(p => !p.IsEliminated).ToList();
     }
 
     public Player GetRandomAlivePlayer()
     {
+        List<Player> alivePlayers = GetAlivePlayers();
         if (alivePlayers.Count == 0)
         {
             return null;
