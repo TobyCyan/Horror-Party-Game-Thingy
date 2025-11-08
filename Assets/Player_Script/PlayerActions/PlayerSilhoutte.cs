@@ -22,6 +22,8 @@ public class PlayerSilhouette : NetworkBehaviour
     public event Action OnSilhouetteShown;
     public event Action OnSilhouetteHidden;
 
+    [SerializeField] private AudioSettings revealedSfxSettings;
+
     void Awake()
     {
         // Validate that we have valid single layers
@@ -50,6 +52,16 @@ public class PlayerSilhouette : NetworkBehaviour
             StopAllCoroutines();
         }
 
+        // Only play sound on the owner client
+        if (IsOwner)
+        {
+            Debug.Log($"PlayerSilhouette: ShowOnceRpc {seconds} seconds on {gameObject}");
+            if (!revealedSfxSettings.IsNullOrEmpty())
+            {
+                Player player = GetComponent<Player>();
+                player.PlayLocalAudio(revealedSfxSettings);
+            }
+        }
         StartCoroutine(ShowOnceCo(seconds));
     }
 
