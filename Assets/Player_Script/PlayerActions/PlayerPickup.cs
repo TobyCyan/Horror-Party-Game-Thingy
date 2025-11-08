@@ -131,6 +131,16 @@ public class PlayerPickup : NetworkBehaviour
         }
     }
 
+    public void ClearNearestItem()
+    {
+        if (nearestItem != null)
+        {
+            nearestItem.HighlightItem(false);
+            nearestItem = null;
+            UpdatePickupPrompt();
+        }
+    }
+
     // =========================================================
     // === PICKUP EXECUTION ====================================
     // =========================================================

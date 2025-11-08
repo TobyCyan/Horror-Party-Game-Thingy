@@ -142,9 +142,10 @@ MonoBehaviour:
     m_Bits: 64
   blindDuration: 5
   silhouetteDuration: 5
-  trapRenderer: {fileID: 0}
-  armedColor: {r: 1, g: 0, b: 0, a: 1}
-  disarmedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  trapRenderer: {fileID: 2157491617931762727}
+  armedMaterial: {fileID: 2100000, guid: 7b5bbeaf80255254ab7e531bd6e45a07, type: 2}
+  disarmedMaterial: {fileID: 964962283620729402, guid: e47294060a0c52e44929b60cb564aec1, type: 3}
+  trapMeshRenderer: {fileID: 2157491617931762727}
 --- !u!65 &8728138874870149105
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -364,5 +365,10 @@ BoxCollider:
 --- !u!4 &989630759531407176 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e47294060a0c52e44929b60cb564aec1, type: 3}
+  m_PrefabInstance: {fileID: 734480999107657891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2157491617931762727 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: e47294060a0c52e44929b60cb564aec1, type: 3}
   m_PrefabInstance: {fileID: 734480999107657891}
   m_PrefabAsset: {fileID: 0}
