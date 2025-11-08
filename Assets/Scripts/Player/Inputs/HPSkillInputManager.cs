@@ -145,6 +145,7 @@ public class HPSkillInputManager : MonoBehaviour
         if (playerPickup != null)
         {
             playerPickup.IsPickupEnabled = !isHunter;
+            playerPickup.ClearNearestItem();
             Debug.Log($"[HPSkillInputManager] Pickup {(isHunter ? "disabled" : "enabled")} - player is {(isHunter ? "hunter" : "prey")}");
         }
 
