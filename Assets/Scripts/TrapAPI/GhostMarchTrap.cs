@@ -88,6 +88,11 @@ public class GhostMarchTrap : TrapBase
         StartCoroutine(MarchThenRearm());
     }
 
+    public override void HandleTriggerEnter(Collider other)
+    {
+        // Nah
+    }
+
     private void AfterJumpScareHandler(Player player)
     {
         if (player == null)
