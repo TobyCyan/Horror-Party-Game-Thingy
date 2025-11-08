@@ -9281,11 +9281,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.75
+      value: -1.785
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9321,11 +9321,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: offset.x
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: offset.y
-      value: -1.75
+      value: -1.785
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
+      propertyPath: offset.z
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: effects.Array.size
@@ -41268,11 +41272,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.75
+      value: -1.785
       objectReference: {fileID: 0}
     - target: {fileID: 3134592354706258181, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -41308,11 +41312,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: offset.x
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: offset.y
-      value: -1.75
+      value: -1.785
+      objectReference: {fileID: 0}
+    - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
+      propertyPath: offset.z
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8509278789690613961, guid: 5873cad45fb836b46ba0bc204ac2502e, type: 3}
       propertyPath: effects.Array.size
