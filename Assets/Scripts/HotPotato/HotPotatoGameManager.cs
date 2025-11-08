@@ -28,6 +28,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
+            markManager.OnMarkedPlayerEliminated += MarkManager_OnMarkedPlayerEliminated;
             markManager.OnGameStarted += StartHPTimer;
             PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
             markManager.OnGameStarted += MarkManager_OnGameStarted;
@@ -53,6 +54,12 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
+    private void MarkManager_OnMarkedPlayerEliminated()
+    {
+        // Pause timer so won't accidentally eliminate next player during cool down
+        hotPotatoTimer.StopTimer();
+    }
+
     private void MarkManager_OnGameStarted()
     {
         isGameActive.Value = true;
@@ -63,6 +70,7 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
+            markManager.OnMarkedPlayerEliminated -= MarkManager_OnMarkedPlayerEliminated;
             markManager.OnGameStarted -= StartHPTimer;
             markManager.StopHPGame();
             PlayerManager.OnAllPlayersLoaded -= markManager.StartHPGame;
@@ -86,13 +94,13 @@ public class HotPotatoGameManager : NetworkBehaviour
 
     public async void EndGame()
     {
-        isGameActive.Value = false;
         Debug.Log("Hot Potato game ended.");
         GetComponent<NetworkObject>().Despawn();
         markManager.StopHPGame();
 
         if (IsServer)
         {
+            isGameActive.Value = false;
             int playerCount = PlayerManager.Instance.players.Count;
             // Despawn everyone
             for (int i = 0; i < playerCount; i++)

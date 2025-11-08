@@ -1,7 +1,8 @@
-using Unity.Netcode;
-using Unity.Collections;
-using UnityEngine;
 using System;
+using System.Collections;
+using Unity.Collections;
+using Unity.Netcode;
+using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
@@ -59,9 +60,9 @@ public class Player : NetworkBehaviour
     
     public override void OnNetworkDespawn()
     {
-        base.OnNetworkDespawn();
         PlayerManager.Instance.RemovePlayer(this);
         ScoreUiManager.Instance?.PlayerLeft(clientId);
+        base.OnNetworkDespawn();
     }
 
     [Rpc(SendTo.Server)]
@@ -97,13 +98,46 @@ public class Player : NetworkBehaviour
         playerMovement.Blind(duration);
     }
 
-    public void EliminatePlayer()
+    [Rpc(SendTo.Server)]
+    public void EliminatePlayerServerRpc()
     {
-        Debug.Log($"Player {Id} eliminated.");
-        OnPlayerEliminated?.Invoke();
+        if (!IsOwner && !IsServer)
+        {
+            Debug.LogWarning($"[{name}] Unauthorized eliminate request ignored.");
+            return;
+        }
 
-        // TODO: Add logic to hide player and go into spectator mode
-        SpawnManager.Instance.DespawnPlayerServerRpc(Id);
+        // SERVER executes elimination, but first tells everyone (for UI)
+        NotifyPlayerEliminatedClientRpc(clientId);
+
+        OnPlayerEliminated?.Invoke(); // server events (MarkManager, scoring, etc.)
+
+        StartCoroutine(DelayedDespawn());
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void NotifyPlayerEliminatedClientRpc(ulong eliminatedClientId)
+    {
+        // Local feedback only
+        if (clientId == eliminatedClientId)
+        {
+            Debug.Log($"[Client] You were eliminated.");
+            // UIManager.Instance.ShowEliminatedScreen();
+        }
+        else
+        {
+            Debug.Log($"[Client] Player {eliminatedClientId} was eliminated.");
+            // UIManager.Instance.ShowOtherPlayerEliminated(eliminatedClientId);
+        }
+    }
+
+    private IEnumerator DelayedDespawn()
+    {
+        yield return null;
+        if (IsServer)
+        {
+            SpawnManager.Instance.DespawnPlayerServerRpc(Id);
+        }
     }
 
     [Rpc(SendTo.Everyone)]

@@ -56,7 +56,7 @@ public class SpawnManager : NetworkBehaviour
     public void DespawnPlayerServerRpc(ulong id, RpcParams ctx = default)
     {
         // Destroy current player
-        Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId}");
+        Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId} at frame: {Time.frameCount}");
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
         if (player)
         {

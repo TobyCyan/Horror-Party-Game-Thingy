@@ -18,6 +18,11 @@ public class AudioBroadcaster : MonoBehaviour
         }
 
         Player localPlayer = PlayerManager.Instance.localPlayer;
+        if (localPlayer == null)
+        {
+            Debug.LogWarning("PlaySfxLocal called but localPlayer is null.");
+            return;
+        }
         localPlayer.PlayLocalAudio(settings);
     }
 
@@ -30,6 +35,11 @@ public class AudioBroadcaster : MonoBehaviour
         }
 
         Player localPlayer = PlayerManager.Instance.localPlayer;
+        if (localPlayer == null)
+        {
+            Debug.LogWarning("PlaySfxLocalToAll called but localPlayer is null.");
+            return;
+        }
         localPlayer.PlayLocalAudio(settings);
     }
 
@@ -42,6 +52,11 @@ public class AudioBroadcaster : MonoBehaviour
         }
 
         Player localPlayer = PlayerManager.Instance.localPlayer;
+        if (localPlayer == null)
+        {
+            Debug.LogWarning("PlaySfxGlobal called but localPlayer is null.");
+            return;
+        }
         localPlayer.PlayGlobalAudio(settings, position);
     }
 }

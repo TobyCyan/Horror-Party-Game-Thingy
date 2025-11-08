@@ -8,15 +8,13 @@ public class RevealedUi : MonoBehaviour
     {
         Hide();
         PlayerManager.OnLocalPlayerSet += SetAndBindPlayerSilhouette;
+        PlayerManager.OnPlayerRemoved += UnbindPlayerSilhouette;
     }
 
     private void OnDestroy()
     {
-        if (playerSilhouette != null)
-        {
-            playerSilhouette.OnSilhouetteShown -= Reveal;
-            playerSilhouette.OnSilhouetteHidden -= Hide;
-        }
+        PlayerManager.OnLocalPlayerSet -= SetAndBindPlayerSilhouette;
+        PlayerManager.OnPlayerRemoved -= UnbindPlayerSilhouette;
     }
 
     private void SetAndBindPlayerSilhouette(Player player)
@@ -30,6 +28,16 @@ public class RevealedUi : MonoBehaviour
 
         playerSilhouette.OnSilhouetteShown += Reveal;
         playerSilhouette.OnSilhouetteHidden += Hide;
+    }
+
+    private void UnbindPlayerSilhouette(Player _)
+    {
+        if (playerSilhouette != null)
+        {
+            playerSilhouette.OnSilhouetteShown -= Reveal;
+            playerSilhouette.OnSilhouetteHidden -= Hide;
+            playerSilhouette = null;
+        }
     }
 
     private void Reveal()

@@ -17,13 +17,12 @@ public class SkillCooldownUi : MonoBehaviour
 
     private void OnDestroy()
     {
-        SkillRegistry.OnSkillRegistered += OnSkillRegistered;
+        SkillRegistry.OnSkillRegistered -= OnSkillRegistered;
 
         if (SkillRegistry.Instance == null) return;
         SkillRegistry.Instance.UnsubscribeSkillCooldownTimer(skillName,
-            (cooldown) => UpdateUi(cooldown),
-            () => ShowCooldown(false));
-        
+            UpdateUi,
+            DisableCooldown);
     }
 
     private void OnSkillRegistered(string registeredSkillName)
@@ -44,8 +43,13 @@ public class SkillCooldownUi : MonoBehaviour
 
         skillCooldown = SkillRegistry.Instance.GetSkillCooldown(skillName);
         SkillRegistry.Instance.SubscribeSkillCooldownTimer(skillName,
-            (cooldown) => UpdateUi(cooldown),
-            () => ShowCooldown(false));
+            UpdateUi,
+            DisableCooldown);
+    }
+
+    private void DisableCooldown()
+    {
+        ShowCooldown(false);
     }
 
     private void UpdateUi(float cooldown)

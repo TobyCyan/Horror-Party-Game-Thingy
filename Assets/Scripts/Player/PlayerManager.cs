@@ -66,12 +66,12 @@ public class PlayerManager : NetworkBehaviour
     public void RemovePlayer(Player player)
     {
         if (!players.Contains(player)) return;
-        
+
+        // Invoke event first to allow cleanup before removal
+        OnPlayerRemoved?.Invoke(player);
         players.Remove(player);
         alivePlayers.Remove(player);
         player.OnPlayerEliminated -= HandleOnPlayerEliminated;
-
-        OnPlayerRemoved?.Invoke(player);
     }
 
     private void HandleOnPlayerEliminated()

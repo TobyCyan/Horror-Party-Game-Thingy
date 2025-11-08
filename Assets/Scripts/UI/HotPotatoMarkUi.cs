@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class HotPotatoMarkUi : MonoBehaviour
@@ -27,15 +28,16 @@ public class HotPotatoMarkUi : MonoBehaviour
 
     private void CheckPlayerId(ulong id)
     {
-        if (MarkManager.currentMarkedPlayer == null || PlayerManager.Instance.localPlayer == null)
+        if (MarkManager.CurrentMarkedPlayerClientId.Value != NetworkManager.Singleton.LocalClientId 
+            || PlayerManager.Instance.localPlayer == null)
         {
-            Debug.LogWarning($"CurrentMarkedPlayer: {MarkManager.currentMarkedPlayer}, " +
-                $"localPlayer: {PlayerManager.Instance.localPlayer} in HotPotatoMarkUi.");
+            Debug.LogWarning($"CurrentMarkedPlayer ID: {MarkManager.CurrentMarkedPlayerClientId.Value}, " +
+                $"localPlayer: {NetworkManager.Singleton.LocalClientId} in HotPotatoMarkUi.");
             Hide();
             return;
         }
 
-        if (MarkManager.currentMarkedPlayer.Id == PlayerManager.Instance.localPlayer.Id)
+        if (MarkManager.CurrentMarkedPlayerClientId.Value == NetworkManager.Singleton.LocalClientId)
         {
             Reveal();
         }
