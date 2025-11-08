@@ -8,7 +8,7 @@ public class SpawnManager : NetworkBehaviour
     public static SpawnManager Instance;
     
     [SerializeField] private NetworkObject spawnPrefab;
-    [SerializeField] private List<Transform> spawnPositions;
+    public List<Transform> spawnPositions;
     
     void Awake()
     {

@@ -102,6 +102,11 @@ public class MarkManager : NetworkBehaviour
 
     public void StartHPGame()
     {
+        // Set position again anyway
+        PlayerManager.Instance?.players.ForEach(
+            player => player.transform.SetPositionAndRotation(
+                SpawnManager.Instance.spawnPositions[(int)player.clientId].position, player.transform.rotation));
+        
         AssignRandomPlayerWithMark();
         OnGameStarted?.Invoke();
     }
@@ -313,7 +318,7 @@ public class MarkManager : NetworkBehaviour
 
         lastMarkPassTime = Time.time;
 
-        // Update state — NGO will sync it automatically to all clients
+        // Update state ï¿½ NGO will sync it automatically to all clients
         CurrentMarkedPlayerClientId.Value = clientId;
 
         // Apply server-side effects
