@@ -44,12 +44,15 @@ public class SpawnManager : NetworkBehaviour
         if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
         
         Debug.Log($"Spawning Player with id: {ctx.Receive.SenderClientId}");
-        Player player = Instantiate(
-            spawnPrefab, 
-            spawnPositions[(int) ctx.Receive.SenderClientId].position, 
-            Quaternion.identity).GetComponent<Player>();
-        
-        player.GetComponent<NetworkObject>().SpawnWithOwnership(ctx.Receive.SenderClientId);
+
+        NetworkManager.SpawnManager.InstantiateAndSpawn(
+            spawnPrefab,
+            ctx.Receive.SenderClientId,
+            true,
+            true,
+            false,
+            spawnPositions[(int)ctx.Receive.SenderClientId].position,
+            Quaternion.identity);
     }
     
     [Rpc(SendTo.Server)]
