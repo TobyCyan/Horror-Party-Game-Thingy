@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class TrapTriggerForwarder : MonoBehaviour
 {
-    private BlindTrap parentTrap;
+    private TrapBase parentTrap;
 
     private void Awake()
     {
-        parentTrap = GetComponentInParent<BlindTrap>();
+        parentTrap = GetComponentInParent<TrapBase>();
 
         if (parentTrap == null)
         {
-            Debug.LogError("[TrapTriggerForwarder] No BlindTrap found in parent!");
+            Debug.LogError("[TrapTriggerForwarder] No TrapBase found in parent!");
         }
     }
 

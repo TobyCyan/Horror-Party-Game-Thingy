@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
+using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +12,7 @@ public class SceneLifetimeManager : MonoBehaviour
     public ClientSceneLoader clientSceneLoader;
     private TaskCompletionSource<bool> _isCurrentlyPendingSceneEvent;
     private Queue<ProcessingScene> _sceneQueue;
-
+    public ISession activeSession = null;
     
     private HashSet<string> networkedSceneNames = new HashSet<string>();
 
