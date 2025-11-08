@@ -80,7 +80,7 @@ public class SkillUi : MonoBehaviour
             Debug.LogWarning("Player is null in BindPlayerToUi.");
             return;
         }
-
+       
         if (!player.IsOwner)
         {
             Debug.LogWarning("Attempted to bind non-local player to SkillUi.");
@@ -88,6 +88,7 @@ public class SkillUi : MonoBehaviour
         }
 
         player.OnPlayerEliminated += HandleOnPlayerEliminated;
+        PlayerManager.OnLocalPlayerSet -= BindPlayerToUi; // prevent any more rebinding, at least second play can die now 
     }
 
     private void HandleOnPlayerEliminated()
