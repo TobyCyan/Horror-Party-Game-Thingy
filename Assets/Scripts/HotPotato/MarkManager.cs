@@ -100,13 +100,20 @@ public class MarkManager : NetworkBehaviour
         return CurrentMarkedPlayerClientId.Value != INVALID_CLIENT_ID;
     }
 
+    // shoot me why not
     public void StartHPGame()
     {
-        // Set position again anyway
+        StartCoroutine(StartHPGameDelayed());
+    }
+
+    private IEnumerator StartHPGameDelayed()
+    {
+        yield return new WaitForSeconds(0.5f);
+
         PlayerManager.Instance?.players.ForEach(
             player => player.transform.SetPositionAndRotation(
                 SpawnManager.Instance.spawnPositions[(int)player.clientId].position, player.transform.rotation));
-        
+
         AssignRandomPlayerWithMark();
         OnGameStarted?.Invoke();
     }
