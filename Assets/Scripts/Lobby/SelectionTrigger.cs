@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +13,8 @@ public class SelectorTrigger : NetworkBehaviour
     private int triggerCount = 0;
     [SerializeField] private string[] sceneList = { "HospitalMapScene", "TestMazeScene" };
     [SerializeField] private int selectedIndex = 0;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSamples selectionAudioSamples;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -27,11 +28,13 @@ public class SelectorTrigger : NetworkBehaviour
         if (!IsOwner) return;
         if (other.CompareTag("Player")) OnGameDeselectedServerRpc();
     }
+
     [Rpc(SendTo.Server)]
     private void OnGameSelectedServerRpc()
     {
         // Update on server side
         triggerCount++;
+        PlaySfxRpc();
 
         if (triggerCount == PlayerManager.Instance.players.Count)
         {
@@ -69,5 +72,14 @@ public class SelectorTrigger : NetworkBehaviour
         // Update on server side
         triggerCount--;
     }
-    
+
+    [Rpc(SendTo.Everyone)]
+    private void PlaySfxRpc()
+    {
+        if (audioSource != null && selectionAudioSamples != null && selectionAudioSamples.Count > 0)
+        {
+            AudioClip clip = selectionAudioSamples.PickRandom();
+            audioSource.PlayOneShot(clip);
+        }
+    }
 }
