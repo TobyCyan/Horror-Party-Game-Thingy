@@ -72,6 +72,12 @@ public class PlayerManager : NetworkBehaviour
         return players.Where(p => !p.IsEliminated).ToList();
     }
 
+    public bool IsPlayerAlive(ulong clientId)
+    {
+        Player player = FindPlayerByClientId(clientId);
+        return player != null && !player.IsEliminated;
+    }
+
     public Player GetRandomAlivePlayer()
     {
         List<Player> alivePlayers = GetAlivePlayers();

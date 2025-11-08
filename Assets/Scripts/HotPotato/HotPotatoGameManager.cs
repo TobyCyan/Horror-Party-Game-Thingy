@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +13,11 @@ public class HotPotatoGameManager : NetworkBehaviour
     [SerializeField] private Timer hotPotatoTimer;
     public NetworkVariable<float> timer = new();
     private readonly NetworkVariable<bool> isGameActive = new(false);
+
+    // SFX
+    [SerializeField] private AudioSamples gameWinAudioSamples;
+    [SerializeField] private AudioSamples gameLoseAudioSamples;
+    [SerializeField] private AudioSource audioSource;
 
     void Awake()
     {
@@ -67,6 +71,8 @@ public class HotPotatoGameManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        if (!IsServer) return;
+
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
@@ -95,25 +101,53 @@ public class HotPotatoGameManager : NetworkBehaviour
     public async void EndGame()
     {
         Debug.Log("Hot Potato game ended.");
-        GetComponent<NetworkObject>().Despawn();
         markManager.StopHPGame();
 
         if (IsServer)
         {
             isGameActive.Value = false;
-            int playerCount = PlayerManager.Instance.players.Count;
+
+            // Play SFX for all players
+            PlayGameEndSfxRpc();
+
+            // TODO: Show game end UI
+
+            // Wait a bit before despawning to let players see the final state
+            await Task.Delay(5000);
+
             // Despawn everyone
-            for (int i = 0; i < playerCount; i++)
-            {
-                if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
-                    SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
-            }
+            DespawnPlayerRpc();
 
             // ScoreUiManager.Instance.ShowFinalScore();
             await Task.Delay(1000);
             
+            GetComponent<NetworkObject>().Despawn();
             await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
             await SceneLifetimeManager.Instance.ReturnToLobby();
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void DespawnPlayerRpc()
+    {
+        Player localPlayer = PlayerManager.Instance.FindPlayerByClientId(NetworkManager.Singleton.LocalClientId);
+        if (localPlayer != null)
+        {
+            SpawnManager.Instance.DespawnPlayerServerRpc(localPlayer.Id);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayGameEndSfxRpc()
+    {
+        bool isWin = PlayerManager.Instance.IsPlayerAlive(NetworkManager.Singleton.LocalClientId);
+        AudioSamples samples = isWin ? gameWinAudioSamples : gameLoseAudioSamples;
+        
+        if (audioSource != null && samples != null && samples.Count > 0)
+        {
+            AudioClip clip = samples.PickRandom();
+            audioSource.loop = false;
+            audioSource.PlayOneShot(clip);
         }
     }
 
