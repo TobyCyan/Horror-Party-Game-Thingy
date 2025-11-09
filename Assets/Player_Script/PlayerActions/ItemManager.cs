@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Server-authoritative item spawning system
-/// FIXED: Better callback handling and spawn verification
+/// FIXED: ID-based lookup instead of index-based for more robust item management
 /// </summary>
 public class ItemManager : NetworkBehaviour
 {
@@ -12,7 +12,7 @@ public class ItemManager : NetworkBehaviour
 
     [Header("Item Database")]
     [SerializeField] private NetworkPickupItem[] itemPrefabs;
-    [Tooltip("Item IDs start at 1. Array index 0 = Item ID 1")]
+    [Tooltip("Items are matched by their ItemID field, not array index")]
 
     [Header("Spawn Settings")]
     [SerializeField] private float minSpawnHeight = 0.5f;
@@ -92,11 +92,13 @@ public class ItemManager : NetworkBehaviour
         }
 
         int validCount = 0;
+        HashSet<int> seenIds = new HashSet<int>();
+
         for (int i = 0; i < itemPrefabs.Length; i++)
         {
             if (itemPrefabs[i] == null)
             {
-                Debug.LogWarning($"[ItemManager] Item slot {i} (ID {i + 1}) is null!");
+                Debug.LogWarning($"[ItemManager] Item slot {i} is null!");
                 continue;
             }
 
@@ -114,7 +116,22 @@ public class ItemManager : NetworkBehaviour
                 continue;
             }
 
+            int itemId = pickup.ItemID;
+            if (itemId <= 0)
+            {
+                Debug.LogError($"[ItemManager] Item '{itemPrefabs[i].name}' has invalid ItemID: {itemId}. Must be > 0!");
+                continue;
+            }
+
+            if (seenIds.Contains(itemId))
+            {
+                Debug.LogError($"[ItemManager] Duplicate ItemID {itemId} found! Item '{itemPrefabs[i].name}' conflicts with another item!");
+                continue;
+            }
+
+            seenIds.Add(itemId);
             validCount++;
+            Debug.Log($"[ItemManager] Registered item: ID {itemId} - {pickup.ItemName} ({itemPrefabs[i].name})");
         }
 
         Debug.Log($"[ItemManager] Loaded {validCount}/{itemPrefabs.Length} valid item prefabs");
@@ -124,13 +141,12 @@ public class ItemManager : NetworkBehaviour
     // === PUBLIC API ==========================================
     // =========================================================
 
+    /// <summary>
+    /// Check if we have item data for the given ID by searching through the array
+    /// </summary>
     public bool HasItemData(int itemId)
     {
-        int index = itemId - 1;
-        return itemPrefabs != null &&
-               index >= 0 &&
-               index < itemPrefabs.Length &&
-               itemPrefabs[index] != null;
+        return GetItemPrefab(itemId) != null;
     }
 
     public string GetItemName(int itemId)
@@ -200,10 +216,11 @@ public class ItemManager : NetworkBehaviour
 
         Debug.Log($"[ItemManager - SERVER] Processing spawn request - ItemID: {itemId}, ClientID: {senderClientId}, TransactionID: {transactionId}");
 
-        // Validate item ID
-        if (!HasItemData(itemId))
+        // Validate item ID by searching for the prefab
+        NetworkPickupItem prefab = GetItemPrefab(itemId);
+        if (prefab == null)
         {
-            Debug.LogWarning($"[ItemManager - SERVER] Invalid item ID {itemId} requested by client {senderClientId}");
+            Debug.LogWarning($"[ItemManager - SERVER] Invalid item ID {itemId} requested by client {senderClientId} - no matching prefab found");
             NotifySpawnFailedClientRpc(senderClientId, transactionId, "Invalid item ID");
             return;
         }
@@ -224,15 +241,6 @@ public class ItemManager : NetworkBehaviour
             Debug.Log($"[ItemManager - SERVER] Adjusted spawn position Y to {minSpawnHeight}");
         }
 
-        // Get prefab
-        NetworkPickupItem prefab = GetItemPrefab(itemId);
-        if (prefab == null)
-        {
-            Debug.LogError($"[ItemManager - SERVER] Failed to get prefab for item ID {itemId}");
-            NotifySpawnFailedClientRpc(senderClientId, transactionId, "Prefab not found");
-            return;
-        }
-
         // Instantiate item
         NetworkPickupItem newItem = Instantiate(prefab, requestedPosition, rotation);
         if (newItem == null)
@@ -251,7 +259,7 @@ public class ItemManager : NetworkBehaviour
             return;
         }
 
-        // Set item data using reflection (more robust)
+        // Set item data using reflection (ensure ID is set correctly)
         try
         {
             var itemIDField = newItem.GetType().GetField("itemID",
@@ -267,7 +275,7 @@ public class ItemManager : NetworkBehaviour
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 if (itemNameField != null)
                 {
-                    itemNameField.SetValue(newItem, $"Item_{itemId}");
+                    itemNameField.SetValue(newItem, prefab.ItemName);
                 }
             }
         }
@@ -284,7 +292,7 @@ public class ItemManager : NetworkBehaviour
             // Track spawned item
             spawnedItems.Add(netObj);
 
-            Debug.Log($"[ItemManager - SERVER] ✅ Successfully spawned item ID {itemId} with NetworkObjectId {netObj.NetworkObjectId} for client {senderClientId}");
+            Debug.Log($"[ItemManager - SERVER] ✅ Successfully spawned item ID {itemId} ({prefab.ItemName}) with NetworkObjectId {netObj.NetworkObjectId} for client {senderClientId}");
 
             // Notify the requesting client with the NetworkObjectId
             NotifySpawnSuccessClientRpc(senderClientId, transactionId, netObj.NetworkObjectId);
@@ -357,16 +365,32 @@ public class ItemManager : NetworkBehaviour
     // === INTERNAL HELPERS ====================================
     // =========================================================
 
+    /// <summary>
+    /// Get item prefab by searching through the array for matching ItemID
+    /// This is more robust than index-based lookup
+    /// </summary>
     private NetworkPickupItem GetItemPrefab(int itemId)
     {
-        int index = itemId - 1;
-
-        if (itemPrefabs == null || index < 0 || index >= itemPrefabs.Length)
+        if (itemPrefabs == null || itemPrefabs.Length == 0)
         {
             return null;
         }
 
-        return itemPrefabs[index];
+        // Search through all prefabs to find matching ID
+        for (int i = 0; i < itemPrefabs.Length; i++)
+        {
+            if (itemPrefabs[i] == null)
+                continue;
+
+            NetworkPickupItem pickup = itemPrefabs[i].GetComponent<NetworkPickupItem>();
+            if (pickup != null && pickup.ItemID == itemId)
+            {
+                return itemPrefabs[i];
+            }
+        }
+
+        Debug.LogWarning($"[ItemManager] No prefab found with ItemID: {itemId}");
+        return null;
     }
 
     private void CleanupDestroyedItems()
@@ -409,16 +433,24 @@ public class ItemManager : NetworkBehaviour
             return;
         }
 
-        Debug.Log($"=== Item Database ({itemPrefabs.Length} items) ===");
+        Debug.Log($"=== Item Database ({itemPrefabs.Length} slots) ===");
         for (int i = 0; i < itemPrefabs.Length; i++)
         {
             if (itemPrefabs[i] != null)
             {
-                Debug.Log($"  ID {i + 1}: {itemPrefabs[i].ItemName} ({itemPrefabs[i].name})");
+                NetworkPickupItem pickup = itemPrefabs[i].GetComponent<NetworkPickupItem>();
+                if (pickup != null)
+                {
+                    Debug.Log($"  Slot {i}: ID {pickup.ItemID} - {pickup.ItemName} ({itemPrefabs[i].name})");
+                }
+                else
+                {
+                    Debug.Log($"  Slot {i}: {itemPrefabs[i].name} [NO NetworkPickupItem COMPONENT]");
+                }
             }
             else
             {
-                Debug.Log($"  ID {i + 1}: [NULL]");
+                Debug.Log($"  Slot {i}: [NULL]");
             }
         }
     }
@@ -438,6 +470,65 @@ public class ItemManager : NetworkBehaviour
         {
             float age = Time.time - kvp.Value.timestamp;
             Debug.Log($"  Transaction {kvp.Key}: Client {kvp.Value.clientId}, Age: {age:F2}s");
+        }
+    }
+
+    [ContextMenu("Validate Item IDs")]
+    private void ValidateItemIDs()
+    {
+        if (itemPrefabs == null || itemPrefabs.Length == 0)
+        {
+            Debug.LogWarning("No item prefabs to validate");
+            return;
+        }
+
+        Debug.Log("=== Item ID Validation ===");
+        HashSet<int> foundIds = new HashSet<int>();
+        int issues = 0;
+
+        for (int i = 0; i < itemPrefabs.Length; i++)
+        {
+            if (itemPrefabs[i] == null)
+            {
+                Debug.LogWarning($"Slot {i}: NULL prefab");
+                issues++;
+                continue;
+            }
+
+            NetworkPickupItem pickup = itemPrefabs[i].GetComponent<NetworkPickupItem>();
+            if (pickup == null)
+            {
+                Debug.LogError($"Slot {i} ({itemPrefabs[i].name}): Missing NetworkPickupItem component");
+                issues++;
+                continue;
+            }
+
+            int id = pickup.ItemID;
+            if (id <= 0)
+            {
+                Debug.LogError($"Slot {i} ({itemPrefabs[i].name}): Invalid ID {id} (must be > 0)");
+                issues++;
+                continue;
+            }
+
+            if (foundIds.Contains(id))
+            {
+                Debug.LogError($"Slot {i} ({itemPrefabs[i].name}): Duplicate ID {id}!");
+                issues++;
+                continue;
+            }
+
+            foundIds.Add(id);
+            Debug.Log($"Slot {i}: ✅ ID {id} - {pickup.ItemName}");
+        }
+
+        if (issues == 0)
+        {
+            Debug.Log($"✅ All {foundIds.Count} items validated successfully!");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ Validation complete with {issues} issue(s)");
         }
     }
 #endif

@@ -78,7 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   itemName: Freeze_Trap
-  itemID: 200
+  itemID: 4
   visualObject: {fileID: 7789646493628581272}
   itemCollider: {fileID: 1584954269730644559}
   pickupEffect: {fileID: 0}

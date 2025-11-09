@@ -77,7 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   itemName: Slow_Trap
-  itemID: 3
+  itemID: 5
   visualObject: {fileID: 499916335352593906}
   itemCollider: {fileID: 7060908104619183519}
   pickupEffect: {fileID: 0}
@@ -125,6 +125,14 @@ MonoBehaviour:
   placement: 0
   cooldown: 0.5
   oneShot: 1
+  triggerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  armedVisuals: {fileID: 0}
+  disarmedVisuals: {fileID: 0}
+  trapRenderer: {fileID: 2157491617931762727}
+  armedColor: {r: 1, g: 0, b: 0, a: 1}
+  disarmedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   ownerClientId:
     m_InternalValue: 0
   deployedSfxSettings:
