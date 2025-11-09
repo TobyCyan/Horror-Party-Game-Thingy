@@ -20,14 +20,18 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
     protected Material trapMaterial;
 
-    protected GameObject owner;
-    protected float lastTriggerTime = -999f;
-
     public NetworkVariable<ulong> ownerClientId = new NetworkVariable<ulong>();
 
     // Network variables for state sync
     private NetworkVariable<bool> netIsDeployed = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> netIsArmed = new NetworkVariable<bool>(false);
+
+    protected GameObject owner;
+    protected float lastTriggerTime = -999f;
+
+    [Header("SFX")]
+    [SerializeField] private AudioSettings deployedSfxSettings;
+    [SerializeField] private AudioSettings triggeredSfxSettings;
 
     // Public properties (ITrap interface)
     public TrapPlacementKind Placement => placement;
@@ -80,6 +84,7 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         // Unsubscribe to prevent memory leaks when the object is destroyed
         OnArmed -= HandleArmed;
         OnDisarmed -= HandleDisarmed;
+        Debug.Log($"[TrapBase] OnDestroy called");
 
         // Clean up the material instance we created in Awake()
         if (trapMaterial != null)
@@ -189,15 +194,21 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         transform.SetPositionAndRotation(pos, rot);
         owner = ownerGO;
+        Player playerComponent = null;
 
         // Extract owner client ID
         ulong ownerClientIdValue = 0;
-        if (owner != null && owner.TryGetComponent<Player>(out var playerComponent))
+        if (owner != null && owner.TryGetComponent(out playerComponent))
         {
             ownerClientIdValue = playerComponent.OwnerClientId;
         }
 
         gameObject.SetActive(true);
+
+        if (playerComponent != null && !deployedSfxSettings.IsNullOrEmpty())
+        {
+            playerComponent.PlayLocalAudio(deployedSfxSettings);
+        }
 
         // Check if we're server
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
@@ -417,6 +428,15 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
 
         // Call derived class implementation
         OnTriggerCore(ctx);
+
+        Debug.Log($"[TrapBase] Trap triggered by {ctx.instigator?.name ?? "unknown"}");
+        if (!triggeredSfxSettings.IsNullOrEmpty())
+        {
+            if (ctx.instigator.TryGetComponent<Player>(out var playerComponent))
+            {
+                playerComponent.PlayLocalAudio(triggeredSfxSettings);
+            }
+        }
 
         bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
         if (isServer)

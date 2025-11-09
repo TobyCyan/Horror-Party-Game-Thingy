@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class RevealedUi : MonoBehaviour
@@ -8,15 +9,13 @@ public class RevealedUi : MonoBehaviour
     {
         Hide();
         PlayerManager.OnLocalPlayerSet += SetAndBindPlayerSilhouette;
+        PlayerManager.OnPlayerRemoved += UnbindPlayerSilhouette;
     }
 
     private void OnDestroy()
     {
-        if (playerSilhouette != null)
-        {
-            playerSilhouette.OnSilhouetteShown -= Reveal;
-            playerSilhouette.OnSilhouetteHidden -= Hide;
-        }
+        PlayerManager.OnLocalPlayerSet -= SetAndBindPlayerSilhouette;
+        PlayerManager.OnPlayerRemoved -= UnbindPlayerSilhouette;
     }
 
     private void SetAndBindPlayerSilhouette(Player player)
@@ -30,6 +29,28 @@ public class RevealedUi : MonoBehaviour
 
         playerSilhouette.OnSilhouetteShown += Reveal;
         playerSilhouette.OnSilhouetteHidden += Hide;
+    }
+
+    private void UnbindPlayerSilhouette(Player player)
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("Player is null in UnbindPlayerSilhouette.");
+            return;
+        }
+
+        if (player.clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            Debug.Log("UnbindPlayerSilhouette called for non-local player; ignoring.");
+            return;
+        }
+
+        if (playerSilhouette != null)
+        {
+            playerSilhouette.OnSilhouetteShown -= Reveal;
+            playerSilhouette.OnSilhouetteHidden -= Hide;
+            playerSilhouette = null;
+        }
     }
 
     private void Reveal()

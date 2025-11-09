@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,7 +12,12 @@ public class HotPotatoGameManager : NetworkBehaviour
     [SerializeField] private float hotPotatoDuration = 30.0f;
     [SerializeField] private Timer hotPotatoTimer;
     public NetworkVariable<float> timer = new();
-    private bool isGameActive = true;
+    private readonly NetworkVariable<bool> isGameActive = new(false);
+
+    // SFX
+    [SerializeField] private AudioSamples gameWinAudioSamples;
+    [SerializeField] private AudioSamples gameLoseAudioSamples;
+    [SerializeField] private AudioSource audioSource;
 
     void Awake()
     {
@@ -28,8 +32,10 @@ public class HotPotatoGameManager : NetworkBehaviour
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated += HandleMarkedPlayerEliminated;
+            markManager.OnMarkedPlayerEliminated += MarkManager_OnMarkedPlayerEliminated;
             markManager.OnGameStarted += StartHPTimer;
             PlayerManager.OnAllPlayersLoaded += markManager.StartHPGame;
+            markManager.OnGameStarted += MarkManager_OnGameStarted;
         }
 
         PlayerManager.OnLastPlayerStanding += EndGame;
@@ -44,7 +50,6 @@ public class HotPotatoGameManager : NetworkBehaviour
             markManager.PostEliminationCoolDownTimer.OnTimeUp += StartHPTimer;
         }
 
-
         if (markManager == null)
         {
             Debug.LogError("MarkManager reference is missing in HotPotatoGameManager.");
@@ -52,13 +57,29 @@ public class HotPotatoGameManager : NetworkBehaviour
         }
     }
 
+    private void MarkManager_OnMarkedPlayerEliminated()
+    {
+        // Pause timer so won't accidentally eliminate next player during cool down
+        hotPotatoTimer.StopTimer();
+    }
+
+    private void MarkManager_OnGameStarted()
+    {
+        isGameActive.Value = true;
+    }
+
     public override void OnNetworkDespawn()
     {
+        if (!IsServer) return;
+
         if (markManager != null)
         {
             markManager.OnMarkedPlayerEliminated -= HandleMarkedPlayerEliminated;
+            markManager.OnMarkedPlayerEliminated -= MarkManager_OnMarkedPlayerEliminated;
             markManager.OnGameStarted -= StartHPTimer;
             markManager.StopHPGame();
+            PlayerManager.OnAllPlayersLoaded -= markManager.StartHPGame;
+            markManager.OnGameStarted -= MarkManager_OnGameStarted;
         }
 
         if (hotPotatoTimer != null)
@@ -76,27 +97,56 @@ public class HotPotatoGameManager : NetworkBehaviour
         PlayerManager.OnLastPlayerStanding -= EndGame;
     }
 
-    private async void EndGame()
+    public async void EndGame()
     {
-        isGameActive = false;
         Debug.Log("Hot Potato game ended.");
-        GetComponent<NetworkObject>().Despawn();
+        markManager.StopHPGame();
 
         if (IsServer)
         {
-            int playerCount = PlayerManager.Instance.players.Count;
+            isGameActive.Value = false;
+
+            // Play SFX for all players
+            PlayGameEndSfxRpc();
+
+            // TODO: Show game end UI
+
+            // Wait a bit before despawning to let players see the final state
+            await Task.Delay(5000);
+
             // Despawn everyone
-            for (int i = 0; i < playerCount; i++)
-            {
-                if (PlayerManager.Instance.FindPlayerByClientId((ulong)i))
-                    SpawnManager.Instance.DespawnPlayerServerRpc(PlayerManager.Instance.FindPlayerByClientId((ulong)i).Id);
-            }
+            DespawnPlayerRpc();
 
             // ScoreUiManager.Instance.ShowFinalScore();
             await Task.Delay(1000);
             
+            GetComponent<NetworkObject>().Despawn();
             await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
             await SceneLifetimeManager.Instance.ReturnToLobby();
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void DespawnPlayerRpc()
+    {
+        Player localPlayer = PlayerManager.Instance.FindPlayerByClientId(NetworkManager.Singleton.LocalClientId);
+        if (localPlayer != null)
+        {
+            SpawnManager.Instance.DespawnPlayerServerRpc(localPlayer.Id);
+        }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayGameEndSfxRpc()
+    {
+        bool isWin = PlayerManager.Instance.IsPlayerAlive(NetworkManager.Singleton.LocalClientId);
+        AudioSamples samples = isWin ? gameWinAudioSamples : gameLoseAudioSamples;
+        
+        if (audioSource != null && samples != null && samples.Count > 0)
+        {
+            AudioClip clip = samples.PickRandom();
+            audioSource.loop = false;
+            audioSource.PlayOneShot(clip);
         }
     }
 
@@ -125,7 +175,7 @@ public class HotPotatoGameManager : NetworkBehaviour
 
     private void Update()
     {
-        if (!isGameActive) return;
+        if (!isGameActive.Value) return;
 
         if (IsServer)
         {

@@ -8,7 +8,6 @@ public class BlindTrap : TrapBase
     [SerializeField] private float blindDuration = 5f;
     [SerializeField] private float silhouetteDuration = 5f;
 
-    //private Material trapMaterial;
 
     protected override void Awake()
     {
@@ -18,53 +17,8 @@ public class BlindTrap : TrapBase
     protected override void Start()
     {
         base.Start();
-
-        //// Subscribe to lifecycle events
-        //OnArmed += HandleArmed;
-        //OnDisarmed += HandleDisarmed;
-
-        //SetTrapVisualState(IsArmed);
-        //// Initial color update
-        //UpdateVisualColor();
-
         Debug.Log($"[BlindTrap] Start complete");
     }
-
-    //private void OnDestroy()
-    //{
-    //    OnArmed -= HandleArmed;
-    //    OnDisarmed -= HandleDisarmed;
-    //}
-
-    //private void HandleArmed(ITrap trap)
-    //{
-    //    SetTrapVisualState(IsArmed);
-    //    UpdateVisualColor();
-    //    Debug.Log($"[BlindTrap] HandleArmed - Updating color to RED");
-    //}
-
-    //private void HandleDisarmed(ITrap trap)
-    //{
-    //    SetTrapVisualState(IsArmed);
-    //    UpdateVisualColor();
-    //    Debug.Log($"[BlindTrap] HandleDisarmed - Updating color to GRAY");
-    //}
-
-    //private void SetTrapVisualState(bool isArmed)
-    //{
-    //    armState.SetActive(isArmed);
-    //    disarmState.SetActive(!isArmed);
-    //}
-
-    //private void UpdateVisualColor()
-    //{
-    //    if (trapMaterial != null)
-    //    {
-    //        Color targetColor = IsArmed ? armedColor : disarmedColor;
-    //        trapMaterial.color = targetColor;
-    //        Debug.Log($"[BlindTrap] Color updated to {(IsArmed ? "RED (armed)" : "GRAY (disarmed)")}");
-    //    }
-    //}
 
     protected override bool IsValidTrigger(Collider other, out ulong instigatorNetworkId)
     {
@@ -134,9 +88,6 @@ public class BlindTrap : TrapBase
     public override void Deploy(Vector3 pos, Quaternion rot, GameObject ownerGO)
     {
         base.Deploy(pos, rot, ownerGO);
-
-        // Update color after deployment
-        //UpdateVisualColor();
         Debug.Log($"[BlindTrap] Deploy complete - IsArmed: {IsArmed}");
     }
 }

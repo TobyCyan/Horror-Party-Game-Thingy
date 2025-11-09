@@ -1,33 +1,23 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class HPPassingLogic : MonoBehaviour
 {
-    private const float PassCooldown = 5f;
-    // Global pass time
-    private static float lastPassTime = -Mathf.Infinity;
-
     private void OnCollisionEnter(Collision other)
     {
-        // Only marked person should try to pass
-        if (MarkManager.currentMarkedPlayer?.Id != PlayerManager.Instance.localPlayer?.Id) return;
+        if (other.collider.tag != "Player") return;
         
-        if (!CanPass()) return;
-
+        // Only marked person should try to pass
+        ulong localClientId = NetworkManager.Singleton.LocalClientId;
+        if (!MarkManager.IsPlayerMarked(localClientId))
+        {
+            Debug.LogWarning($"Client {localClientId} tried to pass the mark but is not the marked player.");
+            return;
+        }
+        
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            lastPassTime = Time.time;
-            MarkManager.Instance.PassMarkToPlayer(player.Id);
+            MarkManager.Instance.PassMarkToPlayer(localClientId, player.clientId);
         }
-    }
-
-    private bool CanPass()
-    {
-        bool isCooldownOver = IsCooldownOver();
-        return isCooldownOver;
-    }
-
-    private bool IsCooldownOver()
-    {
-        return Time.time - lastPassTime >= PassCooldown;
     }
 }

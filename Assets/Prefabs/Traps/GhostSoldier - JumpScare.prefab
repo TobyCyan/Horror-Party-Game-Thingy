@@ -173,6 +173,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GhostSoldier - JumpScare
       objectReference: {fileID: 0}
+    - target: {fileID: 6988336940430040307, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 697780027
+      objectReference: {fileID: 0}
     - target: {fileID: 9188209229025624927, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
       propertyPath: m_Controller
       value: 
@@ -191,17 +195,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8188101763154642663}
   m_SourcePrefab: {fileID: 100100000, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
---- !u!114 &202024338356143028 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7561992660520686746, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
-  m_PrefabInstance: {fileID: 7655033404714506030}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2540656385060796389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d6c21601fd519c40add688830fab45a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2540656385060796389 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5295703023776014539, guid: 44d8904bb6adbab4080ea57d1c0f844b, type: 3}
@@ -219,10 +212,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46bbd5a056b998c4b82f1f5f74e883b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   jumpScareSfx: {fileID: 8300000, guid: 1c1c857b5af93764a85e393afa753bb2, type: 3}
   offset: {x: 0, y: -1.85, z: 0.15}
-  effects:
-  - {fileID: 202024338356143028}
   shouldResumeCameraMovementAfter: 1
 --- !u!82 &8188101763154642663
 AudioSource:

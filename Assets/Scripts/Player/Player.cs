@@ -1,7 +1,8 @@
-using Unity.Netcode;
-using Unity.Collections;
-using UnityEngine;
 using System;
+using System.Collections;
+using Unity.Collections;
+using Unity.Netcode;
+using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
@@ -13,12 +14,15 @@ public class Player : NetworkBehaviour
     [SerializeField] protected PlayerMovement playerMovement;
     [SerializeField] protected PlayerCam playerCam;
     [SerializeField] protected Transform meshRoot;
+    [SerializeField] private AudioPlayer audioPlayer;
     public Transform MeshRoot => meshRoot;
 
     public PlayerCam PlayerCam => playerCam;
     public ulong Id => NetworkObjectId;
     public ulong clientId;
     
+    private readonly NetworkVariable<bool> isEliminated = new(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public bool IsEliminated => isEliminated.Value;
     public event Action OnPlayerEliminated;
 
     [SerializeField] private string defaultLayerName = "Default";
@@ -48,14 +52,25 @@ public class Player : NetworkBehaviour
 
         clientId = OwnerClientId;
         PlayerManager.Instance.AddPlayer(this);
-        ScoreUiManager.Instance?.PlayerJoined(clientId); 
+        ScoreUiManager.Instance?.PlayerJoined(clientId);
+
+        // Notify PlayerManager that this player is ready
+        // Important for syncing game start only when all players are ready
+        if (IsOwner)
+            NotifyPlayerManagerServerRpc(clientId);
     }
     
     public override void OnNetworkDespawn()
     {
-        base.OnNetworkDespawn();
         PlayerManager.Instance.RemovePlayer(this);
         ScoreUiManager.Instance?.PlayerLeft(clientId);
+        base.OnNetworkDespawn();
+    }
+
+    [Rpc(SendTo.Server)]
+    private void NotifyPlayerManagerServerRpc(ulong clientId)
+    {
+        PlayerManager.Instance.NotifyPlayerReady(clientId);
     }
 
     public void EnablePlayer(bool enable)
@@ -64,12 +79,12 @@ public class Player : NetworkBehaviour
         playerMovement.enabled = enable;
         playerCam.enabled = enable;
         audioListener.enabled = enable;
+        audioPlayer.enabled = enable;
     }
 
     public void LockPlayerInPlace()
     {
         // EnablePlayer(false);
-        playerCam.enabled = false;
         playerMovement.FreezeInPlace();
         playerCam.LookStraight();
     }
@@ -84,17 +99,50 @@ public class Player : NetworkBehaviour
         playerMovement.Blind(duration);
     }
 
-    public void EliminatePlayer()
+    [Rpc(SendTo.Server)]
+    public void EliminatePlayerServerRpc(RpcParams rpcParams = default)
     {
-        Debug.Log($"Player {Id} eliminated.");
-        OnPlayerEliminated?.Invoke();
+        // Verify that the caller owns this NetworkObject
+        //if (rpcParams.Receive.SenderClientId != OwnerClientId)
+        //{
+        //    Debug.LogWarning($"[{name}] Unauthorized eliminate request from {rpcParams.Receive.SenderClientId} ignored.");
+        //    return;
+        //}
 
-        // TODO: Add logic to hide player and go into spectator mode
+        if (isEliminated.Value)
+        {
+            Debug.LogWarning($"[{name}] Player already eliminated. Duplicate eliminate request ignored.");
+            return;
+        }
+
+        OnPlayerEliminated?.Invoke();
+        isEliminated.Value = true;
+        NotifyPlayerEliminatedClientRpc(clientId);
+        StartCoroutine(DelayedDespawn());
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void NotifyPlayerEliminatedClientRpc(ulong eliminatedClientId)
+    {
+        // Local feedback only
+        if (NetworkManager.Singleton.LocalClientId == eliminatedClientId)
+        {
+            Debug.Log($"[Client] {eliminatedClientId} with local client Id {NetworkManager.Singleton.LocalClientId} You were eliminated.");
+            // UIManager.Instance.ShowEliminatedScreen();
+            // Called on local player side too
+            OnPlayerEliminated?.Invoke();
+        }
+        else
+        {
+            Debug.Log($"[Client] Player {eliminatedClientId} was eliminated.");
+            // UIManager.Instance.ShowOtherPlayerEliminated(eliminatedClientId);
+        }
+    }
+
+    private IEnumerator DelayedDespawn()
+    {
+        yield return null;
         SpawnManager.Instance.DespawnPlayerServerRpc(Id);
-        
-        // Update Scoreboard
-        if (ScoreUiManager.Instance)
-            ScoreUiManager.UpdateScore(clientId, float0, int0, int1);
     }
 
     [Rpc(SendTo.Everyone)]
@@ -111,6 +159,44 @@ public class Player : NetworkBehaviour
         {
             meshRoot.gameObject.layer = layer;
         }
+    }
+
+    public void PlayLocalAudio(AudioSettings settings)
+    {
+        if (clientId != NetworkManager.Singleton.LocalClientId)
+        {
+            Debug.LogWarning($"Attempted to play local audio on non-local player {name}.");
+            return;
+        }
+
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+
+        if (audioPlayer == null)
+        {
+            Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
+            return;
+        }
+
+        audioPlayer.PlaySfx(settings);
+    }
+
+    public void PlayGlobalAudio(AudioSettings settings, Vector3 position)
+    {
+        if (settings.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"AudioSettings is null or empty in requestor {settings.requestorName}.");
+            return;
+        }
+        if (audioPlayer == null)
+        {
+            Debug.LogWarning($"AudioPlayer component is not assigned in Player {name}.");
+            return;
+        }
+        audioPlayer.PlayGlobal(settings, position);
     }
 
     // // Give Last touch player authority to move it

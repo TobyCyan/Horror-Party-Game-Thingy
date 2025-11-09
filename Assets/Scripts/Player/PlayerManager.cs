@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -13,13 +15,14 @@ public class PlayerManager : NetworkBehaviour
     public static event Action<Player> OnPlayerAdded;
     public static event Action<Player> OnPlayerRemoved;
     public Player localPlayer;
-    private readonly List<Player> alivePlayers = new();
-    public List<Player> AlivePlayers => alivePlayers;
     public static event Action OnAllPlayersEliminated;
     public static event Action OnLastPlayerStanding;
     public static event Action<Player> OnLocalPlayerSet;
     public static event Action OnAllPlayersLoaded;
+
+    // For tracking expected players after scene load
     private int expectedPlayers = 100;
+    private readonly HashSet<ulong> readyClients = new();
 
     private void Awake()
     {
@@ -50,58 +53,39 @@ public class PlayerManager : NetworkBehaviour
         }
         
         players.Add(player);
-        alivePlayers.Add(player);
-        player.OnPlayerEliminated += () => EliminatePlayer(player);
+        Debug.Log($"[PlayerManager] Client {player.clientId} added at frame {Time.frameCount}");
 
         OnPlayerAdded?.Invoke(player);
-        if (players.Count == expectedPlayers)
-        {
-            OnAllPlayersLoaded?.Invoke();
-        }
     }
     
     public void RemovePlayer(Player player)
     {
         if (!players.Contains(player)) return;
-        
-        players.Remove(player);
-        alivePlayers.Remove(player);
-        player.OnPlayerEliminated -= () => EliminatePlayer(player);
 
+        // Invoke event first to allow cleanup before removal
         OnPlayerRemoved?.Invoke(player);
-    }
+        players.Remove(player);
 
-    /// <summary>
-    /// Eliminates a player from the alive players list.
-    /// </summary>
-    /// <param name="player"></param>
-    public void EliminatePlayer(Player player)
-    {
-        if (!players.Contains(player)) return;
-        
-        if (alivePlayers.Contains(player))
-        {
-            alivePlayers.Remove(player);
-        }
-
-        if (alivePlayers.Count <= 1)
+        if (players.Count == 1)
         {
             OnLastPlayerStanding?.Invoke();
         }
-
-        if (alivePlayers.Count == 0)
-        {
-            OnAllPlayersEliminated?.Invoke();
-        }
     }
 
-    public bool IsPlayerAlive(Player player)
+    public List<Player> GetAlivePlayers()
     {
-        return alivePlayers.Contains(player);
+        return players.Where(p => !p.IsEliminated).ToList();
+    }
+
+    public bool IsPlayerAlive(ulong clientId)
+    {
+        Player player = FindPlayerByClientId(clientId);
+        return player != null && !player.IsEliminated;
     }
 
     public Player GetRandomAlivePlayer()
     {
+        List<Player> alivePlayers = GetAlivePlayers();
         if (alivePlayers.Count == 0)
         {
             return null;
@@ -109,6 +93,21 @@ public class PlayerManager : NetworkBehaviour
 
         int randomIndex = Random.Range(0, alivePlayers.Count);
         return alivePlayers[randomIndex];
+    }
+
+    public void NotifyPlayerReady(ulong clientId)
+    {
+        if (readyClients.Contains(clientId))
+            return;
+
+        readyClients.Add(clientId);
+        Debug.Log($"[PlayerManager] Client {clientId} is ready ({readyClients.Count}/{expectedPlayers})");
+
+        if (readyClients.Count >= expectedPlayers)
+        {
+            Debug.Log("[PlayerManager] All players reported ready!");
+            OnAllPlayersLoaded?.Invoke();
+        }
     }
 
     public Player FindPlayerByNetId(ulong id)

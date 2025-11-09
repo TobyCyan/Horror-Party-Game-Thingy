@@ -12,6 +12,7 @@ public class PlayerPickup : NetworkBehaviour
     [SerializeField] private float pickupRange = 3f;
     [SerializeField] private KeyCode pickupKey = KeyCode.Q;
     [SerializeField] private LayerMask pickupLayer;
+    [SerializeField] private AudioSettings pickupSfxSettings;
 
     [Header("Control")]
     [SerializeField] private bool isPickupEnabled = true;
@@ -26,6 +27,7 @@ public class PlayerPickup : NetworkBehaviour
     private NetworkPickupItem nearestItem = null;
     private PlayerInventory inventory;
     private Camera playerCamera;
+    private Player player;
     private float lastPickupAttemptTime = 0f;
 
     public bool IsPickupEnabled { get => isPickupEnabled; set => isPickupEnabled = value; }
@@ -37,6 +39,7 @@ public class PlayerPickup : NetworkBehaviour
 
     private void Start()
     {
+        player = GetComponent<Player>();
         inventory = GetComponent<PlayerInventory>();
         if (!IsOwner) return;
 
@@ -122,6 +125,20 @@ public class PlayerPickup : NetworkBehaviour
         }
 
         nearestItem = closest;
+        foreach (var item in allItems)
+        {
+            item.HighlightItem(item == nearestItem);
+        }
+    }
+
+    public void ClearNearestItem()
+    {
+        if (nearestItem != null)
+        {
+            nearestItem.HighlightItem(false);
+            nearestItem = null;
+            UpdatePickupPrompt();
+        }
     }
 
     // =========================================================
@@ -362,6 +379,14 @@ public class PlayerPickup : NetworkBehaviour
         // TODO: Implement UI notification, sound, etc.
         // Example: UIManager.Instance.ShowNotification($"Picked up {itemName}");
         Debug.Log($"[PlayerPickup] 🎯 Picked up: {itemName}");
+        PlayPickUpSfx();
+    }
+
+    private void PlayPickUpSfx()
+    {
+        if (pickupSfxSettings.IsNullOrEmpty()) return;
+        if (player == null) return;
+        player.PlayLocalAudio(pickupSfxSettings);
     }
 
     private void ShowInventoryFullFeedback()

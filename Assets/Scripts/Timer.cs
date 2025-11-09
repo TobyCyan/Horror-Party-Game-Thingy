@@ -31,7 +31,7 @@ public class Timer : MonoBehaviour
 
     private void OnDestroy()
     {
-        StopTimer();
+        // StopTimer();
     }
 
     public void StopTimer()

@@ -8,7 +8,7 @@ public class SpawnManager : NetworkBehaviour
     public static SpawnManager Instance;
     
     [SerializeField] private NetworkObject spawnPrefab;
-    [SerializeField] private List<Transform> spawnPositions;
+    public List<Transform> spawnPositions;
     
     void Awake()
     {
@@ -28,7 +28,11 @@ public class SpawnManager : NetworkBehaviour
     private void OnSceneLoaded(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         NetworkManager.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
-        SpawnPlayersServerRpc();
+
+        foreach (var cId in clientsCompleted)
+        {
+            SpawnPlayerByCId(cId);            
+        }
     }
 
     private void OnSceneUnload(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
@@ -44,21 +48,45 @@ public class SpawnManager : NetworkBehaviour
         if (PlayerManager.Instance.FindPlayerByClientId(ctx.Receive.SenderClientId)) return;
         
         Debug.Log($"Spawning Player with id: {ctx.Receive.SenderClientId}");
-        Player player = Instantiate(
-            spawnPrefab, 
-            spawnPositions[(int) ctx.Receive.SenderClientId].position, 
-            Quaternion.identity).GetComponent<Player>();
+
+        NetworkManager.SpawnManager.InstantiateAndSpawn(
+            spawnPrefab,
+            ctx.Receive.SenderClientId,
+            true,
+            true,
+            false,
+            spawnPositions[(int)ctx.Receive.SenderClientId].position,
+            Quaternion.identity);
+    }
+
+    public void SpawnPlayerByCId(ulong cId)
+    {
+        // Don't spawn if exist already
+        if (PlayerManager.Instance.FindPlayerByClientId(cId)) return;
         
-        player.GetComponent<NetworkObject>().SpawnWithOwnership(ctx.Receive.SenderClientId);
+        Debug.Log($"Spawning Player with id: {cId}");
+
+        NetworkManager.SpawnManager.InstantiateAndSpawn(
+            spawnPrefab,
+            cId,
+            true,
+            true,
+            false,
+            spawnPositions[(int)cId].position,
+            Quaternion.identity);
     }
     
     [Rpc(SendTo.Server)]
     public void DespawnPlayerServerRpc(ulong id, RpcParams ctx = default)
     {
+        if (PlayerManager.Instance.FindPlayerByClientId(id)) return;
+        
         // Destroy current player
-        Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId}");
+        Debug.Log($"Despawning Player with id: {ctx.Receive.SenderClientId} at frame: {Time.frameCount}");
         Player player = PlayerManager.Instance.FindPlayerByNetId(id);
-
-        player.GetComponent<NetworkObject>().Despawn(); // Despawn Calls Camera Switch
+        if (player)
+        {
+            player.GetComponent<NetworkObject>().Despawn();
+        } // Despawn Calls Camera Switch
     }
 }

@@ -105,7 +105,7 @@ public class HPSkillInputManager : MonoBehaviour
         huntersSightSkill.UseSkill();
     }
 
-    private void SetAsHunter(ulong newHunterId)
+    private void SetAsHunter(ulong newHunterClientId)
     {
         if (!TryGetComponent(out Player owner))
         {
@@ -113,7 +113,7 @@ public class HPSkillInputManager : MonoBehaviour
             return;
         }
 
-        bool isHunter = owner.Id == newHunterId;
+        bool isHunter = owner.clientId == newHunterClientId;
         SetCanUseHunterSkill(isHunter);
 
         // Enable/disable interactions based on hunter status
@@ -145,6 +145,7 @@ public class HPSkillInputManager : MonoBehaviour
         if (playerPickup != null)
         {
             playerPickup.IsPickupEnabled = !isHunter;
+            playerPickup.ClearNearestItem();
             Debug.Log($"[HPSkillInputManager] Pickup {(isHunter ? "disabled" : "enabled")} - player is {(isHunter ? "hunter" : "prey")}");
         }
 

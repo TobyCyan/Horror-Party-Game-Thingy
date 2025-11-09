@@ -78,6 +78,7 @@ public class PlayerCam : NetworkBehaviour
     public void LookStraight()
     {
         transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+        this.enabled = false;
     }
     
     public override void OnNetworkSpawn()
