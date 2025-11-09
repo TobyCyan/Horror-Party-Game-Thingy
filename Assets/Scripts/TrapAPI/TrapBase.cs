@@ -84,7 +84,6 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         // Unsubscribe to prevent memory leaks when the object is destroyed
         OnArmed -= HandleArmed;
         OnDisarmed -= HandleDisarmed;
-        Debug.Log($"[TrapBase] OnDestroy called");
 
         // Clean up the material instance we created in Awake()
         if (trapMaterial != null)
