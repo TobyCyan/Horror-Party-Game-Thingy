@@ -8,14 +8,26 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     [SerializeField] float cooldown = 0.5f;
     [SerializeField] bool oneShot = false;
 
+    [Header("Who can trigger")]
+    [SerializeField] protected LayerMask triggerMask;
+
+    [Header("Base Visuals")]
+    [SerializeField] protected GameObject armedVisuals; 
+    [SerializeField] protected GameObject disarmedVisuals; 
+    [SerializeField] protected Renderer trapRenderer;
+    [SerializeField] protected Color armedColor = Color.red;
+    [SerializeField] protected Color disarmedColor = Color.gray;
+
+    protected Material trapMaterial;
+
+    protected GameObject owner;
+    protected float lastTriggerTime = -999f;
+
     public NetworkVariable<ulong> ownerClientId = new NetworkVariable<ulong>();
 
     // Network variables for state sync
     private NetworkVariable<bool> netIsDeployed = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> netIsArmed = new NetworkVariable<bool>(false);
-
-    protected GameObject owner;
-    protected float lastTriggerTime = -999f;
 
     // Public properties (ITrap interface)
     public TrapPlacementKind Placement => placement;
@@ -32,12 +44,24 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     // Lifecycle methods
     protected virtual void Awake()
     {
+        if (trapRenderer != null)
+        {
+            trapMaterial = trapRenderer.material;
+        }
         // Subscribe will happen in OnNetworkSpawn
     }
 
     protected virtual void Start()
     {
-        if (NetworkObject == null || !NetworkObject.IsSpawned) return;
+        // Subscribe to our own events to update visuals.
+        OnArmed += HandleArmed;
+        OnDisarmed += HandleDisarmed;
+
+        if (NetworkObject == null || !NetworkObject.IsSpawned)
+        {
+            SetVisualState(IsArmed); //Set initial visual state
+            return;
+        }
 
         if (placement == TrapPlacementKind.Auto || placement == TrapPlacementKind.Default)
         {
@@ -47,6 +71,22 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
                 Arm();
             }
         }
+
+        SetVisualState(IsArmed); //Set initial visual state
+    }
+
+    public override void OnDestroy()
+    {
+        // Unsubscribe to prevent memory leaks when the object is destroyed
+        OnArmed -= HandleArmed;
+        OnDisarmed -= HandleDisarmed;
+
+        // Clean up the material instance we created in Awake()
+        if (trapMaterial != null)
+        {
+            Destroy(trapMaterial);
+        }
+        base.OnDestroy();
     }
 
     public override void OnNetworkSpawn()
@@ -69,6 +109,10 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
             OnArmed?.Invoke(this);
             Debug.Log($"[TrapBase] OnNetworkSpawn - Already armed");
         }
+        else
+        {
+            SetVisualState(false); // Ensure visuals are correct if disarmed
+        }
     }
 
     public override void OnNetworkDespawn()
@@ -77,6 +121,41 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         netIsArmed.OnValueChanged -= OnArmedChanged;
         base.OnNetworkDespawn();
     }
+
+    #region Visual Handlers (Armed/Disarmed)
+    private void HandleArmed(ITrap trap)
+    {
+        SetVisualState(true);
+        Debug.Log($"[TrapBase] HandleArmed - Visuals updated to ARMED");
+    }
+
+    private void HandleDisarmed(ITrap trap)
+    {
+        SetVisualState(false);
+        Debug.Log($"[TrapBase] HandleDisarmed - Visuals updated to DISARMED");
+    }
+
+    protected virtual void SetVisualState(bool isArmed)
+    {
+        // 1. Handle GameObject toggling (from BlindTrap's SetTrapVisualState)
+        if (armedVisuals != null)
+        {
+            armedVisuals.SetActive(isArmed);
+        }
+        if (disarmedVisuals != null)
+        {
+            disarmedVisuals.SetActive(!isArmed);
+        }
+
+        // 2. Handle color change (from BlindTrap's UpdateVisualColor)
+        if (trapMaterial != null)
+        {
+            Color targetColor = isArmed ? armedColor : disarmedColor;
+            trapMaterial.color = targetColor;
+            Debug.Log($"[TrapBase] Color updated to {(isArmed ? armedColor.ToString() : disarmedColor.ToString())}");
+        }
+    }
+    #endregion
 
     // Network variable change handlers
     private void OnDeployedChanged(bool oldValue, bool newValue)
@@ -194,6 +273,51 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
         Debug.Log($"[TrapBase] After Arm() - IsArmed: {netIsArmed.Value}");
     }
 
+    // --- MOVED FROM BLINDTRAP (AND GENERALIZED) ---
+    // This RPC is now generic. It doesn't know about "Player",
+    // it just gets an instigator's NetworkObject ID.
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestTriggerServerRpc(ulong instigatorNetworkId, Vector3 hitPoint)
+    {
+        bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
+        Debug.Log($"[TrapBase - SERVER RPC] Received request for instigator {instigatorNetworkId}, IsServer: {isServer}");
+
+        if (!isServer)
+        {
+            Debug.LogError("[TrapBase - SERVER RPC] Not on server!");
+            return;
+        }
+
+        if (!CanTrigger())
+        {
+            Debug.LogWarning($"[TrapBase - SERVER RPC] Cannot trigger");
+            return;
+        }
+
+        // Get the generic NetworkObject
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(instigatorNetworkId, out NetworkObject instigatorNetObj))
+        {
+            Debug.LogError($"[TrapBase - SERVER RPC] Instigator {instigatorNetworkId} not found!");
+            return;
+        }
+
+        // NO MORE PLAYER CHECK HERE
+        // The instigator is just the GameObject from the NetworkObject.
+        // The child class's OnTriggerCore is responsible for
+        // getting any specific components (like Player).
+
+        var ctx = new TrapTriggerContext
+        {
+            source = TrapTriggerSource.Player, // Or a more generic source if you have one
+            instigator = instigatorNetObj.gameObject, // Pass the GameObject
+            hitPoint = hitPoint,
+            hitNormal = Vector3.up
+        };
+
+        Debug.Log($"[TrapBase - SERVER RPC] Triggering for instigator {instigatorNetObj.OwnerClientId}");
+        Trigger(ctx);
+    }
+
     // Public API: Arm trap
     public virtual void Arm()
     {
@@ -223,6 +347,62 @@ public abstract class TrapBase : NetworkBehaviour, ITrap
     // Public API: Check if trap can trigger
     public virtual bool CanTrigger() =>
         IsDeployed && IsArmed && (Time.time - lastTriggerTime) >= cooldown;
+
+    //Public API: Handle trigger enter from TrapTriggerForwarder
+    public virtual void HandleTriggerEnter(Collider other)
+    {
+        bool isSpawnedCheck = NetworkObject != null && NetworkObject.IsSpawned;
+        Debug.Log($"[TrapBase] HandleTriggerEnter - IsSpawned: {isSpawnedCheck}, CanTrigger: {CanTrigger()}");
+
+        if (!isSpawnedCheck)
+        {
+            Debug.LogWarning("[TrapBase] Not spawned yet");
+            return;
+        }
+
+        if (!CanTrigger())
+        {
+            Debug.Log($"[TrapBase] Cannot trigger - IsDeployed: {IsDeployed}, IsArmed: {IsArmed}");
+            return;
+        }
+
+        // Use the new virtual method to check for a valid instigator
+        if (IsValidTrigger(other, out ulong instigatorNetworkId))
+        {
+            Debug.Log($"[TrapBase] Valid trigger by network object {instigatorNetworkId}");
+            RequestTriggerServerRpc(instigatorNetworkId, other.ClosestPoint(transform.position));
+        }
+        else
+        {
+            Debug.Log($"[TrapBase] Invalid trigger: {other.gameObject.name}");
+        }
+    }
+
+    // --- ADDED: VIRTUAL VALIDATION METHOD ---
+    // Child classes can override this to be more specific.
+    // The base implementation just checks the layer mask and finds *any* NetworkObject.
+    protected virtual bool IsValidTrigger(Collider other, out ulong instigatorNetworkId)
+    {
+        instigatorNetworkId = 0;
+
+        // 1. Check layer mask
+        if ((triggerMask.value & (1 << other.gameObject.layer)) == 0)
+        {
+            Debug.Log($"[TrapBase] Wrong layer: {other.gameObject.layer}");
+            return false;
+        }
+
+        // 2. Find the root NetworkObject
+        var netObj = other.GetComponentInParent<NetworkObject>();
+        if (netObj == null)
+        {
+            Debug.LogWarning($"[TrapBase] Trigger by {other.gameObject.name} on correct layer, but no NetworkObject found in parents.");
+            return false;
+        }
+
+        instigatorNetworkId = netObj.NetworkObjectId;
+        return true;
+    }
 
     // Public API: Trigger trap
     public void Trigger(in TrapTriggerContext ctx)

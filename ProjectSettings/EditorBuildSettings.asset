@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Resources/Scenes/Demo/_InitScene.unity
+    path: Assets/Resources/Scenes/GoldenPlaytest/_InitScene.unity
     guid: 53d47658d1303b5448c6d1d3343f20dc
   - enabled: 1
     path: Assets/Resources/Scenes/Demo/MainMenu.unity
@@ -24,13 +24,13 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/HotPotatoGameLoopScene.unity
     guid: 21845808c551651408201d864be5e98c
   - enabled: 1
-    path: Assets/Resources/Scenes/HospitalMapScene.unity
+    path: Assets/Resources/Scenes/GoldenPlaytest/HospitalMapScene.unity
     guid: e04ba6faa77f1a348837132b372beba8
   - enabled: 1
     path: Assets/Resources/Scenes/NewMainMenu.unity
     guid: 203a115d67ca2a841b0bd5d8c447bd60
   - enabled: 1
-    path: Assets/Resources/Scenes/LobbyScene.unity
+    path: Assets/Resources/Scenes/GoldenPlaytest/LobbyScene.unity
     guid: 3a4c5eaa002c81748a8d4ff24923085f
   - enabled: 1
     path: Assets/Resources/Scenes/AlvinTestScenes/TestMazeScene.unity
