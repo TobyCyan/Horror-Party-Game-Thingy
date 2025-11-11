@@ -83,10 +83,14 @@ public class NetworkLoadingScreen : NetworkBehaviour
         if (sceneEvent.SceneEventType == Unity.Netcode.SceneEventType.Load)
         {
             Show();
+
+            // start local fallback timer for this client
+            if (fallbackTimer != null)
+                StopCoroutine(fallbackTimer);
+            fallbackTimer = StartCoroutine(LocalHideFallback());
         }
 
-        // start timer on server to sync
-        if (IsServer && sceneEvent.SceneEventType == Unity.Netcode.SceneEventType.LoadEventCompleted)
+        if (IsServer && sceneEvent.SceneEventType == Unity.Netcode.SceneEventType.Load)
         {
             readyCount = 0;
             readyClients.Clear();
@@ -94,12 +98,13 @@ public class NetworkLoadingScreen : NetworkBehaviour
             if (fallbackTimer != null)
                 StopCoroutine(fallbackTimer);
 
-            fallbackTimer = StartCoroutine(HideLoadScreen());
+            // server fallback still exists to sync everyone if needed
+            fallbackTimer = StartCoroutine(ServerHideFallback());
         }
     }
 
-    // exceed x seconds, just tell everyone to hide the load screen
-    private IEnumerator HideLoadScreen()
+    // exceed x seconds, just tell everyone to hide the load screen (server version)
+    private IEnumerator ServerHideFallback()
     {
         yield return new WaitForSeconds(fallbackTime);
         HideClientRpc();
@@ -108,9 +113,17 @@ public class NetworkLoadingScreen : NetworkBehaviour
         fallbackTimer = null;
     }
 
+    // local fallback for each client individually
+    private IEnumerator LocalHideFallback()
+    {
+        yield return new WaitForSeconds(fallbackTime + 1);
+        canvas.enabled = false;
+        fallbackTimer = null;
+    }
     [ServerRpc(RequireOwnership = false)]
     private void NotifyReadyServerRpc(ServerRpcParams rpcParams = default)
     {
+        Debug.Log("All clients loaded hiding load screen");
         ulong clientId = rpcParams.Receive.SenderClientId;
         if (readyClients.Contains(clientId)) return;
 
@@ -132,7 +145,16 @@ public class NetworkLoadingScreen : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void HideClientRpc() => canvas.enabled = false;
+    private void HideClientRpc()
+    {
+        // when server decides all are ready, hide for everyone
+        if (fallbackTimer != null)
+        {
+            StopCoroutine(fallbackTimer);
+            fallbackTimer = null;
+        }
+        canvas.enabled = false;
+    }
 
     private void Show() => canvas.enabled = true;
 
