@@ -77,7 +77,7 @@ public class NetworkLoadingScreen : NetworkBehaviour
 
     private void OnSceneEvent(Unity.Netcode.SceneEvent sceneEvent)
     {
-        // yeah fk me
+        // yeah frick me
         if (ignoredScenes.Contains(sceneEvent.SceneName)) return;
 
         if (sceneEvent.SceneEventType == Unity.Netcode.SceneEventType.Load)
