@@ -12,7 +12,9 @@ public class JoinCodeUi : MonoBehaviour
         }
         else
         {
-            joinCodeUi.text = SceneLifetimeManager.Instance.activeSession.Code;
+            string code = SceneLifetimeManager.Instance.activeSession.Code;
+            joinCodeUi.text = code;
+            GUIUtility.systemCopyBuffer = code;
         }
     }
 }

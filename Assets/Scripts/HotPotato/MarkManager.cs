@@ -116,6 +116,7 @@ public class MarkManager : NetworkBehaviour
 
         AssignRandomPlayerWithMark();
         OnGameStarted?.Invoke();
+        NetworkLoadingScreen.SignalClientLoaded();
     }
 
     public void StopHPGame()
