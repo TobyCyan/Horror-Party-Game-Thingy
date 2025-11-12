@@ -20,6 +20,9 @@ public class NetworkPickupItem : NetworkBehaviour
     [SerializeField] private ParticleSystem pickupEffect;
     [SerializeField] private AudioClip pickupSound;
 
+    [Header("Despawn Settings")]
+    [SerializeField] private float despawnDelay = 0.5f; // Small delay to allow effects to play
+
     // Network state - these are the source of truth
     private NetworkVariable<bool> isPickedUp = new NetworkVariable<bool>(
         false,
@@ -144,6 +147,15 @@ public class NetworkPickupItem : NetworkBehaviour
         Debug.Log($"[NetworkPickupItem - SERVER] {itemName} pickup completed - setting network variable");
         isPickedUp.Value = true;
         pickupInProgress = false;
+
+        if (despawnDelay > 0)
+        {
+            Invoke(nameof(DespawnItem), despawnDelay);
+        }
+        else
+        {
+            DespawnItem();
+        }
     }
 
     /// <summary>
@@ -187,10 +199,22 @@ public class NetworkPickupItem : NetworkBehaviour
             Debug.LogWarning($"[NetworkPickupItem] Attempting to despawn {itemName} but it's not marked as picked up!");
         }
 
+        Collider[] allColliders = GetComponentsInChildren<Collider>(true);
+        foreach (var col in allColliders)
+        {
+            col.enabled = false;
+            Debug.Log($"[NetworkPickupItem - SERVER] Disabled collider: {col.gameObject.name}");
+        }
+
         if (NetworkObject != null && NetworkObject.IsSpawned)
         {
             Debug.Log($"[NetworkPickupItem - SERVER] Despawning {itemName}");
             NetworkObject.Despawn(true);
+        }
+        else
+        {
+            Debug.LogWarning($"[NetworkPickupItem - SERVER] {itemName} was not spawned, destroying locally");
+            Destroy(gameObject);
         }
     }
 
@@ -249,19 +273,11 @@ public class NetworkPickupItem : NetworkBehaviour
             }
         }
 
-        // Disable collider IMMEDIATELY
-        if (itemCollider != null)
+        Collider[] allColliders = GetComponentsInChildren<Collider>();
+        foreach (var c in allColliders)
         {
-            itemCollider.enabled = false;
-        }
-        else
-        {
-            // Disable all colliders if no specific one assigned
-            Collider[] colliders = GetComponentsInChildren<Collider>();
-            foreach (var c in colliders)
-            {
-                c.enabled = false;
-            }
+            c.enabled = false;
+            Debug.Log($"[NetworkPickupItem] Disabled collider on: {c.gameObject.name}");
         }
     }
 
