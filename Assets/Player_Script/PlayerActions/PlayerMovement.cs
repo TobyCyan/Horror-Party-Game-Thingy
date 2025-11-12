@@ -457,11 +457,32 @@ public class PlayerMovement : NetworkBehaviour
     // ----------------- Stun API -----------------
     public void Stun(float duration)
     {
+        // If server is calling this on another player, send RPC to their client
+        if (IsServer && !IsOwner)
+        {
+            StunClientRpc(duration);
+            return;
+        }
+
+        // Execute stun locally (either we're the owner, or we received the RPC)
         isStunned = true;
         stunTimer = Mathf.Max(0f, duration);
 
         FreezeInPlace();
-        Debug.Log($"[PlayerMovement] Stunned for {duration:0.00}s");
+        Debug.Log($"[PlayerMovement] Frozen for {duration:0.00}s");
+    }
+
+    [ClientRpc]
+    private void StunClientRpc(float duration)
+    {
+        // Only the owner processes this
+        if (!IsOwner) return;
+
+        isStunned = true;
+        stunTimer = Mathf.Max(0f, duration);
+
+        FreezeInPlace();
+        Debug.Log($"[PlayerMovement] Frozen for {duration:0.00}s (via RPC)");
     }
 
     private void Unfreeze()
