@@ -13,6 +13,7 @@ public class HotPotatoGameManager : NetworkBehaviour
     [SerializeField] private Timer hotPotatoTimer;
     public NetworkVariable<float> timer = new();
     private readonly NetworkVariable<bool> isGameActive = new(false);
+    [SerializeField] public GameObject endGameUI; 
 
     // SFX
     [SerializeField] private AudioSamples gameWinAudioSamples;
@@ -23,6 +24,7 @@ public class HotPotatoGameManager : NetworkBehaviour
     {
         Instance = this;
         PlayerManager.OnLocalPlayerSet += PassHpComponentToPlayer;
+        endGameUI.SetActive(false);
     }
 
     public override void OnNetworkSpawn()
@@ -110,24 +112,25 @@ public class HotPotatoGameManager : NetworkBehaviour
             PlayGameEndSfxRpc();
 
             // TODO: Show game end UI
+            endGameUI.SetActive(true);
 
-            // Wait a bit before despawning to let players see the final state
-            await Task.Delay(5000);
+            //// Wait a bit before despawning to let players see the final state
+            //await Task.Delay(5000);
 
-            // Despawn everyone
-            DespawnPlayerRpc();
+            //// Despawn everyone
+            //DespawnPlayerRpc();
 
-            // ScoreUiManager.Instance.ShowFinalScore();
-            await Task.Delay(1000);
+            //// ScoreUiManager.Instance.ShowFinalScore();
+            //await Task.Delay(1000);
             
-            GetComponent<NetworkObject>().Despawn();
-            await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
-            await SceneLifetimeManager.Instance.ReturnToLobby();
+            //GetComponent<NetworkObject>().Despawn();
+            //await SceneLifetimeManager.Instance.UnloadSceneNetworked(SceneManager.GetActiveScene().name);
+            //await SceneLifetimeManager.Instance.ReturnToLobby();
         }
     }
 
     [Rpc(SendTo.Everyone)]
-    private void DespawnPlayerRpc()
+    public void DespawnPlayerRpc()
     {
         Player localPlayer = PlayerManager.Instance.FindPlayerByClientId(NetworkManager.Singleton.LocalClientId);
         if (localPlayer != null)
