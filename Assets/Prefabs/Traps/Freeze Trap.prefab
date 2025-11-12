@@ -83,6 +83,7 @@ MonoBehaviour:
   itemCollider: {fileID: 1584954269730644559}
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  despawnDelay: 0.5
 --- !u!54 &1629183516727625973
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -132,7 +133,7 @@ MonoBehaviour:
   armedVisuals: {fileID: 499916335352593906}
   disarmedVisuals: {fileID: 7789646493628581272}
   trapRenderer: {fileID: 2157491617931762727}
-  armedColor: {r: 1, g: 0, b: 0, a: 1}
+  armedColor: {r: 0.25504494, g: 0, b: 1, a: 1}
   disarmedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   ownerClientId:
     m_InternalValue: 0
@@ -146,7 +147,7 @@ MonoBehaviour:
     samples: {fileID: 11400000, guid: 0a416536b7f51034d96da6573c25acd9, type: 2}
     mode: 2
     index: 0
-  freezeDuration: 3
+  freezeDuration: 5
   silhouetteDuration: 3
 --- !u!65 &8728138874870149105
 BoxCollider:

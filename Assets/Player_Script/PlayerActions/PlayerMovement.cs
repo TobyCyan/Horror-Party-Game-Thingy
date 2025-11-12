@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Unity.Netcode;
 
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CapsuleCollider))]
 public class PlayerMovement : NetworkBehaviour
@@ -200,11 +201,15 @@ public class PlayerMovement : NetworkBehaviour
         // Only process input for the owner
         if (!IsOwner) return;
 
-        // Freeze timer
+        // Freeze timer - must run BEFORE early return to count down
         if (isStunned)
         {
             stunTimer -= Time.deltaTime;
-            if (stunTimer <= 0f) Unfreeze();
+            if (stunTimer <= 0f)
+            {
+                Unfreeze();
+            }
+            // Still return early to prevent input processing while stunned
             return;
         }
 
@@ -339,7 +344,7 @@ public class PlayerMovement : NetworkBehaviour
         anim.SetBool("IsWalking", false);
         anim.SetFloat("MoveX", 0f);
         anim.SetFloat("MoveZ", 0f);
-        this.enabled = false;
+        // Don't disable component - stun timer needs Update() to count down
     }
 
     public void ResetMovementSpeed()
@@ -456,7 +461,7 @@ public class PlayerMovement : NetworkBehaviour
         stunTimer = Mathf.Max(0f, duration);
 
         FreezeInPlace();
-        Debug.Log($"[PlayerMovement] Frozen for {duration:0.00}s");
+        Debug.Log($"[PlayerMovement] Stunned for {duration:0.00}s");
     }
 
     private void Unfreeze()
