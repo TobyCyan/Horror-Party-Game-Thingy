@@ -147,7 +147,7 @@ MonoBehaviour:
     samples: {fileID: 11400000, guid: 0a416536b7f51034d96da6573c25acd9, type: 2}
     mode: 2
     index: 0
-  freezeDuration: 5
+  freezeDuration: 3
   silhouetteDuration: 3
 --- !u!65 &8728138874870149105
 BoxCollider:
