@@ -80,9 +80,10 @@ MonoBehaviour:
   itemName: Blind_Trap
   itemID: 3
   visualObject: {fileID: 3897863915285929489}
-  itemCollider: {fileID: 7638412415113953706}
+  itemCollider: {fileID: 0}
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  despawnDelay: 0.5
 --- !u!54 &1629183516727625973
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -167,8 +168,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.143007, y: 0.37232223, z: 2.2421193}
-  m_Center: {x: 0.0006193909, y: 0, z: -0.05634132}
+  m_Size: {x: 2.143007, y: 0, z: 2.2421193}
+  m_Center: {x: 0.0006193909, y: -0.18616109, z: -0.05634132}
 --- !u!82 &4129227032400866806
 AudioSource:
   m_ObjectHideFlags: 0
@@ -460,39 +461,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3167167266408127938, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7638412415113953706}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
 --- !u!1 &3897863915285929489 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3167167266408127938, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
   m_PrefabInstance: {fileID: 2153836958909858771}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &7638412415113953706
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3897863915285929489}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0196193
-  m_Height: 3.989041
-  m_Direction: 1
-  m_Center: {x: -0.1346735, y: 0.012320161, z: -0.01812011}
 --- !u!4 &4421459755979900075 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2359843829121550200, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}

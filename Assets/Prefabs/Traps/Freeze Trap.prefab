@@ -80,7 +80,7 @@ MonoBehaviour:
   itemName: Freeze_Trap
   itemID: 4
   visualObject: {fileID: 7789646493628581272}
-  itemCollider: {fileID: 1584954269730644559}
+  itemCollider: {fileID: 0}
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
   despawnDelay: 0.5
@@ -168,8 +168,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.143007, y: 0.37232223, z: 2.2421193}
-  m_Center: {x: 0.0006193909, y: 0, z: -0.05634132}
+  m_Size: {x: 2.143007, y: 0, z: 2.2421193}
+  m_Center: {x: 0.0006193909, y: -0.18616109, z: -0.05634132}
 --- !u!82 &4129227032400866806
 AudioSource:
   m_ObjectHideFlags: 0
@@ -461,10 +461,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3167167266408127938, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1584954269730644559}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
 --- !u!4 &7444928035262373666 stripped
 Transform:
@@ -476,26 +473,3 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3167167266408127938, guid: 665cc4af457cf3340bdc625c6b87a9a3, type: 3}
   m_PrefabInstance: {fileID: 5183198898614245466}
   m_PrefabAsset: {fileID: 0}
---- !u!136 &1584954269730644559
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7789646493628581272}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0196193
-  m_Height: 3.989041
-  m_Direction: 1
-  m_Center: {x: -0.1346735, y: 0.012320161, z: -0.01812011}
